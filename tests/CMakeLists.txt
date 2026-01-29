@@ -1,22 +1,47 @@
+#===============================================================================
+# General Tests
+#===============================================================================
+# Unit tests for general-purpose utilities and algorithms used throughout
+# the project, including filename ordering and content span detection.
+
+#===============================================================================
+# Configure Directories
+#===============================================================================
+
 INCLUDE_DIRECTORIES(BEFORE ..)
 
-SET(
-	sources
-	main.cpp TestContentSpanFinder.cpp
-	TestSmartFilenameOrdering.cpp
-	TestMatrixCalc.cpp
-	../ContentSpanFinder.cpp ../ContentSpanFinder.h
-	../SmartFilenameOrdering.cpp ../SmartFilenameOrdering.h
+#===============================================================================
+# Source Files
+#===============================================================================
+
+SET(SOURCES
+    main.cpp
+    TestContentSpanFinder.cpp
+    TestSmartFilenameOrdering.cpp
+    TestMatrixCalc.cpp
+    ../ContentSpanFinder.cpp
+    ../ContentSpanFinder.h
+    ../SmartFilenameOrdering.cpp
+    ../SmartFilenameOrdering.h
 )
 
-SOURCE_GROUP("Sources" FILES ${sources})
+SOURCE_GROUP("Sources" FILES ${SOURCES})
 
-SET(
-	libs
-	imageproc math ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-	${Boost_PRG_EXECUTION_MONITOR_LIBRARY}
-	${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+#===============================================================================
+# Link Libraries
+#===============================================================================
+
+SET(LIBS
+    imageproc
+    math
+    Qt5::Gui
+    Qt5::Core
+    ${EXTRA_LIBS}
 )
 
-ADD_EXECUTABLE(tests ${sources})
-TARGET_LINK_LIBRARIES(tests ${libs})
+#===============================================================================
+# Build Target
+#===============================================================================
+
+ADD_EXECUTABLE(tests ${SOURCES})
+TARGET_LINK_LIBRARIES(tests ${LIBS})

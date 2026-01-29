@@ -1,28 +1,68 @@
+#===============================================================================
+# Zones Library
+#===============================================================================
+# This library provides spline-based zone management for document editing,
+# including editable zones with serialization and user interactions.
+
 PROJECT(zones)
+
+#===============================================================================
+# Configure Directories
+#===============================================================================
 
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(
-	sources
-	SplineVertex.cpp SplineVertex.h
-	SplineSegment.cpp SplineSegment.h
-	EditableSpline.cpp EditableSpline.h
-	SerializableSpline.cpp SerializableSpline.h
-	Zone.cpp Zone.h
-	ZoneSet.cpp ZoneSet.h
-	EditableZoneSet.cpp EditableZoneSet.h
-	BasicSplineVisualizer.cpp BasicSplineVisualizer.h
-	ZoneInteractionContext.cpp ZoneInteractionContext.h
-	ZoneDefaultInteraction.cpp ZoneDefaultInteraction.h
-	ZoneCreationInteraction.cpp ZoneCreationInteraction.h
-	ZoneVertexDragInteraction.cpp ZoneVertexDragInteraction.h
-	ZoneContextMenuInteraction.cpp ZoneContextMenuInteraction.h
-	ZoneContextMenuItem.h
+#===============================================================================
+# Source Files
+#===============================================================================
+
+SET(SOURCES
+    SplineVertex.cpp
+    SplineVertex.h
+    SplineSegment.cpp
+    SplineSegment.h
+    EditableSpline.cpp
+    EditableSpline.h
+    SerializableSpline.cpp
+    SerializableSpline.h
+    Zone.cpp
+    Zone.h
+    ZoneSet.cpp
+    ZoneSet.h
+    EditableZoneSet.cpp
+    EditableZoneSet.h
+    BasicSplineVisualizer.cpp
+    BasicSplineVisualizer.h
+    ZoneInteractionContext.cpp
+    ZoneInteractionContext.h
+    ZoneDefaultInteraction.cpp
+    ZoneDefaultInteraction.h
+    ZoneCreationInteraction.cpp
+    ZoneCreationInteraction.h
+    ZoneVertexDragInteraction.cpp
+    ZoneVertexDragInteraction.h
+    ZoneContextMenuInteraction.cpp
+    ZoneContextMenuInteraction.h
+    ZoneContextMenuItem.h
 )
 
-SOURCE_GROUP(Sources FILES ${sources})
-QT4_AUTOMOC(${sources})
+SOURCE_GROUP(Sources FILES ${SOURCES})
 
-ADD_LIBRARY(zones STATIC ${sources})
+#===============================================================================
+# Qt5 Meta-Object Compilation
+#===============================================================================
+# Qt5 uses automatic moc, no need for explicit QT5_WRAP_CPP
 
-TRANSLATION_SOURCES(scantailor ${sources})
+SET(CMAKE_AUTOMOC ON)
+
+#===============================================================================
+# Build Target
+#===============================================================================
+
+ADD_LIBRARY(zones STATIC ${SOURCES})
+
+#===============================================================================
+# Translation Sources
+#===============================================================================
+
+TRANSLATION_SOURCES(scantailor ${SOURCES})

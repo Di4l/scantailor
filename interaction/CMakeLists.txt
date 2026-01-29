@@ -1,24 +1,60 @@
+#===============================================================================
+# Interaction Library
+#===============================================================================
+# This library provides interactive mouse and keyboard handling for UI elements
+# such as draggable objects, splines, and zoom operations.
+
 PROJECT(interaction)
+
+#===============================================================================
+# Configure Directories
+#===============================================================================
 
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(
-	sources
-	DraggableObject.h
-	DraggablePoint.cpp DraggablePoint.h
-	DraggableLineSegment.cpp DraggableLineSegment.h
-	ObjectDragHandler.cpp ObjectDragHandler.h
-	InteractionHandler.cpp InteractionHandler.h
-	InteractionState.cpp InteractionState.h
-	DragHandler.cpp DragHandler.h
-	DragWatcher.cpp DragWatcher.h
-	ZoomHandler.cpp ZoomHandler.h
-	InteractiveXSpline.cpp InteractiveXSpline.h
+#===============================================================================
+# Source Files
+#===============================================================================
+
+SET(SOURCES
+    DraggableObject.h
+    DraggablePoint.cpp
+    DraggablePoint.h
+    DraggableLineSegment.cpp
+    DraggableLineSegment.h
+    ObjectDragHandler.cpp
+    ObjectDragHandler.h
+    InteractionHandler.cpp
+    InteractionHandler.h
+    InteractionState.cpp
+    InteractionState.h
+    DragHandler.cpp
+    DragHandler.h
+    DragWatcher.cpp
+    DragWatcher.h
+    ZoomHandler.cpp
+    ZoomHandler.h
+    InteractiveXSpline.cpp
+    InteractiveXSpline.h
 )
 
-SOURCE_GROUP(Sources FILES ${sources})
-QT4_AUTOMOC(${sources})
+SOURCE_GROUP(Sources FILES ${SOURCES})
 
-ADD_LIBRARY(interaction STATIC ${sources})
+#===============================================================================
+# Qt5 Meta-Object Compilation
+#===============================================================================
+# Qt5 uses automatic moc, no need for explicit QT5_WRAP_CPP
 
-TRANSLATION_SOURCES(scantailor ${sources})
+SET(CMAKE_AUTOMOC ON)
+
+#===============================================================================
+# Build Target
+#===============================================================================
+
+ADD_LIBRARY(interaction STATIC ${SOURCES})
+
+#===============================================================================
+# Translation Sources
+#===============================================================================
+
+TRANSLATION_SOURCES(scantailor ${SOURCES})

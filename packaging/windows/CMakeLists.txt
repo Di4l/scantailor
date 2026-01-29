@@ -9,7 +9,6 @@ IF(NOT MAKENSIS_EXE)
 		"makensis.exe is a part of NSIS. Get NSIS from http://nsis.sf.net/"
 	)
 ENDIF(NOT MAKENSIS_EXE)
-	
 IF(MSVC)
 	GET_FILENAME_COMPONENT(make_program_dir "${CMAKE_MAKE_PROGRAM}" PATH)
 	FIND_FILE(
@@ -20,14 +19,12 @@ IF(MSVC)
 		# Get rid of .. components in the path.
 		GET_FILENAME_COMPONENT(VC_REDIST_DIR "${VC_REDIST_DIR}" ABSOLUTE)
 		SET(VC_REDIST_DIR "${VC_REDIST_DIR}" CACHE PATH "VC/redist directory." FORCE)
-
 		# Find CRT redistributables.
 		FILE(GLOB crt_redist_dirs "${VC_REDIST_DIR}/x86/Microsoft.VC*.CRT")
 		IF(crt_redist_dirs)
 			LIST(GET crt_redist_dirs 0 CRT_REDIST_PATH)
 		ENDIF(crt_redist_dirs)
 	ENDIF(VC_REDIST_DIR)
-
 	IF (NOT CRT_REDIST_PATH)
 		MESSAGE(
 			FATAL_ERROR
@@ -39,31 +36,25 @@ IF(MSVC)
 		)
 	ENDIF(NOT CRT_REDIST_PATH)
 ENDIF()
-
 MATH(EXPR bits "${CMAKE_SIZEOF_VOID_P} * 8")
 SET(LICENSE_FILE "${CMAKE_SOURCE_DIR}/GPL3.txt")
 SET(INSTALLER_FILENAME "scantailor-${VERSION}-${bits}bit-install.exe")
 SET(REGISTER_EXTENSION_NSH "${CMAKE_CURRENT_SOURCE_DIR}/registerExtension.nsh")
-
 SET(
 	SOURCES
 	scantailor.nsi.in "${CMAKE_SOURCE_DIR}/cmake/generate_nsi_file.cmake.in"
 	"${CMAKE_SOURCE_DIR}/cmake/prepare_staging_dir.cmake.in"
 )
-
 SOURCE_GROUP("Sources" FILES ${SOURCES})
 SOURCE_GROUP("Generated" FILES "${CMAKE_BINARY_DIR}/scantailor.nsi")
-
 CONFIGURE_FILE(
 	"${CMAKE_SOURCE_DIR}/cmake/prepare_staging_dir.cmake.in"
 	"${CMAKE_BINARY_DIR}/prepare_staging_dir.cmake" @ONLY
 )
-
 SET(MAYBE_CRASHREPORTER_EXE "")
 IF(ENABLE_CRASH_REPORTER)
 	SET(MAYBE_CRASHREPORTER_EXE "-DCRASHREPORTER_EXE=$<TARGET_FILE:CrashReporter>")
 ENDIF()
-
 SET(MAYBE_CRT_REDIST_PATH "")
 IF(CRT_REDIST_PATH)
 	SET(MAYBE_CRT_REDIST_PATH "-DCRT_REDIST_PATH=${CRT_REDIST_PATH}")
@@ -87,33 +78,27 @@ ADD_DEPENDENCIES(
 IF(ENABLE_CRASH_REPORTER)
 	ADD_DEPENDENCIES(prepare_staging_dir CrashReporter)
 ENDIF()
-
 SET(extra_deps scantailor compile_translations)
-
 SET(DUMP_SYMBOLS_COMMANDS "")
 IF(ENABLE_CRASH_REPORTER)
 	LIST(APPEND extra_deps CrashReporter)
 	SET(
 		DUMP_SYMBOLS_COMMANDS
 		COMMAND "${CMAKE_COMMAND}" ARGS -E echo "Dumping symbols..."
-		
 		COMMAND "${DUMP_SYMS_EXECUTABLE}" ARGS "$<TARGET_FILE:scantailor>"
 		">" "${SYMBOLS_PATH}/temp.sym"
 		COMMAND "${CMAKE_COMMAND}" ARGS "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
 		-P "${CMAKE_SOURCE_DIR}/cmake/move_sym_file.cmake"
-		
 		COMMAND "${DUMP_SYMS_EXECUTABLE}" ARGS "$<TARGET_FILE:scantailor-cli>"
 		">" "${SYMBOLS_PATH}/temp.sym"
 		COMMAND "${CMAKE_COMMAND}" ARGS "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
 		-P "${CMAKE_SOURCE_DIR}/cmake/move_sym_file.cmake"
 	)
 ENDIF(ENABLE_CRASH_REPORTER)
-
 CONFIGURE_FILE(
 	"${CMAKE_SOURCE_DIR}/cmake/generate_nsi_file.cmake.in"
 	"${CMAKE_BINARY_DIR}/generate_nsi_file.cmake" @ONLY
 )
-
 SET(
 	scantailor_nsi_command
 	OUTPUT "${CMAKE_BINARY_DIR}/scantailor.nsi"
@@ -133,7 +118,6 @@ LIST(
 	VERBATIM
 )
 ADD_CUSTOM_COMMAND(${scantailor_nsi_command})
-
 ADD_CUSTOM_COMMAND(
 	OUTPUT "${INSTALLER_FILENAME}"
 	${DUMP_SYMBOLS_COMMANDS}
@@ -143,7 +127,6 @@ ADD_CUSTOM_COMMAND(
 	DEPENDS ${extra_deps}
 	VERBATIM
 )
-
 OPTION(BUILD_INSTALLER_BY_DEFAULT "Wheter the \"installer\" target gets built by default" ON)
 SET(maybe_all "")
 IF(BUILD_INSTALLER_BY_DEFAULT)

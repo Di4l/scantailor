@@ -1,19 +1,40 @@
+#===============================================================================
+# Automatic Differentiation Tests
+#===============================================================================
+# Unit tests for the automatic differentiation (ADIFF) library.
+# These tests validate the correctness of Hessian matrix calculations
+# and other automatic differentiation functionality.
+
+#===============================================================================
+# Configure Directories
+#===============================================================================
+
 INCLUDE_DIRECTORIES(BEFORE ..)
 
-SET(
-	sources
-	${CMAKE_SOURCE_DIR}/tests/main.cpp
-	TestHessians.cpp
+#===============================================================================
+# Source Files
+#===============================================================================
+
+SET(SOURCES
+    ${CMAKE_SOURCE_DIR}/tests/main.cpp
+    TestHessians.cpp
 )
 
-SOURCE_GROUP("Sources" FILES ${sources})
+SOURCE_GROUP("Sources" FILES ${SOURCES})
 
-SET(
-	libs
-	math ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-	${Boost_PRG_EXECUTION_MONITOR_LIBRARY}
-	${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+#===============================================================================
+# Link Libraries
+#===============================================================================
+
+SET(LIBS
+    math
+    Qt5::Core
+    ${EXTRA_LIBS}
 )
 
-ADD_EXECUTABLE(adiff_tests ${sources})
-TARGET_LINK_LIBRARIES(adiff_tests ${libs})
+#===============================================================================
+# Build Target
+#===============================================================================
+
+ADD_EXECUTABLE(adiff_tests ${SOURCES})
+TARGET_LINK_LIBRARIES(adiff_tests ${LIBS})

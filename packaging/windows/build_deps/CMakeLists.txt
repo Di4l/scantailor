@@ -1,5 +1,4 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
-
 SET(
 	CMAKE_USER_MAKE_RULES_OVERRIDE
 	"${CMAKE_SOURCE_DIR}/../../../cmake/default_cflags.cmake"
@@ -8,25 +7,19 @@ SET(
 	CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
 	"${CMAKE_SOURCE_DIR}/../../../cmake/default_cxxflags.cmake"
 )
-
 PROJECT("Scan Tailor Dependencies")
-
 # This forces Visual Studio 2008 SP1 to actually link to the versions of the
 # libraries it ships with!  It's harmless on other platforms.
 ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-
 INCLUDE(../../../cmake/SetDefaultBuildType.cmake)
 INCLUDE(../../../cmake/SetDefaultGccFlags.cmake)
 INCLUDE(../../../cmake/ToNativePath.cmake)
 INCLUDE(../../../cmake/PatchFile.cmake)
 INCLUDE(TestCXXAcceptsFlag)
-
 ST_SET_DEFAULT_BUILD_TYPE(Release)
 ST_SET_DEFAULT_GCC_FLAGS()
-
 GET_FILENAME_COMPONENT(source_outer_dir "${PROJECT_SOURCE_DIR}/../../../.." ABSOLUTE)
 GET_FILENAME_COMPONENT(build_outer_dir "${PROJECT_BINARY_DIR}/.." ABSOLUTE)
-
 FILE(GLOB jpeg_dirs1 "${build_outer_dir}/jpeg-[0-9]*")
 FILE(GLOB jpeg_dirs2 "${source_outer_dir}/jpeg-[0-9]*")
 FILE(GLOB zlib_dirs1 "${build_outer_dir}/zlib-[0-9]*.[0-9]*.[0-9]*")
@@ -45,7 +38,6 @@ FILE(GLOB qt_dirs5 "C:/Qt/4.*.*")
 FILE(GLOB qt_dirs6 "C:/Qt/20*/qt")
 FILE(GLOB boost_dirs1 "${build_outer_dir}/boost_1_[0-9]*_[0-9]*")
 FILE(GLOB boost_dirs2 "${source_outer_dir}/boost_1_[0-9]*_[0-9]*")
-
 FIND_PATH(
 	JPEG_DIR jpeglib.h HINTS ${jpeg_dirs1} ${jpeg_dirs2}
 	DOC "Path to jpeg source directory."
@@ -71,7 +63,6 @@ FIND_PATH(
 	BOOST_DIR boost/foreach.hpp HINTS ${boost_dirs1} ${boost_dirs2}
 	DOC "Path to top-level Boost source directory."
 )
-
 IF(NOT JPEG_DIR)
 	MESSAGE(FATAL_ERROR "JPEG source directory not found. You may specify it manually.")
 ELSEIF(NOT ZLIB_DIR)
@@ -85,8 +76,6 @@ ELSEIF(NOT QT_DIR)
 ELSEIF(NOT BOOST_DIR)
 	MESSAGE(FATAL_ERROR "Boost source directory not found. You may specify it manually.")
 ENDIF()
-
-
 IF(MINGW)
 	SET(ZLIB_LIBRARY_NAME z)
 	SET(PNG_LIBRARY_NAME png)
@@ -98,7 +87,6 @@ ELSE()
 	SET(JPEG_LIBRARY_NAME libjpeg)
 	SET(TIFF_LIBRARY_NAME libtiff)
 ENDIF()
-
 MACRO(LIST_ITEMS_PREPEND LIST PREFIX)
 	SET(tmp_list_)
 	FOREACH(item ${${LIST}})
@@ -106,10 +94,7 @@ MACRO(LIST_ITEMS_PREPEND LIST PREFIX)
 	ENDFOREACH(item)
 	SET(${LIST} ${tmp_list_})
 ENDMACRO(LIST_ITEMS_PREPEND)
-
-
 #=================================== JPEG ===================================#
-
 # Patch jmorecfg.h to:
 # 1. Prevent double definition of INT32.
 # 2. Build a DLL rather than a static library.
@@ -131,7 +116,6 @@ IF(NOT EXISTS "${JPEG_DIR}/jmorecfg.h.orig")
 	SET(jmorecfg_h "")
 	SET(jmorecfg_h_orig "")
 ENDIF(NOT EXISTS "${JPEG_DIR}/jmorecfg.h.orig")
-
 SET(
 	libjpeg_sources
 	jaricom.c jcapimin.c jcapistd.c jcarith.c jccoefct.c jccolor.c
@@ -144,9 +128,7 @@ SET(
 	jquant2.c jutils.c jmemmgr.c jmemnobs.c
 )
 LIST_ITEMS_PREPEND(libjpeg_sources "${JPEG_DIR}/")
-
 CONFIGURE_FILE("${JPEG_DIR}/jconfig.vc" "${JPEG_DIR}/jconfig.h" COPYONLY)
-
 ADD_LIBRARY(${JPEG_LIBRARY_NAME} SHARED ${libjpeg_sources})
 SET_TARGET_PROPERTIES(
 	${JPEG_LIBRARY_NAME} PROPERTIES
@@ -160,17 +142,13 @@ SET_TARGET_PROPERTIES(
 	RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${QT_DIR}/bin"
 	RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${QT_DIR}/bin"
 )
-
-
 #=================================== ZLIB ===================================#
-
 SET(
 	zlib_sources
 	adler32.c compress.c crc32.c deflate.c inffast.c inflate.c
 	inftrees.c trees.c uncompr.c zutil.c
 )
 LIST_ITEMS_PREPEND(zlib_sources "${ZLIB_DIR}/")
-
 ADD_LIBRARY(${ZLIB_LIBRARY_NAME} SHARED ${zlib_sources})
 SET_TARGET_PROPERTIES(
 	${ZLIB_LIBRARY_NAME} PROPERTIES
@@ -184,10 +162,7 @@ SET_TARGET_PROPERTIES(
 	RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${QT_DIR}/bin"
 	RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${QT_DIR}/bin"
 )
-
-
 #================================== LIBPNG ==================================#
-
 IF(NOT EXISTS "${PNG_DIR}/pnglibconf.h")
 	IF(EXISTS "${PNG_DIR}/scripts/pnglibconf.h.prebuilt")
 		CONFIGURE_FILE(
@@ -196,9 +171,7 @@ IF(NOT EXISTS "${PNG_DIR}/pnglibconf.h")
 		)
 	ENDIF()
 ENDIF()
-
 INCLUDE_DIRECTORIES(${ZLIB_DIR})
-
 SET(
 	libpng_sources
 	png.c pngset.c pngget.c pngrutil.c pngtrans.c pngwutil.c pngread.c
@@ -206,7 +179,6 @@ SET(
 	pngerror.c pngpread.c
 )
 LIST_ITEMS_PREPEND(libpng_sources "${PNG_DIR}/")
-
 ADD_DEFINITIONS(-DPNG_NO_MODULEDEF)
 ADD_LIBRARY(${PNG_LIBRARY_NAME} SHARED ${libpng_sources})
 TARGET_LINK_LIBRARIES(${PNG_LIBRARY_NAME} ${ZLIB_LIBRARY_NAME})
@@ -222,12 +194,8 @@ SET_TARGET_PROPERTIES(
 	RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${QT_DIR}/bin"
 	RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${QT_DIR}/bin"
 )
-
-
 #=================================== TIFF ===================================#
-
 INCLUDE_DIRECTORIES("${JPEG_DIR}") # ZLIB_DIR already included above
-
 SET(
 	libtiff_sources
 	tif_aux.c tif_close.c tif_codec.c tif_color.c tif_compress.c
@@ -240,7 +208,6 @@ SET(
 	tif_warning.c tif_write.c tif_zip.c tif_unix.c libtiff.def
 )
 LIST_ITEMS_PREPEND(libtiff_sources "${TIFF_DIR}/libtiff/")
-
 SET(tiff_vc_config "${TIFF_DIR}/libtiff/tif_config.vc.h")
 IF(EXISTS "${TIFF_DIR}/libtiff/tif_config.h.vc")
 	SET(tiff_vc_config "${TIFF_DIR}/libtiff/tif_config.h.vc")
@@ -254,7 +221,6 @@ IF(EXISTS "${TIFF_DIR}/libtiff/tiffconf.vc.h")
 		"${TIFF_DIR}/libtiff/tiffconf.h" @COPYONLY
 	)
 ENDIF(EXISTS "${TIFF_DIR}/libtiff/tiffconf.vc.h")
-
 ADD_LIBRARY(${TIFF_LIBRARY_NAME} SHARED ${libtiff_sources})
 TARGET_LINK_LIBRARIES(
 	${TIFF_LIBRARY_NAME}
@@ -271,10 +237,7 @@ SET_TARGET_PROPERTIES(
 	RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${QT_DIR}/bin"
 	RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${QT_DIR}/bin"
 )
-
-
 #================================= Boost ================================#
-
 IF(MINGW)
 	SET(boost_toolset gcc)
 ELSEIF(MSVC)
@@ -282,12 +245,10 @@ ELSEIF(MSVC)
 ELSE(MINGW)
 	MESSAGE(FATAL_ERROR "Unsupported platform.  MinGW and MSVC are supported.")
 ENDIF(MINGW)
-
 SET(boost_64bit_flags "")
 IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	LIST(APPEND boost_64bit_flags "address-model=64")
 ENDIF()
-
 ADD_CUSTOM_TARGET(
 	boost ALL
 	COMMAND bootstrap && b2 --with-test toolset=${boost_toolset}
@@ -297,10 +258,7 @@ ADD_CUSTOM_TARGET(
 	WORKING_DIRECTORY "${BOOST_DIR}"
 	VERBATIM
 )
-
-
 #=================================== Qt ===================================#
-
 # Backward compatibility.  We used to patch projects.pro, but now we achieve
 # the same result by other means.
 IF(EXISTS "${QT_DIR}/projects.pro.orig")
@@ -310,14 +268,10 @@ IF(EXISTS "${QT_DIR}/projects.pro.orig")
 	)
 	FILE(REMOVE "${QT_DIR}/projects.pro.orig")
 ENDIF(EXISTS "${QT_DIR}/projects.pro.orig")
-
-
 TO_NATIVE_PATH("${JPEG_DIR}" JPEG_INCLUDE_DIR)
 TO_NATIVE_PATH("${ZLIB_DIR}" ZLIB_INCLUDE_DIR)
 TO_NATIVE_PATH("${PNG_DIR}" PNG_INCLUDE_DIR)
 TO_NATIVE_PATH("${QT_DIR}" QT_DIR_NATIVE)
-
-
 # Find all *.conf files under mkspecs that mention -Zc:wchar_t- and remove
 # that minus at the end.  That's necessary to make Qt compatible with other
 # libraries that use wchar_t stuff.
@@ -330,17 +284,14 @@ FOREACH(conf_file ${conf_files})
 		IF(NOT EXISTS "${conf_file}.orig")
 			CONFIGURE_FILE("${conf_file}" "${conf_file}.orig" COPYONLY)
 		ENDIF()
-
 		FILE(WRITE "${conf_file}" "${new_contents}")
 	ENDIF()
 ENDFOREACH()
-
 SET(qt_maybe_skip_tools "")
 IF(EXISTS "${QT_DIR}/bin/designer.exe")
 	# Either the tools have already been built, or they came prepackaged.
 	SET(qt_maybe_skip_tools "-nomake tools")
 ENDIF(EXISTS "${QT_DIR}/bin/designer.exe")
-
 IF(MINGW)
 	SET(platform win32-g++)
 	SET(make_command "mingw32-make -j$ENV{NUMBER_OF_PROCESSORS}")
@@ -365,8 +316,6 @@ ELSEIF(MSVC)
 ELSE(MINGW)
 	MESSAGE(FATAL_ERROR "Unsupported platform.")
 ENDIF(MINGW)
-
-
 IF(MINGW)
 	# Figure out the correct values for -*-libgcc and -*-libstdc++
 	# An empty value doesn't mean it's incorrect.
@@ -375,29 +324,23 @@ IF(MINGW)
 	STRING(REGEX MATCH "-(static|shared)-libgcc" static_shared_libgcc "${CMAKE_CXX_FLAGS}")
 	STRING(REGEX MATCH "-(static|shared)-libstdc\\+\\+" static_shared_libstdcpp "${CMAKE_CXX_FLAGS}")
 ENDIF()
-
 # Patch qmake.conf
 SET(CHANGES "")
 IF(MINGW)
 	# Set correct -*-libgcc and -*-libstdc++ flags.
 	LIST(
 		APPEND CHANGES
-		
 		# Get rid of existing flags, if any.
 		"/-(static|shared)-lib(gcc|stdc\\+\\+)//"
-			
 		# Add the flags we want.
 		"/(QMAKE_LFLAGS[ \t]*=)[ \t]*/\\1 ${static_shared_libgcc} ${static_shared_libstdcpp} /"
 	)
-	
 	IF (CMAKE_C_FLAGS MATCHES ".*-fno-keep-inline-dllexport.*")
 		# This option is needed to prevent out-of-memory situations when linking large DLLs.
 		LIST(
 			APPEND CHANGES
-			
 			# Get rid of the existing flag, if present.
 			"/-f(no)?-keep-inline-dllexport//"
-			
 			# Add the flag to QMAKE_CFLAGS and QMAKE_LFLAGS.
 			"/(QMAKE_(C|L)FLAGS[ \t]*=)[ \t]*/\\1 -fno-keep-inline-dllexport /"
 		)
@@ -407,44 +350,33 @@ ELSEIF(MSVC AND force_frame_pointer)
 	# good stack traces from our built-in crash reporter.
 	LIST(
 		APPEND CHANGES
-		
 		# Add the flag.
 		"/(QMAKE_CFLAGS_RELEASE[ \t]*=)/\\1 -Oy-/"
-		
 		# Get rid of duplicates, in case it was already there.
 		"/( -Oy-)+/ -Oy-/"
 	)
 ENDIF()
 PATCH_FILE("${QT_DIR}/mkspecs/${platform}/qmake.conf" ${CHANGES})
-	
-
 # We also force debugging symbols even for release builds.
 PATCH_FILE(
 	"${QT_DIR}/mkspecs/features/release.prf"
-	
 	# Clone *FLAGS_RELEASE into *FLAGS_RELEASE_WITH_DEBUGINFO
 	"/(\\$\\$QMAKE_(C|CXX|L)FLAGS_RELEASE)([ \t\r\n]|$)/\\1_WITH_DEBUGINFO\\3/"
 )
-
-
 # Set correct -*-libgcc and -*-libstdc++ flags.
 IF(MINGW)
 	FOREACH(file_ Makefile.win32-g++ Makefile.win32-g++-sh)
 		SET(conf_file_ "${QT_DIR}/qmake/${file_}")
 		PATCH_FILE(
 			"${conf_file_}"
-			
 			# Get rid of existing flags, if any.
 			"/-(static|shared)-lib(gcc|stdc\\+\\+)//"
-			
 			# Add the flags we want.
 			"/(LFLAGS[ \t]*=)[ \t]*/\\1 ${static_shared_libgcc} ${static_shared_libstdcpp} /"
 		)
 	ENDFOREACH()
 ENDIF()
-
 SET(qt_build_script "${CMAKE_BINARY_DIR}/build-qt.bat")
-
 ADD_CUSTOM_COMMAND(
 	OUTPUT "${qt_build_script}"
 	COMMAND "${CMAKE_COMMAND}"
@@ -464,29 +396,24 @@ ADD_CUSTOM_COMMAND(
 	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/generate_qt_build_script.cmake"
 	VERBATIM
 )
-	
 ADD_CUSTOM_TARGET(
 	Qt ALL
 	COMMAND "${qt_build_script}"
 	DEPENDS "${qt_build_script}"
 	WORKING_DIRECTORY "${QT_DIR}"
 )
-
 # boost added so that boost is built before Qt. That's helpful if build
 # errors occur, as rebuilding boost is much faster than rebuilding Qt.
 ADD_DEPENDENCIES(
 	Qt ${ZLIB_LIBRARY_NAME} ${JPEG_LIBRARY_NAME}
 	${PNG_LIBRARY_NAME} ${TIFF_LIBRARY_NAME}
 )
-
 # If you have multiple versions of Qt installed, this script
 # can easily pick the wrong one.
 MESSAGE(STATUS "----------------------------")
 MESSAGE(STATUS "QT_DIR is ${QT_DIR}")
 MESSAGE(STATUS "Check it's the one you want.")
 MESSAGE(STATUS "----------------------------")
-
-
 # Dump symbols of all DLLs we are going to link to.
 OPTION(DUMP_DLL_SYMBOLS "Enable if you are going to build crash reporter." OFF)
 IF(DUMP_DLL_SYMBOLS)
@@ -498,7 +425,6 @@ IF(DUMP_DLL_SYMBOLS)
 	IF(NOT SYMBOLS_PATH)
 		MESSAGE(FATAL_ERROR "SYMBOLS_PATH directory is not set.")
 	ENDIF(NOT SYMBOLS_PATH)
-
 	# We can't build it, because it requires ATL, which is not part
 	# of the Visual Studio Express Edition, so we rely on a pre-built
 	# version which can be found in the Mozilla repository.
@@ -511,7 +437,6 @@ IF(DUMP_DLL_SYMBOLS)
 			FATAL_ERROR "dump_syms.exe wasn't found.  Specify its location manually by setting the DUMP_SYMS_EXECUTABLE variable.  dump_syms.exe may be found in the Mozilla repository under /toolkit/crashreporter/tools/win32"
 		)
 	ENDIF(NOT DUMP_SYMS_EXECUTABLE)
-	
 	ADD_CUSTOM_TARGET(
 		dump_dll_symbols ALL
 		COMMAND "${CMAKE_COMMAND}" "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
@@ -522,7 +447,6 @@ IF(DUMP_DLL_SYMBOLS)
 		WORKING_DIRECTORY "${QT_DIR}/bin"
 		VERBATIM
 	)
-	
 	# Qt depends on the rest of them.
 	ADD_DEPENDENCIES(dump_dll_symbols Qt)
 ENDIF()
