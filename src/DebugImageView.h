@@ -21,15 +21,14 @@
 
 #include "AutoRemovingFile.h"
 #include <QStackedWidget>
-#include <boost/intrusive/list.hpp>
+#include <list>
 
 class QImage;
 
+// NOTE: DebugImageView was previously part of boost::intrusive::list.
+// Now managed separately. Can be re-implemented as intrusive_list in future.
 class DebugImageView :
-	public QStackedWidget,
-	public boost::intrusive::list_base_hook<
-		boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-	>
+	public QStackedWidget
 {
 public:
 	DebugImageView(AutoRemovingFile file, QWidget* parent = 0);

@@ -17,7 +17,7 @@
 */
 
 #include "RelinkablePathVisualization.h"
-#include "RelinkablePathVisualization.h.moc"
+// #include "RelinkablePathVisualization.h.moc"
 #include "RelinkablePath.h"
 #include "QtSignalForwarder.h"
 #include <QHBoxLayout>
@@ -33,8 +33,6 @@
 #include <QStyleOptionButton>
 #include <QFile>
 #include <QVariant>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <vector>
 
 struct RelinkablePathVisualization::PathComponent
@@ -129,7 +127,7 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
 	checkForExistence(path_components);
 
 	int component_idx = -1;
-	BOOST_FOREACH(PathComponent& path_component, path_components) {
+	for (PathComponent& path_component : path_components) {
 		++component_idx;
 		ComponentButton* btn = new ComponentButton(this);
 		m_pLayout->addWidget(btn);
@@ -141,11 +139,9 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
 		stylePathComponentButton(btn, path_component.exists);
 		
 		new QtSignalForwarder(
-			btn, SIGNAL(clicked()), boost::bind(
-				&RelinkablePathVisualization::onClicked, this,
-				component_idx, path_component.prefixPath,
-				path_component.suffixPath, path_component.type
-			)
+			btn, SIGNAL(clicked()), [this, idx = component_idx, prefix = path_component.prefixPath, suffix = path_component.suffixPath, type = path_component.type]() {
+				onClicked(idx, prefix, suffix, type);
+			}
 		);
 	}
 
@@ -273,7 +269,7 @@ RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& compo
 	}
 
 	if (QFile::exists(components.back().prefixPath)) {
-		BOOST_FOREACH(PathComponent& comp, components) {
+		for (PathComponent& comp : components) {
 			comp.exists = true;
 		}
 		return;

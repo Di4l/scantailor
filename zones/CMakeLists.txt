@@ -30,26 +30,26 @@ SET(SOURCES
 )
 
 SET(GUI_SOURCES
-    EditableSpline.cpp
-    EditableSpline.h
-    SerializableSpline.cpp
-    SerializableSpline.h
-    EditableZoneSet.cpp
-    EditableZoneSet.h
-    BasicSplineVisualizer.cpp
-    BasicSplineVisualizer.h
-    ZoneDefaultInteraction.cpp
-    ZoneDefaultInteraction.h
-    ZoneCreationInteraction.cpp
-    ZoneCreationInteraction.h
-    ZoneVertexDragInteraction.cpp
-    ZoneVertexDragInteraction.h
-    ZoneContextMenuInteraction.cpp
-    ZoneContextMenuInteraction.h
-    ZoneContextMenuItem.h
+    gui/EditableSpline.cpp
+    gui/EditableSpline.h
+    gui/SerializableSpline.cpp
+    gui/SerializableSpline.h
+    gui/EditableZoneSet.cpp
+    gui/EditableZoneSet.h
+    gui/BasicSplineVisualizer.cpp
+    gui/BasicSplineVisualizer.h
+    gui/ZoneDefaultInteraction.cpp
+    gui/ZoneDefaultInteraction.h
+    gui/ZoneCreationInteraction.cpp
+    gui/ZoneCreationInteraction.h
+    gui/ZoneVertexDragInteraction.cpp
+    gui/ZoneVertexDragInteraction.h
+    gui/ZoneContextMenuInteraction.cpp
+    gui/ZoneContextMenuInteraction.h
+    gui/ZoneContextMenuItem.h
 )
 
-SET(SOURCES ${SOURCES} gui/${GUI_SOURCES})
+SET(SOURCES ${SOURCES} ${GUI_SOURCES})
 
 SOURCE_GROUP(Sources FILES ${SOURCES})
 

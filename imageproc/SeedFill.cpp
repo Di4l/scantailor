@@ -18,7 +18,7 @@
 
 #include "SeedFill.h"
 #include "SeedFillGeneric.h"
-#include "GrayImage.h"
+#include "imageproc/gui/GrayImage.h"
 #include <QSize>
 #include <QImage>
 #include <QDebug>

@@ -17,7 +17,7 @@
 */
 
 #include "StageListView.h"
-#include "StageListView.h.moc"
+// #include "StageListView.h.moc"
 #include "StageSequence.h"
 #include "ChangedStateItemDelegate.h"
 #include "SkinnedButton.h"
@@ -36,7 +36,6 @@
 #include <QVariant>
 #include <Qt>
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <memory>
 #include <assert.h>
@@ -287,7 +286,7 @@ void
 StageListView::ensureSelectedRowVisible()
 {
 	// This loop won't run more than one iteration.
-	BOOST_FOREACH(QModelIndex const& idx, selectionModel()->selectedRows(0)) {
+	for (QModelIndex const& idx : selectionModel()->selectedRows(0)) {
 		scrollTo(idx, EnsureVisible);
 	}
 }

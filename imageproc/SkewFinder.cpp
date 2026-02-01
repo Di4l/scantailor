@@ -18,7 +18,7 @@
 
 #include "SkewFinder.h"
 #include "imageproc/gui/BinaryImage.h"
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 #include "BitOps.h"
 #include "Shear.h"
 #include "ReduceThreshold.h"

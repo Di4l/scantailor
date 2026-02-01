@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -17,7 +18,7 @@
 */
 
 #include "ThumbnailSequence.h"
-#include "ThumbnailSequence.h.moc"
+// #include "ThumbnailSequence.h.moc"
 #include "ThumbnailFactory.h"
 #include "IncompleteThumbnail.h"
 #include "PageSequence.h"
@@ -28,14 +29,7 @@
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
 #include "ScopedIncDec.h"
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/mem_fun.hpp>
-#include <boost/function.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/foreach.hpp>
+#include "MultiIndexContainer.h"
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QGraphicsItemGroup>
@@ -70,9 +64,6 @@
 #include <stddef.h>
 #include <assert.h>
 
-using namespace ::boost::multi_index;
-using namespace ::boost::lambda;
-
 
 class ThumbnailSequence::Item
 {
@@ -101,7 +92,7 @@ private:
 class ThumbnailSequence::GraphicsScene : public QGraphicsScene
 {
 public:
-	typedef boost::function<void (QGraphicsSceneContextMenuEvent*)> ContextMenuEventCallback;
+	typedef std::function<void (QGraphicsSceneContextMenuEvent*)> ContextMenuEventCallback;
 
 	void setContextMenuEventCallback(ContextMenuEventCallback callback) {
 		m_contextMenuEventCallback = callback;
@@ -172,19 +163,24 @@ public:
 		
 	void itemSelectedByUser(CompositeItem* item, Qt::KeyboardModifiers modifiers);
 private:
-	class ItemsByIdTag;
-	class ItemsInOrderTag;
-	class SelectedThenUnselectedTag;
+	struct ItemsByIdTag {};
+	struct ItemsInOrderTag {};
+	struct SelectedThenUnselectedTag {};
+	
+	// PageId extractor from Item
+	struct ItemPageIdExtractor
+	{
+		PageId operator()(Item const& item) const { return item.pageId(); }
+	};
+	
+	using namespace st::multi_index;
 	
 	typedef multi_index_container<
 		Item,
 		indexed_by<
-			ordered_unique<
-				tag<ItemsByIdTag>,
-				const_mem_fun<Item, PageId const&, &Item::pageId>
-			>,
-			sequenced<tag<ItemsInOrderTag> >,
-			sequenced<tag<SelectedThenUnselectedTag> >
+			ordered_unique_index<Item, ItemsByIdTag, ItemPageIdExtractor>,
+			sequenced_index<Item, ItemsInOrderTag>,
+			sequenced_index<Item, SelectedThenUnselectedTag>
 		>
 	> Container;
 	
@@ -489,7 +485,7 @@ ThumbnailSequence::Impl::Impl(
 	m_pSelectionLeader(0)
 {
 	m_graphicsScene.setContextMenuEventCallback(
-		bind(&Impl::sceneContextMenuEvent, this, _1)
+		[this](auto arg) { sceneContextMenuEvent(arg); }
 	);
 }
 
@@ -582,7 +578,7 @@ ThumbnailSequence::Impl::toPageSequence() const
 {
 	PageSequence pages;
 
-	BOOST_FOREACH(Item const& item, m_itemsInOrder) {
+	for (Item const& item : m_itemsInOrder) {
 		pages.append(item.pageInfo);
 	}
 
@@ -603,7 +599,7 @@ ThumbnailSequence::Impl::invalidateThumbnail(PageInfo const& page_info)
 {
 	ItemsById::iterator const id_it(m_itemsById.find(page_info.id()));
 	if (id_it != m_itemsById.end()) {
-		m_itemsById.modify(id_it, bind(&Item::pageInfo, _1) = page_info);
+		m_itemsById.modify(id_it, [&page_info](Item& item) { item.pageInfo = page_info; });
 		invalidateThumbnailImpl(id_it);
 	}
 }
@@ -723,11 +719,12 @@ ThumbnailSequence::Impl::invalidateAllThumbnails()
 	// Sort pages in m_itemsInOrder using m_ptrOrderProvider.
 	if (m_ptrOrderProvider.get()) {
 		m_itemsInOrder.sort(
-			bind(
-				&PageOrderProvider::precedes, m_ptrOrderProvider.get(),
-				bind(&Item::pageId, _1), bind(&Item::incompleteThumbnail, _1),
-				bind(&Item::pageId, _2), bind(&Item::incompleteThumbnail, _2) 
-			)
+			[this](auto const& item1, auto const& item2) {
+				return m_ptrOrderProvider->precedes(
+					item1.pageId, item1.incompleteThumbnail,
+					item2.pageId, item2.incompleteThumbnail
+				);
+			}
 		);
 	}
 	
@@ -1020,7 +1017,7 @@ std::set<PageId>
 ThumbnailSequence::Impl::selectedItems() const
 {
 	std::set<PageId> selection;
-	BOOST_FOREACH(Item const& item, m_selectedThenUnselected) {
+	for (Item const& item : m_selectedThenUnselected) {
 		if (!item.isSelected()) {
 			break;
 		}
@@ -1266,7 +1263,7 @@ ThumbnailSequence::Impl::clearSelection()
 {
 	m_pSelectionLeader = 0;
 	
-	BOOST_FOREACH(Item const& item, m_selectedThenUnselected) {
+	for (Item const& item : m_selectedThenUnselected) {
 		if (!item.isSelected()) {
 			break;
 		}

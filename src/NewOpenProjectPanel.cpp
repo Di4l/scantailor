@@ -16,11 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "NewOpenProjectPanel.h.moc"
+// #include "NewOpenProjectPanel.h.moc"
 #include "RecentProjects.h"
 #include "Utils.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QPalette>
@@ -64,10 +62,7 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
 		recentProjectsGroup->setVisible(false);
 	} else {
 		rp.enumerate(
-			boost::lambda::bind(
-				&NewOpenProjectPanel::addRecentProject,
-				this, boost::lambda::_1
-			)
+			[this](auto const& project) { addRecentProject(project); }
 		);
 	}
 	

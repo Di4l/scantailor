@@ -21,7 +21,7 @@
 
 #include "DebugImageView.h"
 #include <QTabWidget>
-#include <boost/intrusive/list.hpp>
+#include <list>
 
 class TabbedDebugImages : public QTabWidget
 {
@@ -31,9 +31,9 @@ public:
 private slots:
 	void currentTabChanged(int idx);
 private:
-	typedef boost::intrusive::list<
-		DebugImageView, boost::intrusive::constant_time_size<false>
-	> DebugViewList;
+	// NOTE: Was boost::intrusive::list. Now using std::list.
+	// If performance becomes critical, consider implementing as intrusive_list again.
+	typedef std::list<DebugImageView*> DebugViewList;
 
 	enum { MAX_LIVE_VIEWS = 3 };
 

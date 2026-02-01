@@ -17,7 +17,7 @@
 */
 
 #include "PictureZoneEditor.h"
-#include "PictureZoneEditor.h.moc"
+// #include "PictureZoneEditor.h.moc"
 #include "NonCopyable.h"
 #include "Zone.h"
 #include "ZoneSet.h"
@@ -41,8 +41,6 @@
 #include <QPen>
 #include <QBrush>
 #include <Qt>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <assert.h>
 
 namespace output
@@ -118,7 +116,7 @@ PictureZoneEditor::PictureZoneEditor(
 	setMouseTracking(true);
 
 	m_context.setShowPropertiesCommand(
-		boost::bind(&PictureZoneEditor::showPropertiesDialog, this, _1)
+		[this](auto arg) { showPropertiesDialog(arg); }
 	);
 
 	connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));
@@ -141,7 +139,7 @@ PictureZoneEditor::PictureZoneEditor(
 	m_pictureMaskRebuildTimer.setSingleShot(true);
 	m_pictureMaskRebuildTimer.setInterval(150);
 
-	BOOST_FOREACH(Zone const& zone, m_ptrSettings->pictureZonesForPage(page_id)) {
+	for (Zone const& zone : m_ptrSettings->pictureZonesForPage(page_id)) {
 		EditableSpline::Ptr spline(new EditableSpline(zone.spline()));
 		m_zones.addZone(spline, zone.properties());
 	}
@@ -269,7 +267,7 @@ PictureZoneEditor::paintOverPictureMask(QPainter& painter)
 	typedef PictureLayerProperty PLP;
 
 	// First pass: ERASER1
-	BOOST_FOREACH(EditableZoneSet::Zone const& zone, m_zones) {
+	for (EditableZoneSet::Zone const& zone : m_zones) {
 		if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
 			painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
 		}
@@ -278,7 +276,7 @@ PictureZoneEditor::paintOverPictureMask(QPainter& painter)
 	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
 	// Second pass: PAINTER2
-	BOOST_FOREACH (EditableZoneSet::Zone const& zone, m_zones) {
+	for (EditableZoneSet::Zone const& zone : m_zones) {
 		if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
 			painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
 		}
@@ -296,7 +294,7 @@ PictureZoneEditor::paintOverPictureMask(QPainter& painter)
 #endif
 
 	// Third pass: ERASER1
-	BOOST_FOREACH (EditableZoneSet::Zone const& zone, m_zones) {
+	for (EditableZoneSet::Zone const& zone : m_zones) {
 		if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
 			painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
 		}
@@ -331,7 +329,7 @@ PictureZoneEditor::commitZones()
 {
 	ZoneSet zones;
 
-	BOOST_FOREACH(EditableZoneSet::Zone const& zone, m_zones) {
+	for (EditableZoneSet::Zone const& zone : m_zones) {
 		zones.add(Zone(*zone.spline(), *zone.properties()));
 	}
 	

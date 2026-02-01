@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -33,7 +34,6 @@
 #include "PageRange.h"
 #include "SelectedPage.h"
 #include "BeforeOrAfter.h"
-#include <boost/function.hpp>
 #include <QMainWindow>
 #include <QString>
 #include <QPointer>
@@ -289,7 +289,7 @@ private:
 	std::auto_ptr<PageOrientationPropagator> m_ptrPageOrientationPropagator;
 	std::auto_ptr<QWidget> m_ptrBatchProcessingWidget;
 	std::auto_ptr<ProcessingIndicationWidget> m_ptrProcessingIndicationWidget;
-	boost::function<bool()> m_checkBeepWhenFinished;
+	std::function<bool()> m_checkBeepWhenFinished;
 	SelectedPage m_selectedPage;
 	QObjectCleanupHandler m_optionsWidgetCleanup;
 	QObjectCleanupHandler m_imageWidgetCleanup;

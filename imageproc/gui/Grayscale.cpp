@@ -19,7 +19,7 @@
 #include "Grayscale.h"
 #include "GrayImage.h"
 #include "BinaryImage.h"
-#include "BitOps.h"
+#include "imageproc/BitOps.h"
 #include <QImage>
 #include <QColor>
 #include <QtGlobal>

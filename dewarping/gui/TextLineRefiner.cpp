@@ -24,10 +24,7 @@
 #include "imageproc/GrayImage.h"
 #include "imageproc/GaussBlur.h"
 #include "imageproc/Sobel.h"
-#include <boost/scoped_array.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
+#include <memory>
 #include <QImage>
 #include <QPainter>
 #include <QPen>
@@ -130,7 +127,7 @@ TextLineRefiner::refine(
 	snakes.reserve(polylines.size());
 	
 	// Convert from polylines to snakes.
-	BOOST_FOREACH(std::vector<QPointF> const& polyline, polylines) {
+	for (std::vector<QPointF> const& polyline : polylines) {
 		snakes.push_back(makeSnake(polyline, iterations));
 	}
 
@@ -145,7 +142,7 @@ TextLineRefiner::refine(
 	float v_sigma = (4.0f / 200.f) * m_dpi.vertical();
 	calcBlurredGradient(gradient, h_sigma, v_sigma);
 	
-	BOOST_FOREACH(Snake& snake, snakes) {
+	for (Snake& snake : snakes) {
 		evolveSnake(snake, gradient, ON_CONVERGENCE_STOP);
 	}
 	if (dbg) { 
@@ -157,7 +154,7 @@ TextLineRefiner::refine(
 	v_sigma *= 0.5f;
 	calcBlurredGradient(gradient, h_sigma, v_sigma);
 	
-	BOOST_FOREACH(Snake& snake, snakes) {
+	for (Snake& snake : snakes) {
 		evolveSnake(snake, gradient, ON_CONVERGENCE_GO_FINER);
 	}
 	if (dbg) { 
@@ -166,11 +163,11 @@ TextLineRefiner::refine(
 
 	// Convert from snakes back to polylines.
 	int i = -1;
-	BOOST_FOREACH(std::vector<QPointF>& polyline, polylines) {
+	for (std::vector<QPointF>& polyline : polylines) {
 		++i;
 		Snake const& snake = snakes[i];
 		polyline.clear();
-		BOOST_FOREACH(SnakeNode const& node, snake.nodes) {
+		for (SnakeNode const& node : snake.nodes) {
 			polyline.push_back(node.center);
 		}
 	}
@@ -180,8 +177,6 @@ void
 TextLineRefiner::calcBlurredGradient(
 	Grid<float>& gradient, float h_sigma, float v_sigma) const
 {
-	using namespace boost::lambda;
-
 	float const downscale = 1.0f / (255.0f * 8.0f);
 	Grid<float> vert_grad(m_image.width(), m_image.height(), /*padding=*/0);
 	horizontalSobel<float>(
@@ -318,7 +313,7 @@ TextLineRefiner::calcFrenetFrames(
 	}
 
 	// Calculate normals and make sure they point down.
-	BOOST_FOREACH(FrenetFrame& frame, frenet_frames) {
+	for (FrenetFrame& frame : frenet_frames) {
 		frame.unitDownNormal = Vec2f(frame.unitTangent[1], -frame.unitTangent[0]);
 		if (frame.unitDownNormal.dot(unit_down_vec) < 0) {
 			frame.unitDownNormal = -frame.unitDownNormal;
@@ -436,7 +431,7 @@ TextLineRefiner::visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> c
 	QRectF knot_rect(0, 0, 7, 7);
 	std::vector<FrenetFrame> frenet_frames;
 
-	BOOST_FOREACH(Snake const& snake, snakes) {
+	for (Snake const& snake : snakes) {
 		SnakeLength const snake_length(snake);
 		calcFrenetFrames(frenet_frames, snake, snake_length, m_unitDownVec);
 		QVector<QPointF> top_polyline;
@@ -465,7 +460,7 @@ TextLineRefiner::visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> c
 
 		// Draw knots.
 		painter.setPen(Qt::NoPen);
-		BOOST_FOREACH(QPointF const& pt, middle_polyline) {
+		for (QPointF const& pt : middle_polyline) {
 			knot_rect.moveCenter(pt);
 			painter.drawEllipse(knot_rect);
 		}
@@ -613,7 +608,7 @@ TextLineRefiner::Optimizer::tangentMovement(Snake& snake, Grid<float> const& gra
 			}
 
 			// Now find the best step for the previous node to combine with.
-			BOOST_FOREACH(uint32_t prev_step_idx, paths) {
+			for (uint32_t prev_step_idx : paths) {
 				Step const& prev_step = step_storage[prev_step_idx];
 				float const cost = base_cost + prev_step.pathCost +
 					calcElasticityEnergy(step.node, prev_step.node, m_snakeLength.avgSegmentLength());
@@ -635,7 +630,7 @@ TextLineRefiner::Optimizer::tangentMovement(Snake& snake, Grid<float> const& gra
 	// Find the best overall path.
 	uint32_t best_path_idx = ~uint32_t(0);
 	float best_cost = NumericTraits<float>::max();
-	BOOST_FOREACH(uint32_t last_step_idx, paths) {
+	for (uint32_t last_step_idx : paths) {
 		Step const& step = step_storage[last_step_idx];
 		if (step.pathCost < best_cost) {
 			best_cost = step.pathCost;
@@ -726,7 +721,7 @@ TextLineRefiner::Optimizer::normalMovement(Snake& snake, Grid<float> const& grad
 			float const base_cost = calcExternalEnergy(gradient, step.node, down_normal);
 
 			// Now find the best step for the previous node to combine with.
-			BOOST_FOREACH(uint32_t prev_step_idx, paths) {
+			for (uint32_t prev_step_idx : paths) {
 				Step const& prev_step = step_storage[prev_step_idx];
 				Step const& prev_prev_step = step_storage[prev_step.prevStepIdx];
 
@@ -750,7 +745,7 @@ TextLineRefiner::Optimizer::normalMovement(Snake& snake, Grid<float> const& grad
 	// Find the best overall path.
 	uint32_t best_path_idx = ~uint32_t(0);
 	float best_cost = NumericTraits<float>::max();
-	BOOST_FOREACH(uint32_t last_step_idx, paths) {
+	for (uint32_t last_step_idx : paths) {
 		Step const& step = step_storage[last_step_idx];
 		if (step.pathCost < best_cost) {
 			best_cost = step.pathCost;

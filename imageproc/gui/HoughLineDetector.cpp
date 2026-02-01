@@ -18,14 +18,14 @@
 
 #include "HoughLineDetector.h"
 #include "BinaryImage.h"
-#include "BWColor.h"
-#include "ConnCompEraser.h"
-#include "ConnComp.h"
-#include "Connectivity.h"
-#include "Constants.h"
-#include "Morphology.h"
-#include "RasterOp.h"
-#include "SeedFill.h"
+#include "imageproc/BWColor.h"
+#include "imageproc/ConnCompEraser.h"
+#include "imageproc/ConnComp.h"
+#include "imageproc/Connectivity.h"
+#include "imageproc/Constants.h"
+#include "imageproc/SeedFill.h"
+#include "imageproc/RasterOp.h"
+#include "imageproc/SeedFill.h"
 #include "Grayscale.h"
 #include <QSize>
 #include <QRect>
@@ -36,7 +36,6 @@
 #include <QColor>
 #include <QPainter>
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <math.h>
 #include <stdint.h>
@@ -77,7 +76,7 @@ HoughLineDetector::HoughLineDetector(
 		angle *= constants::DEG2RAD;
 		
 		QPointF const uv(cos(angle), sin(angle));
-		BOOST_FOREACH (QPoint const& p, checkpoints) {
+		for (QPoint const& p : checkpoints) {
 			double const distance = uv.x() * p.x() + uv.y() * p.y();
 			max_distance = std::max(max_distance, distance);
 			min_distance = std::min(min_distance, distance);
@@ -104,7 +103,7 @@ HoughLineDetector::process(int x, int y, unsigned weight)
 {
 	unsigned* hist_line = &m_histogram[0];
 	
-	BOOST_FOREACH (QPointF const& uv, m_angleUnitVectors) {
+	for (QPointF const& uv : m_angleUnitVectors) {
 		double const distance = uv.x() * x + uv.y() * y;
 		double const biased_distance = distance + m_distanceBias;
 		

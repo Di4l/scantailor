@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_UPSCALE_INTEGER_TIMES_H_
 #define IMAGEPROC_UPSCALE_INTEGER_TIMES_H_
 
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 
 class QSize;
 

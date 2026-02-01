@@ -1,3 +1,4 @@
+#include <functional>
 /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,7 +24,6 @@
 #include "InteractionState.h"
 #include <QPoint>
 #include <QCoreApplication>
-#include <boost/function.hpp>
 
 class ImageViewBase;
 
@@ -36,7 +36,7 @@ public:
 	ZoomHandler(ImageViewBase& image_view);
 
 	ZoomHandler(ImageViewBase& image_view,
-		boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter);
+		std::function<bool(InteractionState const&)> const& explicit_interaction_permitter);
 
 	Focus focus() const { return m_focus; }
 
@@ -46,7 +46,7 @@ protected:
 	virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
 private:
 	ImageViewBase& m_rImageView;
-	boost::function<bool(InteractionState const&)> m_interactionPermitter;
+	std::function<bool(InteractionState const&)> m_interactionPermitter;
 	InteractionState::Captor m_interaction;
 	Focus m_focus;
 };

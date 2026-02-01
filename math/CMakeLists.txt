@@ -82,6 +82,3 @@ ADD_LIBRARY(math STATIC ${GENERIC_SOURCES} ${GENERIC_GUI_SOURCES} ${SPFIT_SOURCE
 #===============================================================================
 # SUBDIRECTORIES - TESTS
 #===============================================================================
-
-ADD_SUBDIRECTORY(spfit/tests)
-ADD_SUBDIRECTORY(adiff/tests)

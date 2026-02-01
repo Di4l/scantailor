@@ -17,7 +17,7 @@
 */
 
 #include "SavGolFilter.h"
-#include "SavGolKernel.h"
+#include "imageproc/SavGolKernel.h"
 #include "Grayscale.h"
 #include "AlignedArray.h"
 #include <QImage>

@@ -21,7 +21,7 @@
 
 #include "NonCopyable.h"
 #include "Proximity.h"
-#include <boost/intrusive/list.hpp>
+#include <list>
 #include <QCursor>
 #include <QString>
 
@@ -31,11 +31,10 @@ class InteractionState
 {
 	DECLARE_NON_COPYABLE(InteractionState)
 public:
-	class Captor :
-		public boost::intrusive::list_base_hook<
-			boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-		>
+	class Captor
 	{
+		// NOTE: Previously inherited from boost::intrusive::list_base_hook with auto_unlink.
+		// Now managed by std::list. Can be re-implemented as intrusive_list in future.
 		friend class InteractionState;
 	private:
 		struct CopyHelper
@@ -115,9 +114,9 @@ public:
 
 	void setRedrawRequested(bool requested) { m_redrawRequested = requested; }
 private:
-	typedef boost::intrusive::list<
-		Captor, boost::intrusive::constant_time_size<false>
-	> CaptorList;
+	// NOTE: Was boost::intrusive::list. Now using std::list.
+	// If performance becomes critical, consider implementing as intrusive_list again.
+	typedef std::list<Captor*> CaptorList;
 
 	/**
 	 * Returns true if the provided proximity is better than the stored one.

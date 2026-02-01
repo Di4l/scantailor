@@ -17,15 +17,14 @@
 */
 
 #include "XSpline.h"
-#include "VecNT.h"
-#include "MatT.h"
-#include "NumericTraits.h"
+#include "math/VecNT.h"
+#include "math/MatT.h"
+#include "math/NumericTraits.h"
 #include "ToLineProjector.h"
 #include "adiff/SparseMap.h"
 #include "adiff/Function.h"
 #include <QLineF>
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <string>
 #include <stdexcept>
 #include <algorithm>
@@ -657,7 +656,7 @@ XSpline::junctionPointsAttractionForce(int seg_begin, int seg_end) const
 			Function<2> next_y(sparse_map);
 			
 			linearCombinationAt(controlPointIndexToT(i), coeffs);
-			BOOST_FOREACH(LinearCoefficient const& coeff, coeffs) {
+			for (LinearCoefficient const& coeff : coeffs) {
 				QPointF const cp(m_controlPoints[coeff.controlPointIdx].pos);
 				Function<2> x(coeff.controlPointIdx * 2, cp.x(), sparse_map);
 				Function<2> y(coeff.controlPointIdx * 2 + 1, cp.y(), sparse_map);

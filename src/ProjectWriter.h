@@ -26,10 +26,7 @@
 #include "PageId.h"
 #include "SelectedPage.h"
 #include "VirtualFunction.h"
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/member.hpp>
+#include "MultiIndexContainer.h"
 #include <QString>
 #include <Qt>
 #include <vector>
@@ -106,47 +103,70 @@ private:
 		: id(id), numericId(numeric_id) {}
 	};
 	
-	class Sequenced;
+	struct DirectoryByPathTag {};
+	struct FileByPathTag {};
+	struct ImageByIdTag {};
+	struct PageByIdTag {};
+	
+	struct SequencedTag {};
 	
 	typedef std::map<ImageId, ImageMetadata> MetadataByImage;
 	
-	typedef boost::multi_index::multi_index_container<
+	// DirectoryByPath extractor
+	struct DirectoryPathExtractor
+	{
+		QString operator()(Directory const& d) const { return d.path; }
+	};
+	
+	// FileByPath extractor
+	struct FilePathExtractor
+	{
+		QString operator()(File const& f) const { return f.path; }
+	};
+	
+	// ImageById extractor
+	struct ImageIdExtractor
+	{
+		ImageId operator()(Image const& i) const { return i.id; }
+	};
+	
+	// PageById extractor
+	struct PageIdExtractor
+	{
+		PageId operator()(Page const& p) const { return p.id; }
+	};
+	
+	using namespace st::multi_index;
+	
+	typedef multi_index_container<
 		Directory,
-		boost::multi_index::indexed_by<
-			boost::multi_index::ordered_unique<
-				boost::multi_index::member<Directory, QString, &Directory::path>
-			>,
-			boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+		indexed_by<
+			ordered_unique_index<Directory, DirectoryByPathTag, DirectoryPathExtractor>,
+			sequenced_index<Directory, SequencedTag>
 		>
 	> Directories;
 	
-	typedef boost::multi_index::multi_index_container<
+	typedef multi_index_container<
 		File,
-		boost::multi_index::indexed_by<
-			boost::multi_index::ordered_unique<
-				boost::multi_index::member<File, QString, &File::path>
-			>,
-			boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+		indexed_by<
+			ordered_unique_index<File, FileByPathTag, FilePathExtractor>,
+			sequenced_index<File, SequencedTag>
 		>
 	> Files;
 	
-	typedef boost::multi_index::multi_index_container<
+	typedef multi_index_container<
 		Image,
-		boost::multi_index::indexed_by<
-			boost::multi_index::ordered_unique<
-				boost::multi_index::member<Image, ImageId, &Image::id>
-			>,
-			boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+		indexed_by<
+			ordered_unique_index<Image, ImageByIdTag, ImageIdExtractor>,
+			sequenced_index<Image, SequencedTag>
 		>
 	> Images;
 	
-	typedef boost::multi_index::multi_index_container<
+	typedef multi_index_container<
 		Page,
-		boost::multi_index::indexed_by<
-			boost::multi_index::ordered_unique<
-				boost::multi_index::member<Page, PageId, &Page::id>
-			>,
-			boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+		indexed_by<
+			ordered_unique_index<Page, PageByIdTag, PageIdExtractor>,
+			sequenced_index<Page, SequencedTag>
 		>
 	> Pages;
 	

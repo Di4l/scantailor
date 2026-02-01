@@ -47,9 +47,6 @@
 #include "imageproc/Grayscale.h"
 #include "imageproc/GrayRasterOp.h"
 #include "imageproc/PolygonRasterizer.h"
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QRect>
 #include <QRectF>
 #include <QSize>
@@ -198,7 +195,7 @@ std::auto_ptr<PageLayout> autoDetectTwoPageLayout(
 	double const image_center = virtual_image_rect.center().x();
 	double min_distance = std::numeric_limits<double>::max();
 	QLineF const* best_line = 0;
-	BOOST_FOREACH (QLineF const& line, ltr_lines) {
+	for (QLineF const& line : ltr_lines) {
 		double const line_center = lineCenterX(line);
 		double const distance = fabs(line_center - image_center);
 		if (distance < min_distance) {
@@ -490,8 +487,6 @@ PageLayoutEstimator::cutAtWhitespaceDeskewed150(
 	bool const left_offcut, bool const right_offcut,
 	DebugImages* dbg)
 {
-	using namespace boost::lambda;
-	
 	int const width = input.width();
 	int const height = input.height();
 	
@@ -521,7 +516,7 @@ PageLayoutEstimator::cutAtWhitespaceDeskewed150(
 	
 	std::deque<Span> spans;
 	SlicedHistogram hist(cc_img, SlicedHistogram::COLS);
-	span_finder.find(hist, bind(&std::deque<Span>::push_back, var(spans), _1));
+	span_finder.find(hist, [&spans](auto const& span) { spans.push_back(span); });
 	
 	if (dbg) {
 		visualizeSpans(*dbg, spans, input, "spans");
@@ -648,7 +643,7 @@ PageLayoutEstimator::visualizeSpans(
 	{
 		QPainter painter(&spans_img);
 		QBrush const brush(QColor(0xff, 0x00, 0x00, 0x50));
-		BOOST_FOREACH(Span const& span, spans) {
+		for (Span const& span : spans) {
 			QRect const rect(span.begin(), 0, span.width(), height);
 			painter.fillRect(rect, brush);
 		}

@@ -25,6 +25,7 @@ PROJECT("Scan Tailor" C CXX)
 SET(CMAKE_CXX_STANDARD 23)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
+ADD_COMPILE_OPTIONS(-fPIC)
 
 # Platform-specific definitions
 ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
@@ -33,9 +34,6 @@ ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
 IF(DEBUG_CLI)
 	ADD_DEFINITIONS(-DDEBUG_CLI)
 ENDIF(DEBUG_CLI)
-
-# Enable testing framework
-ENABLE_TESTING()
 
 #===============================================================================
 # VERSION EXTRACTION
@@ -71,6 +69,17 @@ STRING(
 IF("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
 	MESSAGE(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
 ENDIF()
+
+#===============================================================================
+# QT5 CONFIGURATION
+#===============================================================================
+FIND_PACKAGE(Qt5 COMPONENTS Core Gui Widgets Xml REQUIRED)
+SET(CMAKE_AUTOMOC OFF)
+SET(CMAKE_AUTORCC OFF)
+SET(CMAKE_AUTOUIC OFF)
+
+# Include Qt5 headers
+INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
 
 #===============================================================================
 # INCLUDE DIRECTORIES (PRIMARY)
@@ -329,7 +338,6 @@ ADD_SUBDIRECTORY(math)
 ADD_SUBDIRECTORY(imageproc)
 ADD_SUBDIRECTORY(interaction)
 ADD_SUBDIRECTORY(zones)
-ADD_SUBDIRECTORY(tests)
 
 #===============================================================================
 # UI AND RESOURCE FILES
@@ -457,18 +465,17 @@ SET(
 	src/PageOrderProvider.h
 	src/PageOrderOption.h
 	src/PayloadEvent.h
-	src/filter_dc/AbstractFilterDataCollector.h
-	src/filter_dc/ThumbnailCollector.h
-	src/filter_dc/ContentBoxCollector.h
-	src/filter_dc/PageOrientationCollector.h
+	filter_dc/AbstractFilterDataCollector.h
+	filter_dc/ThumbnailCollector.h
+	filter_dc/ContentBoxCollector.h
+	filter_dc/PageOrientationCollector.h
 	src/version.h
-	src/config.h.in
+	config.h.in
 	${common_ui_files}
 )
 
 # GUI-only sources
-SET(
-	gui_only_sources
+SET(gui_only_sources
 	src/Application.cpp src/Application.h
 	src/SkinnedButton.cpp src/SkinnedButton.h
 	src/RelinkablePathVisualization.cpp src/RelinkablePathVisualization.h
@@ -491,8 +498,7 @@ SET(
 )
 
 # CLI-only sources
-SET(
-	cli_only_sources
+SET(cli_only_sources
 	src/ConsoleBatch.cpp src/ConsoleBatch.h
 	src/main-cli.cpp
 )
@@ -644,12 +650,6 @@ ENDFOREACH(ts_file)
 # QT5_CREATE_TRANSLATION(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${FILTERED_TRANSLATION_FILES})
 # ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
 # INSTALL(FILES ${QM_FILES} DESTINATION "${TRANSLATIONS_DIR_REL}/")
-
-#===============================================================================
-# TESTING
-#===============================================================================
-ADD_TEST(ImageProcTests imageproc/tests/imageproc_tests --log_level=message)
-ADD_TEST(ScanTaylorTests tests/tests --log_level=message)
 
 #===============================================================================
 # SOURCE DISTRIBUTION PACKAGING

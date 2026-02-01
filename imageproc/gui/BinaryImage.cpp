@@ -17,8 +17,8 @@
 */
 
 #include "BinaryImage.h"
-#include "ByteOrder.h"
-#include "BitOps.h"
+#include "imageproc/ByteOrder.h"
+#include "imageproc/BitOps.h"
 #include <QAtomicInt>
 #include <QImage>
 #include <QRect>

@@ -24,24 +24,24 @@ SET(SOURCES
 )
 
 SET(GUI_SOURCES
-    DraggableObject.h
-    DraggableLineSegment.cpp
-    DraggableLineSegment.h
-    ObjectDragHandler.cpp
-    ObjectDragHandler.h
-    InteractionHandler.cpp
-    InteractionHandler.h
-    DragHandler.cpp
-    DragHandler.h
-    DragWatcher.cpp
-    DragWatcher.h
-    ZoomHandler.cpp
-    ZoomHandler.h
-    InteractiveXSpline.cpp
-    InteractiveXSpline.h
+    gui/DraggableObject.h
+    gui/DraggableLineSegment.cpp
+    gui/DraggableLineSegment.h
+    gui/ObjectDragHandler.cpp
+    gui/ObjectDragHandler.h
+    gui/InteractionHandler.cpp
+    gui/InteractionHandler.h
+    gui/DragHandler.cpp
+    gui/DragHandler.h
+    gui/DragWatcher.cpp
+    gui/DragWatcher.h
+    gui/ZoomHandler.cpp
+    gui/ZoomHandler.h
+    gui/InteractiveXSpline.cpp
+    gui/InteractiveXSpline.h
 )
 
-SET(SOURCES ${SOURCES} gui/${GUI_SOURCES})
+SET(SOURCES ${SOURCES} ${GUI_SOURCES})
 
 SOURCE_GROUP(Sources FILES ${SOURCES})
 

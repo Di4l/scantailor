@@ -24,7 +24,6 @@
 #include "imageproc/gui/Grayscale.h"
 #include "BitOps.h"
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <stdexcept>
 #include <algorithm>
 #include <math.h>

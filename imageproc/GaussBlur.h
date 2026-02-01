@@ -24,7 +24,7 @@
 
 #include "ValueConv.h"
 #include <QSize>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <iterator>
 #include <string.h>
 
@@ -130,9 +130,9 @@ void gaussBlurGeneric(QSize const size, float const h_sigma, float const v_sigma
 	int const height = size.height();
 	int const width_height_max = width > height ? width : height;
 
-	boost::scoped_array<float> val_p(new float[width_height_max]);
-	boost::scoped_array<float> val_m(new float[width_height_max]);
-	boost::scoped_array<float> intermediate_image(new float[width * height]);
+	std::unique_ptr<float[]> val_p(new float[width_height_max]);
+	std::unique_ptr<float[]> val_m(new float[width_height_max]);
+	std::unique_ptr<float[]> intermediate_image(new float[width * height]);
 	int const intermediate_stride = width;
 
 	// IIR parameters.

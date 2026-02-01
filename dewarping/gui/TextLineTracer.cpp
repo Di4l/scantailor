@@ -27,12 +27,12 @@
 #include "NumericTraits.h"
 #include "VecNT.h"
 #include "Grid.h"
-#include "SidesOfLine.h"
-#include "ToLineProjector.h"
-#include "LineBoundedByRect.h"
+#include "math/gui/SidesOfLine.h"
+#include "math/gui/ToLineProjector.h"
+#include "math/gui/LineBoundedByRect.h"
 #include "DistortionModelBuilder.h"
-#include "DistortionModel.h"
-#include "Curve.h"
+#include "dewarping/DistortionModel.h"
+#include "dewarping/Curve.h"
 #include "imageproc/BinaryImage.h"
 #include "imageproc/BinaryThreshold.h"
 #include "imageproc/Binarize.h"
@@ -58,11 +58,7 @@
 #include <QPen>
 #include <QColor>
 #include <QtGlobal>
-#include <boost/scoped_array.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/if.hpp>
+#include <memory>
 #include <algorithm>
 #include <set>
 #include <map>
@@ -84,8 +80,6 @@ TextLineTracer::trace(
 	DistortionModelBuilder& output,
 	TaskStatus const& status, DebugImages* dbg)
 {
-	using namespace boost::lambda;
-
 	GrayImage downscaled(downscale(input, dpi));
 	if (dbg) {
 		dbg->add(downscaled, "downscaled");
@@ -153,8 +147,8 @@ TextLineTracer::trace(
 	vert_bounds.second = to_orig.map(vert_bounds.second);
 	output.setVerticalBounds(vert_bounds.first, vert_bounds.second);
 
-	BOOST_FOREACH(std::vector<QPointF>& polyline, polylines) {
-		BOOST_FOREACH(QPointF& pt, polyline) {
+	for (std::vector<QPointF>& polyline : polylines) {
+		for (QPointF& pt : polyline) {
 			pt = to_orig.map(pt);
 		}
 		output.addHorizontalCurve(polyline);
@@ -335,8 +329,6 @@ TextLineTracer::extractTextLines(
 	std::list<std::vector<QPointF> >& out, imageproc::GrayImage const& image,
 	std::pair<QLineF, QLineF> const& bounds, DebugImages* dbg)
 {
-	using namespace boost::lambda;
-
 	int const width = image.width();
 	int const height = image.height();
 	QSize const size(image.size());
@@ -404,7 +396,7 @@ TextLineTracer::extractTextLines(
 
 	rasterOpGeneric(
 		main_grid.data(), main_grid.stride(), size,
-		aux_grid.data(), aux_grid.stride(), _2 = bind((float (*)(float))&std::fabs, _1)
+		aux_grid.data(), aux_grid.stride(), [](auto& out, auto in) { out = std::fabs(in); }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, aux_grid), "abs");
@@ -422,7 +414,7 @@ TextLineTracer::extractTextLines(
 	rasterOpGeneric(
 		main_grid.data(), main_grid.stride(), size,
 		aux_grid.data(), aux_grid.stride(),
-		_2 += _1 - bind((float (*)(float))&std::fabs, _1)
+		[](auto& out, auto in) { out += in - std::fabs(in); }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, aux_grid), "+= diff");
@@ -473,7 +465,7 @@ TextLineTracer::extractTextLines(
 
 	post_binarization.release(); // Save memory.
 
-	BOOST_FOREACH(QPoint const seed, seeds) {
+	for (QPoint const seed : seeds) {
 		std::vector<QPointF> polyline;
 		
 		{
@@ -675,7 +667,7 @@ TextLineTracer::visualizeMidLineSeeds(
 	painter.setPen(Qt::NoPen);
 	painter.setBrush(QColor(0x2d, 0x00, 0x6d, 255));
 	QRectF rect(0, 0, 7, 7);
-	BOOST_FOREACH(QPoint const pt, seeds) {
+	for (QPoint const pt : seeds) {
 		rect.moveCenter(pt + QPointF(0.5, 0.5));
 		painter.drawEllipse(rect);
 	}
@@ -695,7 +687,7 @@ TextLineTracer::visualizePolylines(
 	pen.setWidthF(3.0);
 	painter.setPen(pen);
 
-	BOOST_FOREACH(std::vector<QPointF> const& polyline, polylines) {
+	for (std::vector<QPointF> const& polyline : polylines) {
 		if (!polyline.empty()) {
 			painter.drawPolyline(&polyline[0], polyline.size());
 		}

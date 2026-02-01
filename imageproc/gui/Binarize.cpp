@@ -20,7 +20,7 @@
 #include "BinaryImage.h"
 #include "BinaryThreshold.h"
 #include "Grayscale.h"
-#include "IntegralImage.h"
+#include "imageproc/IntegralImage.h"
 #include <QImage>
 #include <QRect>
 #include <QDebug>

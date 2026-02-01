@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,7 +27,6 @@
 #include "DespeckleLevel.h"
 #include "DewarpingMode.h"
 #include "ImageTransformation.h"
-#include <boost/function.hpp>
 #include <QSize>
 #include <QRect>
 #include <QTransform>
@@ -230,12 +230,12 @@ private:
 		QImage const* morph_background = 0) const;
 
 	void applyFillZonesInPlace(QImage& img, ZoneSet const& zones,
-		boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
+		std::function<QPointF(QPointF const&)> const& orig_to_output) const;
 
 	void applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const;
 
 	void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones,
-		boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
+		std::function<QPointF(QPointF const&)> const& orig_to_output) const;
 
 	void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones) const;
 	

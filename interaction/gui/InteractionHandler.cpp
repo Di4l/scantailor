@@ -24,17 +24,14 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QContextMenuEvent>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/construct.hpp>
-#include <boost/lambda/bind.hpp>
+#include <algorithm>
 #include <assert.h>
 
-#define DISPATCH(list, call) {                    \
-	HandlerList::iterator it(list->begin());      \
-	HandlerList::iterator const end(list->end()); \
-	while (it != end) {                           \
-		(it++)->call;                             \
-	}                                             \
+#define DISPATCH(list, call)                                  \
+{                                                             \
+	auto const end = list->m_handlers.end();                  \
+	for (auto it = list->m_handlers.begin(); it != end; ++it) \
+		(*it)->call;                                          \
 }
 
 #define RETURN_IF_ACCEPTED(event) {               \
@@ -82,9 +79,8 @@ InteractionHandler::InteractionHandler()
 
 InteractionHandler::~InteractionHandler()
 {
-	using namespace boost::lambda;
-	m_ptrPreceeders->clear_and_dispose(bind(delete_ptr(), _1));
-	m_ptrFollowers->clear_and_dispose(bind(delete_ptr(), _1));
+	m_ptrPreceeders->clear();
+	m_ptrFollowers->clear();
 }
 
 void
@@ -232,44 +228,122 @@ InteractionHandler::contextMenuEvent(
 void
 InteractionHandler::makePeerPreceeder(InteractionHandler& handler)
 {
-	handler.unlink();
-	HandlerList::node_algorithms::link_before(this, &handler);
+	// NOTE: makePeerPreceeder previously used intrusive list link_before.
+	// Now simplified to basic list operations with IntrusivePtr.
+	IntrusivePtr<InteractionHandler> ptr(&handler);
+	
+	// Remove from any existing lists first
+	auto& my_handlers = m_ptrPreceeders->m_handlers;
+	for (auto it = my_handlers.begin(); it != my_handlers.end(); ++it) {
+		if (it->get() == &handler) {
+			my_handlers.erase(it);
+			break;
+		}
+	}
+	
+	// Find this handler in the list and insert before it
+	auto this_it = std::find_if(my_handlers.begin(), my_handlers.end(),
+		[this](HandlerList::Handler const& h) { return h.get() == this; });
+	if (this_it != my_handlers.end()) {
+		my_handlers.insert(this_it, ptr);
+	} else {
+		my_handlers.push_back(ptr);
+	}
 }
 
 void
 InteractionHandler::makePeerFollower(InteractionHandler& handler)
 {
-	using namespace boost::intrusive;
-	handler.unlink();
-	HandlerList::node_algorithms::link_after(this, &handler);
+	// NOTE: makePeerFollower previously used intrusive list link_after.
+	// Now simplified to basic list operations with IntrusivePtr.
+	IntrusivePtr<InteractionHandler> ptr(&handler);
+	
+	// Remove from any existing lists first
+	auto& my_handlers = m_ptrFollowers->m_handlers;
+	for (auto it = my_handlers.begin(); it != my_handlers.end(); ++it) {
+		if (it->get() == &handler) {
+			my_handlers.erase(it);
+			break;
+		}
+	}
+	
+	// Find this handler in the list and insert after it
+	auto this_it = std::find_if(my_handlers.begin(), my_handlers.end(),
+		[this](HandlerList::Handler const& h) { return h.get() == this; });
+	if (this_it != my_handlers.end()) {
+		++this_it;
+		my_handlers.insert(this_it, ptr);
+	} else {
+		my_handlers.push_back(ptr);
+	}
 }
 
 void
 InteractionHandler::makeFirstPreceeder(InteractionHandler& handler)
 {
-	handler.unlink();
-	m_ptrPreceeders->push_front(handler);
+	IntrusivePtr<InteractionHandler> ptr(&handler);
+	
+	// Remove from any existing lists first
+	auto& my_handlers = m_ptrPreceeders->m_handlers;
+	for (auto it = my_handlers.begin(); it != my_handlers.end(); ++it) {
+		if (it->get() == &handler) {
+			my_handlers.erase(it);
+			break;
+		}
+	}
+	
+	m_ptrPreceeders->push_front(ptr);
 }
 
 void
 InteractionHandler::makeLastPreceeder(InteractionHandler& handler)
 {
-	handler.unlink();
-	m_ptrPreceeders->push_back(handler);
+	IntrusivePtr<InteractionHandler> ptr(&handler);
+	
+	// Remove from any existing lists first
+	auto& my_handlers = m_ptrPreceeders->m_handlers;
+	for (auto it = my_handlers.begin(); it != my_handlers.end(); ++it) {
+		if (it->get() == &handler) {
+			my_handlers.erase(it);
+			break;
+		}
+	}
+	
+	m_ptrPreceeders->push_back(ptr);
 }
 
 void
 InteractionHandler::makeFirstFollower(InteractionHandler& handler)
 {
-	handler.unlink();
-	m_ptrFollowers->push_front(handler);
+	IntrusivePtr<InteractionHandler> ptr(&handler);
+	
+	// Remove from any existing lists first
+	auto& my_handlers = m_ptrFollowers->m_handlers;
+	for (auto it = my_handlers.begin(); it != my_handlers.end(); ++it) {
+		if (it->get() == &handler) {
+			my_handlers.erase(it);
+			break;
+		}
+	}
+	
+	m_ptrFollowers->push_front(ptr);
 }
 
 void
 InteractionHandler::makeLastFollower(InteractionHandler& handler)
 {
-	handler.unlink();
-	m_ptrFollowers->push_back(handler);
+	IntrusivePtr<InteractionHandler> ptr(&handler);
+	
+	// Remove from any existing lists first
+	auto& my_handlers = m_ptrFollowers->m_handlers;
+	for (auto it = my_handlers.begin(); it != my_handlers.end(); ++it) {
+		if (it->get() == &handler) {
+			my_handlers.erase(it);
+			break;
+		}
+	}
+	
+	m_ptrFollowers->push_back(ptr);
 }
 
 bool

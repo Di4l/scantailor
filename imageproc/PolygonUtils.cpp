@@ -16,11 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "imageproc/gui/PolygonUtils.h"
+#include "imageproc/PolygonUtils.h"
 #include <QPolygonF>
 #include <QPointF>
 #include <QLineF>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <stddef.h>
 #include <math.h>
@@ -74,7 +73,7 @@ PolygonUtils::round(QPolygonF const& poly)
 	QPolygonF rounded;
 	rounded.reserve(poly.size());
 	
-	BOOST_FOREACH (QPointF const& p, poly) {
+	for (QPointF const& p : poly) {
 		rounded.push_back(roundPoint(p));
 	}
 	
@@ -245,7 +244,7 @@ PolygonUtils::convexHull(std::vector<QPointF> point_cloud)
     hull.resize(k);
 	
 	QPolygonF poly(k);
-	BOOST_FOREACH(QPointF const& pt, hull) {
+	for (QPointF const& pt : hull) {
 		poly << pt;
 	}
     

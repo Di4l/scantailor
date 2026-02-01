@@ -17,12 +17,11 @@
 */
 
 #include "RelinkingDialog.h"
-#include "RelinkingDialog.h.moc"
+// #include "RelinkingDialog.h.moc"
 #include "RelinkingSortingModel.h"
 #include <QDir>
 #include <QFileDialog>
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <assert.h>
 
 RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* parent)

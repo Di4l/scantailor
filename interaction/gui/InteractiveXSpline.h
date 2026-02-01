@@ -1,3 +1,4 @@
+#include <functional>
  /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -19,24 +20,23 @@
 #ifndef INTERACTIVE_XSPLINE_H_
 #define INTERACTIVE_XSPLINE_H_
 
-#include "XSpline.h"
+#include "math/gui/XSpline.h"
 #include "DraggablePoint.h"
 #include "ObjectDragHandler.h"
 #include "InteractionState.h"
 #include "VecNT.h"
 #include <QPointF>
 #include <QCoreApplication>
-#include <boost/function.hpp>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <stddef.h>
 
 class InteractiveXSpline : public InteractionHandler
 {
 	Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
 public:
-	typedef boost::function<QPointF (QPointF const&)> Transform;
-	typedef boost::function<void()> ModifiedCallback;
-	typedef boost::function<void()> DragFinishedCallback;
+	typedef std::function<QPointF (QPointF const&)> Transform;
+	typedef std::function<void()> ModifiedCallback;
+	typedef std::function<void()> DragFinishedCallback;
 
 	InteractiveXSpline();
 
@@ -100,7 +100,7 @@ private:
 	Transform m_fromStorage;
 	Transform m_toStorage;
 	XSpline m_spline;
-	boost::scoped_array<ControlPoint> m_controlPoints;
+	std::unique_ptr<ControlPoint[]> m_controlPoints;
 	InteractionState::Captor m_curveProximity;
 	QPointF m_curveProximityPointStorage;
 	QPointF m_curveProximityPointScreen;

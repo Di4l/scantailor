@@ -20,8 +20,8 @@
 #define DYNAMIC_POOL_H_
 
 #include "NonCopyable.h"
-#include <boost/intrusive/list.hpp>
-#include <boost/scoped_array.hpp>
+#include <list>
+#include <memory>
 #include <stddef.h>
 
 /**
@@ -50,29 +50,26 @@ private:
 	enum { OVERALLOCATION_FACTOR = 3 }; /**< Allocate 3 times the requested size. */
 	enum { OVERALLOCATION_LIMIT = 256 }; /**< Don't overallocate too much. */
 	
-	struct Chunk : public boost::intrusive::list_base_hook<>
+	// NOTE: Previously used boost::intrusive::list for zero-copy node storage.
+	// Can be re-implemented as intrusive_list in future for performance optimization.
+	struct Chunk
 	{
-		boost::scoped_array<T> storage;
+		std::unique_ptr<T[]> storage;
 		T* pData;
 		size_t remainingElements;
 
 		Chunk() : pData(0), remainingElements(0) {}
 
-		void init(boost::scoped_array<T>& data, size_t size) {
-			data.swap(storage);
+		void init(std::unique_ptr<T[]>& data, size_t size) {
+			storage = std::move(data);
 			pData = storage.get();
 			remainingElements = size;
 		}
 	};
 
-	struct DeleteDisposer
-	{
-		void operator()(Chunk* chunk) {
-			delete chunk;
-		}
-	};
-
-	typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false> > ChunkList;
+	// NOTE: Was boost::intrusive::list. Now using std::list with std::unique_ptr.
+	// If performance becomes critical, consider implementing as intrusive_list again.
+	typedef std::list<std::unique_ptr<Chunk>> ChunkList;
 
 	static size_t adviseChunkSize(size_t num_elements);
 
@@ -83,28 +80,31 @@ private:
 template<typename T>
 DynamicPool<T>::~DynamicPool()
 {
-	m_chunkList.clear_and_dispose(DeleteDisposer());
+	// NOTE: unique_ptr destruye automaticamente los chunks
 }
 
 template<typename T>
 T*
 DynamicPool<T>::alloc(size_t num_elements)
 {	
-	Chunk* chunk = 0;
+	Chunk* chunk = nullptr;
 
 	if (!m_chunkList.empty()) {
-		chunk = &m_chunkList.back();
+		chunk = m_chunkList.back().get();
 		if (chunk->remainingElements < num_elements) {
-			chunk = 0;
+			chunk = nullptr;
 		}
 	}
 
 	if (!chunk) {
 		// Create a new chunk.
 		size_t const chunk_size = adviseChunkSize(num_elements);
-		boost::scoped_array<T> data(new T[chunk_size]);
-		chunk = &*m_chunkList.insert(m_chunkList.end(), *new Chunk);
-		chunk->init(data, chunk_size);
+		std::unique_ptr<T[]> data(new T[chunk_size]);
+		std::unique_ptr<Chunk> new_chunk = std::make_unique<Chunk>();
+		Chunk* chunk_ptr = new_chunk.get();
+		m_chunkList.push_back(std::move(new_chunk));
+		chunk_ptr->init(data, chunk_size);
+		chunk = chunk_ptr;
 	}
 
 	// Allocate from chunk.

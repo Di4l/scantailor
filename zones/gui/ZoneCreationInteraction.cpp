@@ -30,14 +30,13 @@
 #include <Qt>
 #include <QLineF>
 #include <QDebug>
-#include <boost/lambda/lambda.hpp>
 
 ZoneCreationInteraction::ZoneCreationInteraction(
 	ZoneInteractionContext& context, InteractionState& interaction)
 :	m_rContext(context),
-	m_dragHandler(context.imageView(), boost::lambda::constant(true)),
+	m_dragHandler(context.imageView(), [](QPointF const&) { return true; }),
 	m_dragWatcher(m_dragHandler),
-	m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
+	m_zoomHandler(context.imageView(), [](QPointF const&) { return true; }),
 	m_ptrSpline(new EditableSpline)
 {
 	QPointF const screen_mouse_pos(

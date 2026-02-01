@@ -21,7 +21,6 @@
 #include "Margins.h"
 #include "Dpi.h"
 #include "Utils.h"
-#include <boost/foreach.hpp>
 #include <QPointF>
 #include <QLineF>
 #include <QRect>

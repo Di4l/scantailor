@@ -20,8 +20,9 @@
 #define ZONE_SET_H_
 
 #include "Zone.h"
-#include <boost/iterator/iterator_facade.hpp>
 #include <list>
+// NOTE: Was using boost::iterator_facade.
+// Now using simple iterator wrapper compatible with C++23 range-based for loops.
 
 class PropertyFactory;
 class QDomDocument;
@@ -31,22 +32,27 @@ class QString;
 class ZoneSet
 {
 public:
-	class const_iterator : public boost::iterator_facade<
-		const_iterator, Zone const, boost::forward_traversal_tag
-	>
+	class const_iterator
 	{
 		friend class ZoneSet;
-		friend class boost::iterator_core_access;
 	public:
+		using difference_type = std::ptrdiff_t;
+		using value_type = Zone;
+		using pointer = const Zone*;
+		using reference = const Zone&;
+		using iterator_category = std::forward_iterator_tag;
+
 		const_iterator() {}
 
-		void increment() { ++m_it; }
+		const_iterator& operator++() { ++m_it; return *this; }
+		const_iterator operator++(int) { const_iterator tmp(*this); ++m_it; return tmp; }
 
-		bool equal(const_iterator const& other) const {
-			return m_it == other.m_it;
-		}
+		bool operator==(const_iterator const& other) const { return m_it == other.m_it; }
+		bool operator!=(const_iterator const& other) const { return m_it != other.m_it; }
 
-		Zone const& dereference() const { return *m_it; }
+		const Zone& operator*() const { return *m_it; }
+		const Zone* operator->() const { return &(*m_it); }
+
 	private:
 		explicit const_iterator(std::list<Zone>::const_iterator it) : m_it(it) {}
 

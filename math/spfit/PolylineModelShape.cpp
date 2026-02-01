@@ -23,7 +23,6 @@
 #include "VecNT.h"
 #include "math/gui/ToLineProjector.h"
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <stdexcept>
 #include <limits>
 #include <math.h>
@@ -42,7 +41,7 @@ PolylineModelShape::PolylineModelShape(std::vector<QPointF> const& polyline)
 	// of our polyline.  We'll use it to calculate curvature at polyline vertices.
 	XSpline spline;
 
-	BOOST_FOREACH(QPointF const& pt, polyline) {
+	for (QPointF const& pt : polyline) {
 		spline.appendControlPoint(pt, -1);
 	}
 	

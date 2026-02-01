@@ -24,6 +24,7 @@
 #include "OutOfMemoryHandler.h"
 #include "imageproc/Scale.h"
 #include "imageproc/GrayImage.h"
+#include "MultiIndexContainer.h"
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QThread>
@@ -39,18 +40,9 @@
 #include <QEvent>
 #include <QSize>
 #include <QDebug>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <vector>
 #include <new>
-
-using namespace ::boost;
-using namespace ::boost::multi_index;
-using namespace imageproc;
 
 class ThumbnailPixmapCache::Item
 {
@@ -86,7 +78,7 @@ public:
 	mutable QPixmap pixmap; /**< Guaranteed to be set if status is LOADED */
 	
 	mutable std::vector<
-		boost::weak_ptr<CompletionHandler>
+		std::weak_ptr<CompletionHandler>
 	> completionHandlers;
 	
 	/**
@@ -119,7 +111,7 @@ public:
 	
 	Status request(
 		ImageId const& image_id, QPixmap& pixmap, bool load_now = false,
-		boost::weak_ptr<CompletionHandler> const* completion_handler = 0);
+		std::weak_ptr<CompletionHandler> const* completion_handler = 0);
 	
 	void ensureThumbnailExists(ImageId const& image_id, QImage const& image);
 	
@@ -130,16 +122,25 @@ protected:
 	virtual void customEvent(QEvent* e);
 private:
 	class LoadResultEvent;
-	class ItemsByKeyTag;
-	class LoadQueueTag;
-	class RemoveQueueTag;
+	
+	struct ItemsByKeyTag {};
+	struct LoadQueueTag {};
+	struct RemoveQueueTag {};
+	
+	// ImageId extractor from Item
+	struct ItemImageIdExtractor
+	{
+		ImageId operator()(Item const& item) const { return item.imageId; }
+	};
+	
+	using namespace st::multi_index;
 	
 	typedef multi_index_container<
 		Item,
 		indexed_by<
-			ordered_unique<tag<ItemsByKeyTag>, member<Item, ImageId, &Item::imageId> >,
-			sequenced<tag<LoadQueueTag> >,
-			sequenced<tag<RemoveQueueTag> >
+			ordered_unique_index<Item, ItemsByKeyTag, ItemImageIdExtractor>,
+			sequenced_index<Item, LoadQueueTag>,
+			sequenced_index<Item, RemoveQueueTag>
 		>
 	> Container;
 	
@@ -298,7 +299,7 @@ ThumbnailPixmapCache::loadNow(ImageId const& image_id, QPixmap& pixmap)
 ThumbnailPixmapCache::Status
 ThumbnailPixmapCache::loadRequest(
 	ImageId const& image_id, QPixmap& pixmap,
-	boost::weak_ptr<CompletionHandler> const& completion_handler)
+	std::weak_ptr<CompletionHandler> const& completion_handler)
 {
 	return m_ptrImpl->request(image_id, pixmap, false, &completion_handler);
 }
@@ -375,7 +376,7 @@ ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir)
 
 	m_thumbDir = thumb_dir;
 
-	BOOST_FOREACH(Item const& item, m_loadQueue) {
+	for (Item const& item : m_loadQueue) {
 		// This trick will make all queued tasks to expire.
 		m_totalLoadAttempts = std::max(
 			m_totalLoadAttempts,
@@ -387,7 +388,7 @@ ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir)
 ThumbnailPixmapCache::Status
 ThumbnailPixmapCache::Impl::request(
 	ImageId const& image_id, QPixmap& pixmap, bool const load_now,
-	boost::weak_ptr<CompletionHandler> const* completion_handler)
+	std::weak_ptr<CompletionHandler> const* completion_handler)
 {
 	assert(QCoreApplication::instance()->thread() == QThread::currentThread());
 	
@@ -776,7 +777,7 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
 	QPixmap pixmap(QPixmap::fromImage(result->image()));
 	result->releaseImage();
 	
-	std::vector<boost::weak_ptr<CompletionHandler> > completion_handlers;
+	std::vector<std::weak_ptr<CompletionHandler> > completion_handlers;
 	
 	{
 		QMutexLocker const locker(&m_mutex);
@@ -833,9 +834,9 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
 	
 	// Notify listeners.
 	ThumbnailLoadResult const load_result(result->status(), pixmap);
-	typedef boost::weak_ptr<CompletionHandler> WeakHandler;
-	BOOST_FOREACH (WeakHandler const& wh, completion_handlers) {
-		boost::shared_ptr<CompletionHandler> const sh(wh.lock());
+	typedef std::weak_ptr<CompletionHandler> WeakHandler;
+	for (WeakHandler const& wh : completion_handlers) {
+		std::shared_ptr<CompletionHandler> const sh(wh.lock());
 		if (sh.get()) {
 			(*sh)(load_result);
 		}

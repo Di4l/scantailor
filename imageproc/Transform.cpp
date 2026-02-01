@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Transform.h"
-#include "Grayscale.h"
-#include "GrayImage.h"
+#include "imageproc/Transform.h"
+#include "imageproc/gui/Grayscale.h"
+#include "imageproc/gui/GrayImage.h"
 #include <QImage>
 #include <QRect>
 #include <QSizeF>

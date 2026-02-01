@@ -22,7 +22,8 @@
 #include "NonCopyable.h"
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
-#include <boost/intrusive/list.hpp>
+#include <list>
+#include <memory>
 
 class InteractionState;
 class QPainter;
@@ -33,9 +34,7 @@ class QContextMenuEvent;
 class QPointF;
 
 class InteractionHandler :
-	public boost::intrusive::list_base_hook<
-		boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-	>
+	public RefCountable
 {
 	DECLARE_NON_COPYABLE(InteractionHandler)
 public:
@@ -103,11 +102,25 @@ protected:
 	static bool defaultInteractionPermitter(InteractionState const& interaction);
 private:
 	class HandlerList :
-		public RefCountable,
-		public boost::intrusive::list<
-			InteractionHandler, boost::intrusive::constant_time_size<false>
-		>
+		public RefCountable
 	{
+	public:
+		typedef IntrusivePtr<InteractionHandler> Handler;
+		typedef std::list<Handler> List;
+		
+		List m_handlers;
+		
+		bool empty() const { return m_handlers.empty(); }
+		void clear() { m_handlers.clear(); }
+		void push_back(Handler const& h) { m_handlers.push_back(h); }
+		void push_front(Handler const& h) { m_handlers.push_front(h); }
+		void pop_back() { m_handlers.pop_back(); }
+		void pop_front() { m_handlers.pop_front(); }
+		List::iterator erase(List::iterator it) { return m_handlers.erase(it); }
+		List::iterator begin() { return m_handlers.begin(); }
+		List::iterator end() { return m_handlers.end(); }
+		List::const_iterator begin() const { return m_handlers.begin(); }
+		List::const_iterator end() const { return m_handlers.end(); }
 	};
 
 	IntrusivePtr<HandlerList> m_ptrPreceeders;

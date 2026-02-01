@@ -1,3 +1,4 @@
+#include <functional>
 /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,7 +31,6 @@
 #include <QObject>
 #include <QColor>
 #include <QtGlobal>
-#include <boost/function.hpp>
 #include <map>
 #include <memory>
 #include <vector>
@@ -53,7 +53,7 @@ public:
 			ZoneContextMenuItem const& delete_item);
 	};
 
-	typedef boost::function<
+	typedef std::function<
 		std::vector<ZoneContextMenuItem>(
 			EditableZoneSet::Zone const&, StandardMenuItems const&
 		)

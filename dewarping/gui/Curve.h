@@ -20,7 +20,7 @@
 #define DEWARPING_CURVE_H_
 
 #include <QPointF>
-#include "XSpline.h"
+#include "math/gui/XSpline.h"
 #include <vector>
 
 class QDomDocument;

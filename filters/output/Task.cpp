@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -58,8 +59,7 @@
 #include "ErrorWidget.h"
 #include "imageproc/BinaryImage.h"
 #include "imageproc/PolygonUtils.h"
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <QImage>
 #include <QString>
 #include <QObject>
@@ -530,21 +530,21 @@ Task::UiUpdater::updateUI(FilterUiInterface* ui)
 	// In OptionsWidget::dewarpingChanged() we make sure to reload
 	// if we are on the "Fill Zones" tab, and if not, it will be reloaded
 	// anyway when another tab is selected.
-	boost::function<QPointF(QPointF const&)> orig_to_output;
-	boost::function<QPointF(QPointF const&)> output_to_orig;
+	std::function<QPointF(QPointF const&)> orig_to_output;
+	std::function<QPointF(QPointF const&)> output_to_orig;
 	if (m_params.dewarpingMode() != DewarpingMode::OFF && m_params.distortionModel().isValid()) {
-		boost::shared_ptr<DewarpingPointMapper> mapper(
+		std::shared_ptr<DewarpingPointMapper> mapper(
 			new DewarpingPointMapper(
 				m_params.distortionModel(), m_params.depthPerception().value(),
 				m_xform.transform(), m_virtContentRect
 			)
 		);
-		orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
-		output_to_orig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
+		orig_to_output = [mapper](auto arg) { return mapper->mapToDewarpedSpace(arg); };
+		output_to_orig = [mapper](auto arg) { return mapper->mapToWarpedSpace(arg); };
 	} else {
 		typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
-		orig_to_output = boost::bind((MapPointFunc)&QTransform::map, m_xform.transform(), _1);
-		output_to_orig = boost::bind((MapPointFunc)&QTransform::map, m_xform.transformBack(), _1);
+		orig_to_output = [xform = m_xform.transform()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); };
+		output_to_orig = [xform = m_xform.transformBack()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); };
 	}
 
 	std::auto_ptr<QWidget> fill_zone_editor(

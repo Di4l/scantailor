@@ -19,6 +19,7 @@
 #include "RelinkingModel.h"
 #include "PayloadEvent.h"
 #include "OutOfMemoryHandler.h"
+#include "MultiIndexContainer.h"
 #include <QFile>
 #include <QDir>
 #include <QMutex>
@@ -27,11 +28,6 @@
 #include <QCoreApplication>
 #include <QColor>
 #include <Qt>
-#include <boost/foreach.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/member.hpp>
 #include <utility>
 #include <iterator>
 #include <algorithm>
@@ -78,19 +74,22 @@ private:
 		Task(QString const& p, int r) : path(p), row(r) {}
 	};
 
-	class OrderedByPathTag;
-	class OrderedByPriorityTag;
-
-	typedef boost::multi_index_container<
+	struct OrderedByPathTag {};
+	struct OrderedByPriorityTag {};
+	
+	// QString extractor from Task
+	struct TaskPathExtractor
+	{
+		QString operator()(Task const& task) const { return task.path; }
+	};
+	
+	using namespace st::multi_index;
+	
+	typedef multi_index_container<
 		Task,
-		boost::multi_index::indexed_by<
-			boost::multi_index::ordered_unique<
-			boost::multi_index::tag<OrderedByPathTag>,
-				boost::multi_index::member<Task, QString, &Task::path>
-			>,
-			boost::multi_index::sequenced<
-				boost::multi_index::tag<OrderedByPriorityTag>
-			>
+		indexed_by<
+			ordered_unique_index<Task, OrderedByPathTag, TaskPathExtractor>,
+			sequenced_index<Task, OrderedByPriorityTag>
 		>
 	> TaskList;
 
@@ -194,7 +193,7 @@ RelinkingModel::replacePrefix(
 	int modified_rowspan_begin = -1;
 
 	int row = -1;
-	BOOST_FOREACH(Item& item, m_items) {
+	for (Item& item : m_items) {
 		++row;
 		bool modified = false;
 		
@@ -241,7 +240,7 @@ RelinkingModel::checkForMerges() const
 	std::vector<QString> new_paths;
 	new_paths.reserve(m_items.size());
 
-	BOOST_FOREACH(Item const& item, m_items) {
+	for (Item const& item : m_items) {
 		new_paths.push_back(item.uncommittedPath);
 	}
 
@@ -260,7 +259,7 @@ RelinkingModel::commitChanges()
 	int modified_rowspan_begin = -1;
 
 	int row = -1;
-	BOOST_FOREACH(Item& item, m_items) {
+	for (Item& item : m_items) {
 		++row;
 		
 		if (item.committedPath != item.uncommittedPath) {
@@ -296,7 +295,7 @@ RelinkingModel::rollbackChanges()
 	int modified_rowspan_begin = -1;
 
 	int row = -1;
-	BOOST_FOREACH(Item& item, m_items) {
+	for (Item& item : m_items) {
 		++row;
 		
 		if (item.uncommittedPath != item.committedPath) {

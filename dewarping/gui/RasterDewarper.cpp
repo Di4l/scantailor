@@ -17,7 +17,7 @@
 */
 
 #include "RasterDewarper.h"
-#include "CylindricalSurfaceDewarper.h"
+#include "dewarping/CylindricalSurfaceDewarper.h"
 #include "HomographicTransform.h"
 #include "VecNT.h"
 #include "imageproc/ColorMixer.h"

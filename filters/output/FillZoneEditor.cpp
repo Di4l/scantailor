@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -17,7 +18,7 @@
 */
 
 #include "FillZoneEditor.h"
-#include "FillZoneEditor.h.moc"
+// #include "FillZoneEditor.h.moc"
 #include "zones/gui/ZoneContextMenuInteraction.h"
 #include "zones/gui/ZoneContextMenuItem.h"
 #include "ColorPickupInteraction.h"
@@ -39,8 +40,6 @@
 #include <QBrush>
 #include <QPen>
 #include <Qt>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <vector>
 #include <assert.h>
 
@@ -63,8 +62,8 @@ private:
 
 FillZoneEditor::FillZoneEditor(
 	QImage const& image, ImagePixmapUnion const& downscaled_version,
-	boost::function<QPointF(QPointF const&)> const& orig_to_image,
-	boost::function<QPointF(QPointF const&)> const& image_to_orig,
+	std::function<QPointF(QPointF const&)> const& orig_to_image,
+	std::function<QPointF(QPointF const&)> const& image_to_orig,
 	PageId const& page_id, IntrusivePtr<Settings> const& settings)
 :	ImageViewBase(
 		image, downscaled_version,
@@ -86,7 +85,7 @@ FillZoneEditor::FillZoneEditor(
 	setMouseTracking(true);
 
 	m_context.setContextMenuInteractionCreator(
-		boost::bind(&FillZoneEditor::createContextMenuInteraction, this, _1)
+		[this](auto arg) { createContextMenuInteraction(arg); }
 	);
 
 	connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));
@@ -101,7 +100,7 @@ FillZoneEditor::FillZoneEditor(
 	rootInteractionHandler().makeLastFollower(m_dragHandler);
 	rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
-	BOOST_FOREACH(Zone const& zone, m_ptrSettings->fillZonesForPage(page_id)) {
+	for (Zone const& zone : m_ptrSettings->fillZonesForPage(page_id)) {
 		EditableSpline::Ptr spline(
 			new EditableSpline(zone.spline().transformed(m_origToImage))
 		);
@@ -125,7 +124,7 @@ FillZoneEditor::onPaint(QPainter& painter, InteractionState const& interaction)
 
 	painter.setPen(Qt::NoPen);
 
-	BOOST_FOREACH(EditableZoneSet::Zone const& zone, m_zones) {
+	for (EditableZoneSet::Zone const& zone : m_zones) {
 		typedef FillColorProperty FCP;
 		QColor const color(zone.properties()->locateOrDefault<FCP>()->color());
 		painter.setBrush(m_colorAdapter(color));
@@ -155,7 +154,7 @@ FillZoneEditor::commitZones()
 {
 	ZoneSet zones;
 
-	BOOST_FOREACH(EditableZoneSet::Zone const& zone, m_zones) {
+	for (EditableZoneSet::Zone const& zone : m_zones) {
 		SerializableSpline const spline(
 			SerializableSpline(*zone.spline()).transformed(m_imageToOrig)
 		);
@@ -224,10 +223,9 @@ FillZoneEditor::MenuCustomizer::operator()(
 	items.push_back(
 		ZoneContextMenuItem(
 			tr("Pick color"),
-			boost::bind(
-				&FillZoneEditor::createColorPickupInteraction,
-				m_pEditor, zone, _1
-			)
+			[zone, pEditor = m_pEditor](auto arg) {
+				pEditor->createColorPickupInteraction(zone, arg);
+			}
 		)
 	);
 	items.push_back(std_items.deleteItem);

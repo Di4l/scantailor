@@ -18,7 +18,7 @@
 
 #include "DrawOver.h"
 #include "BinaryImage.h"
-#include "RasterOp.h"
+#include "imageproc/RasterOp.h"
 #include <QImage>
 #include <QRect>
 #include <QSize>
