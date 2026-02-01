@@ -17,7 +17,7 @@
 */
 
 #include "PictureZoneEditor.h"
-#include "PictureZoneEditor.h.moc"
+// #include "PictureZoneEditor.h.moc"
 #include "NonCopyable.h"
 #include "Zone.h"
 #include "ZoneSet.h"
@@ -116,7 +116,7 @@ PictureZoneEditor::PictureZoneEditor(
 	setMouseTracking(true);
 
 	m_context.setShowPropertiesCommand(
-		boost::bind(&PictureZoneEditor::showPropertiesDialog, this, _1)
+		[this](auto arg) { showPropertiesDialog(arg); }
 	);
 
 	connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));

@@ -27,12 +27,12 @@
 #include "NumericTraits.h"
 #include "VecNT.h"
 #include "Grid.h"
-#include "SidesOfLine.h"
-#include "ToLineProjector.h"
-#include "LineBoundedByRect.h"
+#include "math/gui/SidesOfLine.h"
+#include "math/gui/ToLineProjector.h"
+#include "math/gui/LineBoundedByRect.h"
 #include "DistortionModelBuilder.h"
-#include "DistortionModel.h"
-#include "Curve.h"
+#include "dewarping/DistortionModel.h"
+#include "dewarping/Curve.h"
 #include "imageproc/BinaryImage.h"
 #include "imageproc/BinaryThreshold.h"
 #include "imageproc/Binarize.h"
@@ -58,7 +58,7 @@
 #include <QPen>
 #include <QColor>
 #include <QtGlobal>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <algorithm>
 #include <set>
 #include <map>
@@ -80,8 +80,6 @@ TextLineTracer::trace(
 	DistortionModelBuilder& output,
 	TaskStatus const& status, DebugImages* dbg)
 {
-	using namespace boost::lambda;
-
 	GrayImage downscaled(downscale(input, dpi));
 	if (dbg) {
 		dbg->add(downscaled, "downscaled");
@@ -331,8 +329,6 @@ TextLineTracer::extractTextLines(
 	std::list<std::vector<QPointF> >& out, imageproc::GrayImage const& image,
 	std::pair<QLineF, QLineF> const& bounds, DebugImages* dbg)
 {
-	using namespace boost::lambda;
-
 	int const width = image.width();
 	int const height = image.height();
 	QSize const size(image.size());
@@ -400,7 +396,7 @@ TextLineTracer::extractTextLines(
 
 	rasterOpGeneric(
 		main_grid.data(), main_grid.stride(), size,
-		aux_grid.data(), aux_grid.stride(), _2 = bind((float (*)(float))&std::fabs, _1)
+		aux_grid.data(), aux_grid.stride(), [](auto& out, auto in) { out = std::fabs(in); }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, aux_grid), "abs");
@@ -418,7 +414,7 @@ TextLineTracer::extractTextLines(
 	rasterOpGeneric(
 		main_grid.data(), main_grid.stride(), size,
 		aux_grid.data(), aux_grid.stride(),
-		_2 += _1 - bind((float (*)(float))&std::fabs, _1)
+		[](auto& out, auto in) { out += in - std::fabs(in); }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, aux_grid), "+= diff");

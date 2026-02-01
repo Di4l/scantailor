@@ -18,7 +18,7 @@
 
 #include "LineBoundedByRect.h"
 #include "LineIntersectionScalar.h"
-#include "NumericTraits.h"
+#include "math/NumericTraits.h"
 
 bool lineBoundedByRect(QLineF& line, QRectF const& rect)
 {

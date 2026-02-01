@@ -58,6 +58,15 @@ FindPeaksGeneric.h
 
 # Brightness and color operations (CORE)
 ColorInterpolation.cpp ColorInterpolation.h
+
+# Seed filling and region operations
+SeedFill.cpp SeedFill.h
+
+# Polygon operations
+PolygonUtils.cpp PolygonUtils.h
+
+# Geometric transformations
+Transform.cpp Transform.h
 )
 
 SET(gui_sources
@@ -65,12 +74,11 @@ SET(gui_sources
 gui/BinaryImage.cpp gui/BinaryImage.h
 gui/BinaryThreshold.cpp gui/BinaryThreshold.h
 
-# Seed filling and region operations
-gui/SeedFill.cpp gui/SeedFill.h
-gui/InfluenceMap.cpp gui/InfluenceMap.h
-
 # Connectivity operations
 gui/ConnectivityMap.cpp gui/ConnectivityMap.h
+
+# Influence map operations
+gui/InfluenceMap.cpp gui/InfluenceMap.h
 
 # Grayscale operations
 gui/GrayImage.cpp gui/GrayImage.h
@@ -78,7 +86,6 @@ gui/Grayscale.cpp gui/Grayscale.h
 
 # Geometric transformations (GUI)
 gui/Scale.cpp gui/Scale.h
-gui/Transform.cpp gui/Transform.h
 
 # Feature detection (GUI)
 gui/HoughLineDetector.cpp gui/HoughLineDetector.h
@@ -89,8 +96,7 @@ gui/MorphGradientDetect.cpp gui/MorphGradientDetect.h
 # Filtering operations (GUI)
 gui/SavGolFilter.cpp gui/SavGolFilter.h
 
-# Polygon operations
-gui/PolygonUtils.cpp gui/PolygonUtils.h
+# Polygon operations (GUI)
 gui/PolygonRasterizer.cpp gui/PolygonRasterizer.h
 
 # Brightness and color operations

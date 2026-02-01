@@ -17,7 +17,7 @@
 */
 
 #include "StageListView.h"
-#include "StageListView.h.moc"
+// #include "StageListView.h.moc"
 #include "StageSequence.h"
 #include "ChangedStateItemDelegate.h"
 #include "SkinnedButton.h"

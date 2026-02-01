@@ -17,7 +17,7 @@
 */
 
 #include "ImageView.h"
-#include "ImageView.h.moc"
+// #include "ImageView.h.moc"
 #include "ImageTransformation.h"
 #include "ImagePresentation.h"
 #include "InteractionState.h"
@@ -66,13 +66,13 @@ ImageView::ImageView(
 	for (int i = 0; i < 2; ++i) {
 		m_handles[i].setHitRadius(hit_radius);
 		m_handles[i].setPositionCallback(
-			boost::bind(&ImageView::handlePosition, this, i)
+			[this, i]() { return handlePosition(i); }
 		);
 		m_handles[i].setMoveRequestCallback(
-			boost::bind(&ImageView::handleMoveRequest, this, i, _1)
+			[this, i](auto arg) { handleMoveRequest(i, arg); }
 		);
 		m_handles[i].setDragFinishedCallback(
-			boost::bind(&ImageView::dragFinished, this)
+			[this]() { dragFinished(); }
 		);
 
 		m_handleInteractors[i].setProximityStatusTip(tip);

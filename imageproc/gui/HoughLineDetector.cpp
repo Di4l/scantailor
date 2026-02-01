@@ -18,14 +18,14 @@
 
 #include "HoughLineDetector.h"
 #include "BinaryImage.h"
-#include "BWColor.h"
-#include "ConnCompEraser.h"
-#include "ConnComp.h"
-#include "Connectivity.h"
-#include "Constants.h"
-#include "Morphology.h"
-#include "RasterOp.h"
-#include "SeedFill.h"
+#include "imageproc/BWColor.h"
+#include "imageproc/ConnCompEraser.h"
+#include "imageproc/ConnComp.h"
+#include "imageproc/Connectivity.h"
+#include "imageproc/Constants.h"
+#include "imageproc/SeedFill.h"
+#include "imageproc/RasterOp.h"
+#include "imageproc/SeedFill.h"
 #include "Grayscale.h"
 #include <QSize>
 #include <QRect>

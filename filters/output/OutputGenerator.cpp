@@ -1052,7 +1052,7 @@ OutputGenerator::processWithDewarping(
 		)
 	);
 	std::function<QPointF(QPointF const&)> const orig_to_output(
-		boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
+		[mapper](auto arg) { return mapper->mapToDewarpedSpace(arg); }
 	);
 
 	if (render_params.binaryOutput()) {	
@@ -1809,7 +1809,7 @@ OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const
 {
 	typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
 	applyFillZonesInPlace(
-		img, zones, boost::bind((MapPointFunc)&QTransform::map, m_xform.transform(), _1)
+		img, zones, [xform = m_xform.transform()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); }
 	);
 }
 
@@ -1840,7 +1840,7 @@ OutputGenerator::applyFillZonesInPlace(
 {
 	typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
 	applyFillZonesInPlace(
-		img, zones, boost::bind((MapPointFunc)&QTransform::map, m_xform.transform(), _1)
+		img, zones, [xform = m_xform.transform()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); }
 	);
 }
 

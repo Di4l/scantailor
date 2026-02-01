@@ -17,8 +17,8 @@
 */
 
 #include "TowardsLineTracer.h"
-#include "SidesOfLine.h"
-#include "ToLineProjector.h"
+#include "math/gui/SidesOfLine.h"
+#include "math/gui/ToLineProjector.h"
 #include "NumericTraits.h"
 #include "imageproc/SEDM.h"
 #include <QRect>
@@ -174,11 +174,11 @@ TowardsLineTracer::setupSteps()
 	}
 
 	// Sort by decreasing alignment with m_normalTowardsLine.
-	using namespace boost::lambda;
 	std::sort(
 		m_steps, m_steps + m_numSteps,
-		bind(&Vec2d::dot, m_normalTowardsLine, bind<Vec2d const&>(&Step::unitVec, _1)) >
-		bind(&Vec2d::dot, m_normalTowardsLine, bind<Vec2d const&>(&Step::unitVec, _2))
+		[this](auto const& step1, auto const& step2) {
+			return m_normalTowardsLine.dot(step1.unitVec) > m_normalTowardsLine.dot(step2.unitVec);
+		}
 	);
 }
 

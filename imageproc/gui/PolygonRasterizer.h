@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_POLYGONRASTERIZER_H_
 #define IMAGEPROC_POLYGONRASTERIZER_H_
 
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 #include <Qt>
 
 class QPolygonF;

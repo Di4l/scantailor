@@ -18,7 +18,7 @@
 
 #include "OrthogonalRotation.h"
 #include "imageproc/gui/BinaryImage.h"
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 #include "RasterOp.h"
 #include <QRect>
 #include <algorithm>

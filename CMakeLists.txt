@@ -25,6 +25,7 @@ PROJECT("Scan Tailor" C CXX)
 SET(CMAKE_CXX_STANDARD 23)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
+ADD_COMPILE_OPTIONS(-fPIC)
 
 # Platform-specific definitions
 ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
@@ -68,6 +69,17 @@ STRING(
 IF("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
 	MESSAGE(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
 ENDIF()
+
+#===============================================================================
+# QT5 CONFIGURATION
+#===============================================================================
+FIND_PACKAGE(Qt5 COMPONENTS Core Gui Widgets Xml REQUIRED)
+SET(CMAKE_AUTOMOC OFF)
+SET(CMAKE_AUTORCC OFF)
+SET(CMAKE_AUTOUIC OFF)
+
+# Include Qt5 headers
+INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
 
 #===============================================================================
 # INCLUDE DIRECTORIES (PRIMARY)

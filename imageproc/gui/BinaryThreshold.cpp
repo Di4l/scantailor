@@ -18,7 +18,7 @@
 
 #include "BinaryThreshold.h"
 #include "Grayscale.h"
-#include "Morphology.h"
+#include "imageproc/Morphology.h"
 #include <QImage>
 #include <QDebug>
 #include <stdexcept>

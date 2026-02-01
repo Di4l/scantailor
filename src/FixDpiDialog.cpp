@@ -17,7 +17,7 @@
 */
 
 #include "FixDpiDialog.h"
-#include "FixDpiDialog.h.moc"
+// #include "FixDpiDialog.h.moc"
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 #include <QModelIndex>
@@ -835,12 +835,10 @@ FixDpiDialog::TreeModel::emitItemChanged(QModelIndex const& idx)
 FixDpiDialog::SizeGroup&
 FixDpiDialog::TreeModel::sizeGroupFor(QSize const size)
 {
-	using namespace boost::lambda;
-	
 	std::vector<SizeGroup>::iterator const it(
 		std::find_if(
 			m_sizes.begin(), m_sizes.end(),
-			bind(&SizeGroup::size, _1) == size
+			[size](auto const& group) { return group.size() == size; }
 		)
 	);
 	if (it != m_sizes.end()) {

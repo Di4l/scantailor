@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_BINARYTHRESHOLD_H_
 #define IMAGEPROC_BINARYTHRESHOLD_H_
 
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 
 class QImage;
 

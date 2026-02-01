@@ -24,9 +24,10 @@
 #include "PropertySet.h"
 #include "IntrusivePtr.h"
 #include <QObject>
-#include <boost/mpl/bool.hpp>
-#include <boost/iterator/iterator_facade.hpp>
+#include <type_traits>
 #include <map>
+// NOTE: Was using boost::iterator_facade.
+// Now using simple iterator wrapper compatible with C++23 range-based for loops.
 
 class EditableZoneSet : public QObject
 {
@@ -51,22 +52,31 @@ public:
 		Map::const_iterator m_iter;
 	};
 
-	class const_iterator : public boost::iterator_facade<
-		const_iterator, Zone const, boost::forward_traversal_tag
-	>
+	class const_iterator
 	{
 		friend class EditableZoneSet;
-		friend class boost::iterator_core_access;
 	public:
+		using difference_type = std::ptrdiff_t;
+		using value_type = Zone;
+		using pointer = const Zone*;
+		using reference = const Zone&;
+		using iterator_category = std::forward_iterator_tag;
+
 		const_iterator() : m_zone() {}
 
-		void increment() { ++m_zone.m_iter; }
+		const_iterator& operator++() { ++m_zone.m_iter; return *this; }
+		const_iterator operator++(int) { const_iterator tmp(*this); ++m_zone.m_iter; return tmp; }
 
-		bool equal(const_iterator const& other) const {
+		bool operator==(const_iterator const& other) const {
 			return m_zone.m_iter == other.m_zone.m_iter;
 		}
+		bool operator!=(const_iterator const& other) const {
+			return m_zone.m_iter != other.m_zone.m_iter;
+		}
 
-		Zone const& dereference() const { return m_zone; }
+		const Zone& operator*() const { return m_zone; }
+		const Zone* operator->() const { return &m_zone; }
+
 	private:
 		explicit const_iterator(Map::const_iterator it) : m_zone(it) {}
 
@@ -102,19 +112,5 @@ private:
 	Map m_splineMap;
 	PropertySet m_defaultProps;
 };
-
-namespace boost
-{
-namespace foreach
-{
-
-// Make BOOST_FOREACH work with the above class (necessary for boost >= 1.46 with gcc >= 4.6)
-template<>
-struct is_noncopyable<EditableZoneSet> : public boost::mpl::true_
-{
-};
-
-} // namespace foreach
-} // namespace boost
 
 #endif

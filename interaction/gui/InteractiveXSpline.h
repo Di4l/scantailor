@@ -20,14 +20,14 @@
 #ifndef INTERACTIVE_XSPLINE_H_
 #define INTERACTIVE_XSPLINE_H_
 
-#include "XSpline.h"
+#include "math/gui/XSpline.h"
 #include "DraggablePoint.h"
 #include "ObjectDragHandler.h"
 #include "InteractionState.h"
 #include "VecNT.h"
 #include <QPointF>
 #include <QCoreApplication>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <stddef.h>
 
 class InteractiveXSpline : public InteractionHandler
@@ -100,7 +100,7 @@ private:
 	Transform m_fromStorage;
 	Transform m_toStorage;
 	XSpline m_spline;
-	boost::scoped_array<ControlPoint> m_controlPoints;
+	std::unique_ptr<ControlPoint[]> m_controlPoints;
 	InteractionState::Captor m_curveProximity;
 	QPointF m_curveProximityPointStorage;
 	QPointF m_curveProximityPointScreen;

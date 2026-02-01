@@ -17,7 +17,7 @@
 */
 
 #include "RelinkablePathVisualization.h"
-#include "RelinkablePathVisualization.h.moc"
+// #include "RelinkablePathVisualization.h.moc"
 #include "RelinkablePath.h"
 #include "QtSignalForwarder.h"
 #include <QHBoxLayout>
@@ -139,11 +139,9 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
 		stylePathComponentButton(btn, path_component.exists);
 		
 		new QtSignalForwarder(
-			btn, SIGNAL(clicked()), boost::bind(
-				&RelinkablePathVisualization::onClicked, this,
-				component_idx, path_component.prefixPath,
-				path_component.suffixPath, path_component.type
-			)
+			btn, SIGNAL(clicked()), [this, idx = component_idx, prefix = path_component.prefixPath, suffix = path_component.suffixPath, type = path_component.type]() {
+				onClicked(idx, prefix, suffix, type);
+			}
 		);
 	}
 

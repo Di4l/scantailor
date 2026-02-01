@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ProjectCreationContext.h.moc"
+// #include "ProjectCreationContext.h.moc"
 #include "ProjectFilesDialog.h"
 #include "FixDpiDialog.h"
 #include "ImageFileInfo.h"
@@ -45,11 +45,9 @@ namespace
 template<typename T>
 bool allDpisOK(T const& container)
 {
-	using namespace boost::lambda;
-	
 	return std::find_if(
 		container.begin(), container.end(),
-		!bind(&ImageFileInfo::isDpiOK, _1)
+		[](auto const& file) { return !file.isDpiOK(); }
 	) == container.end();
 }
 

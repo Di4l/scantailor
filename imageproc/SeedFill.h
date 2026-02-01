@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_SEEDFILL_H_
 #define IMAGEPROC_SEEDFILL_H_
 
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "Connectivity.h"
 
 class QImage;

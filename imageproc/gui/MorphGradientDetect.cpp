@@ -17,9 +17,9 @@
 */
 
 #include "MorphGradientDetect.h"
-#include "Morphology.h"
+#include "imageproc/Morphology.h"
 #include "Grayscale.h"
-#include "GrayRasterOp.h"
+#include "imageproc/GrayRasterOp.h"
 #include <QImage>
 #include <QSize>
 

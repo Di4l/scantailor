@@ -17,7 +17,7 @@
 */
 
 #include "DewarpingView.h"
-#include "DewarpingView.h.moc"
+// #include "DewarpingView.h.moc"
 #include "ImagePresentation.h"
 #include "dewarping/Curve.h"
 #include "VecNT.h"
@@ -43,7 +43,7 @@
 #include <QColor>
 #include <Qt>
 #include <QDebug>
-#include <boost/array.hpp>
+#include <array>
 #include <vector>
 #include <stdexcept>
 
@@ -111,11 +111,11 @@ DewarpingView::DewarpingView(
 	int curve_idx = -1;
 	for (InteractiveXSpline* spline : splines) {
 		++curve_idx;
-		spline->setModifiedCallback(boost::bind(&DewarpingView::curveModified, this, curve_idx));
-		spline->setDragFinishedCallback(boost::bind(&DewarpingView::dragFinished, this));
+		spline->setModifiedCallback([this, curve_idx]() { curveModified(curve_idx); });
+		spline->setDragFinishedCallback([this]() { dragFinished(); });
 		spline->setStorageTransform(
-			boost::bind(&DewarpingView::sourceToWidget, this, _1),
-			boost::bind(&DewarpingView::widgetToSource, this, _1)
+			[this](auto arg) { return sourceToWidget(arg); },
+			[this](auto arg) { return widgetToSource(arg); }
 		);
 		makeLastFollower(*spline);
 	}

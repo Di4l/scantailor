@@ -17,7 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EditableZoneSet.h.moc"
+// #include "EditableZoneSet.h.moc"
 
 EditableZoneSet::EditableZoneSet()
 {

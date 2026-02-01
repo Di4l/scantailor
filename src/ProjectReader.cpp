@@ -70,7 +70,7 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
 	);
 	m_ptrDisambiguator.reset(
 		new FileNameDisambiguator(
-			disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)
+			disambig_el, [this](auto arg) { return expandFilePath(arg); }
 		)
 	);
 }

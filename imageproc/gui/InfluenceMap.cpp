@@ -20,7 +20,7 @@
 #include "BinaryImage.h"
 #include "ConnectivityMap.h"
 #include "FastQueue.h"
-#include "BitOps.h"
+#include "imageproc/BitOps.h"
 #include <QImage>
 #include <QColor>
 #include <algorithm>

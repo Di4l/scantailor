@@ -94,7 +94,7 @@ ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& fil
 	root_el.appendChild(
 		m_outFileNameGen.disambiguator()->toXml(
 			doc, "file-name-disambiguation",
-			boost::bind(&ProjectWriter::packFilePath, this, _1)
+			[this](auto arg) { return packFilePath(arg); }
 		)
 	);
 	

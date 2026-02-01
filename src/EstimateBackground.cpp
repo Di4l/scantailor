@@ -92,8 +92,6 @@ static void seedFillTopBottomInPlace(GrayImage& image)
 
 static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg)
 {
-	using namespace boost::lambda;
-
 	// We do morphological preprocessing with one of two methods.  The first
 	// one is good for cases when the dark area is in the middle of the image,
 	// touching at least one of the vertical edges and not touching the horizontal one.

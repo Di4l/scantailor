@@ -487,8 +487,6 @@ PageLayoutEstimator::cutAtWhitespaceDeskewed150(
 	bool const left_offcut, bool const right_offcut,
 	DebugImages* dbg)
 {
-	using namespace boost::lambda;
-	
 	int const width = input.width();
 	int const height = input.height();
 	
@@ -518,7 +516,7 @@ PageLayoutEstimator::cutAtWhitespaceDeskewed150(
 	
 	std::deque<Span> spans;
 	SlicedHistogram hist(cc_img, SlicedHistogram::COLS);
-	span_finder.find(hist, bind(&std::deque<Span>::push_back, var(spans), _1));
+	span_finder.find(hist, [&spans](auto const& span) { spans.push_back(span); });
 	
 	if (dbg) {
 		visualizeSpans(*dbg, spans, input, "spans");

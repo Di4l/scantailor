@@ -18,7 +18,7 @@
 
 #include "DentFinder.h"
 #include "imageproc/gui/BinaryImage.h"
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 #include <assert.h>
 
 namespace imageproc

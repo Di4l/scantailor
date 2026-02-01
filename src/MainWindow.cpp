@@ -17,7 +17,7 @@
 */
 
 #include "MainWindow.h"
-#include "MainWindow.h.moc"
+// #include "MainWindow.h.moc"
 #include "NewOpenProjectPanel.h"
 #include "RecentProjects.h"
 #include "WorkerThread.h"
@@ -474,8 +474,6 @@ MainWindow::showNewOpenProjectPanel()
 void
 MainWindow::createBatchProcessingWidget()
 {
-	using namespace boost::lambda;
-
 	m_ptrBatchProcessingWidget.reset(new QWidget);
 	QGridLayout* layout = new QGridLayout(m_ptrBatchProcessingWidget.get());
 	m_ptrBatchProcessingWidget->setLayout(layout);
@@ -496,7 +494,7 @@ MainWindow::createBatchProcessingWidget()
 		Ui::BatchProcessingLowerPanel ui;
 	};
 	LowerPanel* lower_panel = new LowerPanel(m_ptrBatchProcessingWidget.get());
-	m_checkBeepWhenFinished = bind(&QCheckBox::isChecked, lower_panel->ui.beepWhenFinished);
+	m_checkBeepWhenFinished = [checkbox = lower_panel->ui.beepWhenFinished]() { return checkbox->isChecked(); };
 
 	int row = 0; // Row 0 is reserved.
 	layout->addWidget(stop_btn, ++row, 1, Qt::AlignCenter);
@@ -858,7 +856,7 @@ MainWindow::showRelinkingDialog()
 	
 	new QtSignalForwarder(
 		dialog, SIGNAL(accepted()),
-		boost::lambda::bind(&MainWindow::performRelinking, this, dialog->relinker())
+		[this, relinker = dialog->relinker()]() { performRelinking(relinker); }
 	);
 
 	dialog->show();
@@ -1881,8 +1879,6 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
 	// so to be safe, remove duplicates.
 	files.erase(std::unique(files.begin(), files.end()), files.end());
 	
-	using namespace boost::lambda;
-	
 	std::vector<ImageFileInfo> new_files;
 	std::vector<QString> loaded_files;
 	std::vector<QString> failed_files; // Those we failed to read metadata from.
@@ -1893,8 +1889,9 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
 		ImageFileInfo image_file_info(file_info, std::vector<ImageMetadata>());
 
 		ImageMetadataLoader::Status const status = ImageMetadataLoader::load(
-			files.at(i), bind(&std::vector<ImageMetadata>::push_back,
-			boost::ref(image_file_info.imageInfo()), _1)
+			files.at(i), [&image_file_info](auto const& metadata) {
+				image_file_info.imageInfo().push_back(metadata);
+			}
 		);
 
 		if (status == ImageMetadataLoader::LOADED) {
@@ -1916,7 +1913,7 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
 	}
 
 	// Check if there is at least one DPI that's not OK.
-	if (std::find_if(new_files.begin(), new_files.end(), !bind(&ImageFileInfo::isDpiOK, _1)) != new_files.end()) {
+	if (std::find_if(new_files.begin(), new_files.end(), [](auto const& file) { return !file.isDpiOK(); }) != new_files.end()) {
 
 		std::auto_ptr<FixDpiDialog> dpi_dialog(new FixDpiDialog(new_files, this));
 		dpi_dialog->setWindowModality(Qt::WindowModal);

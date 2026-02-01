@@ -24,7 +24,7 @@
 #include "imageproc/GrayImage.h"
 #include "imageproc/GaussBlur.h"
 #include "imageproc/Sobel.h"
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <QImage>
 #include <QPainter>
 #include <QPen>
@@ -177,8 +177,6 @@ void
 TextLineRefiner::calcBlurredGradient(
 	Grid<float>& gradient, float h_sigma, float v_sigma) const
 {
-	using namespace boost::lambda;
-
 	float const downscale = 1.0f / (255.0f * 8.0f);
 	Grid<float> vert_grad(m_image.width(), m_image.height(), /*padding=*/0);
 	horizontalSobel<float>(

@@ -52,19 +52,19 @@ InteractiveXSpline::setSpline(XSpline const& spline)
 	int const num_control_points = spline.numControlPoints();
 
 	XSpline new_spline(spline);
-	boost::scoped_array<ControlPoint> new_control_points(
+	std::unique_ptr<ControlPoint[]> new_control_points(
 		new ControlPoint[num_control_points]
 	);
 
 	for (int i = 0; i < num_control_points; ++i) {
 		new_control_points[i].point.setPositionCallback(
-			boost::bind(&InteractiveXSpline::controlPointPosition, this, i)
+			[this, i]() { return controlPointPosition(i); }
 		);
 		new_control_points[i].point.setMoveRequestCallback(
-			boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, _1)
+			[this, i](QPointF const& pos) { controlPointMoveRequest(i, pos); }
 		);
 		new_control_points[i].point.setDragFinishedCallback(
-			boost::bind(&InteractiveXSpline::dragFinished, this)
+			[this]() { dragFinished(); }
 		);
 
 		if (i == 0 || i == num_control_points - 1) {

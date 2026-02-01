@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_BINARYIMAGE_H_
 #define IMAGEPROC_BINARYIMAGE_H_
 
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 #include "BinaryThreshold.h"
 #include <QRect>
 #include <QSize>

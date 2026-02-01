@@ -17,7 +17,7 @@
 */
 
 #include "PolygonRasterizer.h"
-#include "PolygonUtils.h"
+#include "imageproc/PolygonUtils.h"
 #include "BinaryImage.h"
 #include <QRect>
 #include <QRectF>

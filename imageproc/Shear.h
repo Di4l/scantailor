@@ -20,7 +20,7 @@
 #ifndef IMAGEPROC_SHEAR_H_
 #define IMAGEPROC_SHEAR_H_
 
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 
 namespace imageproc
 {

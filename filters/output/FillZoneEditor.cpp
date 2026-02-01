@@ -18,7 +18,7 @@
 */
 
 #include "FillZoneEditor.h"
-#include "FillZoneEditor.h.moc"
+// #include "FillZoneEditor.h.moc"
 #include "zones/gui/ZoneContextMenuInteraction.h"
 #include "zones/gui/ZoneContextMenuItem.h"
 #include "ColorPickupInteraction.h"
@@ -85,7 +85,7 @@ FillZoneEditor::FillZoneEditor(
 	setMouseTracking(true);
 
 	m_context.setContextMenuInteractionCreator(
-		boost::bind(&FillZoneEditor::createContextMenuInteraction, this, _1)
+		[this](auto arg) { createContextMenuInteraction(arg); }
 	);
 
 	connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));
@@ -223,10 +223,9 @@ FillZoneEditor::MenuCustomizer::operator()(
 	items.push_back(
 		ZoneContextMenuItem(
 			tr("Pick color"),
-			boost::bind(
-				&FillZoneEditor::createColorPickupInteraction,
-				m_pEditor, zone, _1
-			)
+			[zone, pEditor = m_pEditor](auto arg) {
+				pEditor->createColorPickupInteraction(zone, arg);
+			}
 		)
 	);
 	items.push_back(std_items.deleteItem);

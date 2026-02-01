@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_CONNECTIVITY_MAP_H_
 #define IMAGEPROC_CONNECTIVITY_MAP_H_
 
-#include "Connectivity.h"
+#include "imageproc/Connectivity.h"
 #include "FastQueue.h"
 #include <QSize>
 #include <QColor>

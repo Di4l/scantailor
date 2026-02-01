@@ -539,12 +539,12 @@ Task::UiUpdater::updateUI(FilterUiInterface* ui)
 				m_xform.transform(), m_virtContentRect
 			)
 		);
-		orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
-		output_to_orig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
+		orig_to_output = [mapper](auto arg) { return mapper->mapToDewarpedSpace(arg); };
+		output_to_orig = [mapper](auto arg) { return mapper->mapToWarpedSpace(arg); };
 	} else {
 		typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
-		orig_to_output = boost::bind((MapPointFunc)&QTransform::map, m_xform.transform(), _1);
-		output_to_orig = boost::bind((MapPointFunc)&QTransform::map, m_xform.transformBack(), _1);
+		orig_to_output = [xform = m_xform.transform()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); };
+		output_to_orig = [xform = m_xform.transformBack()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); };
 	}
 
 	std::auto_ptr<QWidget> fill_zone_editor(

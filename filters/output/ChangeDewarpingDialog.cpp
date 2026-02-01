@@ -17,7 +17,7 @@
 */
 
 #include "ChangeDewarpingDialog.h"
-#include "ChangeDewarpingDialog.h.moc"
+// #include "ChangeDewarpingDialog.h.moc"
 #include "PageSelectionAccessor.h"
 #include "QtSignalForwarder.h"
 
@@ -34,8 +34,6 @@ ChangeDewarpingDialog::ChangeDewarpingDialog(
 	m_mode(mode),
 	m_pScopeGroup(new QButtonGroup(this))
 {
-	using namespace boost::lambda;
-
 	ui.setupUi(this);
 	m_pScopeGroup->addButton(ui.thisPageRB);
 	m_pScopeGroup->addButton(ui.allPagesRB);

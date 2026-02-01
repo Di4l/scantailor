@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_MORPHOLOGY_H_
 #define IMAGEPROC_MORPHOLOGY_H_
 
-#include "BWColor.h"
+#include "imageproc/BWColor.h"
 #include <vector>
 
 class QSize;

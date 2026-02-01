@@ -18,7 +18,7 @@
 */
 
 #include "ThumbnailSequence.h"
-#include "ThumbnailSequence.h.moc"
+// #include "ThumbnailSequence.h.moc"
 #include "ThumbnailFactory.h"
 #include "IncompleteThumbnail.h"
 #include "PageSequence.h"
@@ -485,7 +485,7 @@ ThumbnailSequence::Impl::Impl(
 	m_pSelectionLeader(0)
 {
 	m_graphicsScene.setContextMenuEventCallback(
-		bind(&Impl::sceneContextMenuEvent, this, _1)
+		[this](auto arg) { sceneContextMenuEvent(arg); }
 	);
 }
 
@@ -599,7 +599,7 @@ ThumbnailSequence::Impl::invalidateThumbnail(PageInfo const& page_info)
 {
 	ItemsById::iterator const id_it(m_itemsById.find(page_info.id()));
 	if (id_it != m_itemsById.end()) {
-		m_itemsById.modify(id_it, bind(&Item::pageInfo, _1) = page_info);
+		m_itemsById.modify(id_it, [&page_info](Item& item) { item.pageInfo = page_info; });
 		invalidateThumbnailImpl(id_it);
 	}
 }
@@ -719,11 +719,12 @@ ThumbnailSequence::Impl::invalidateAllThumbnails()
 	// Sort pages in m_itemsInOrder using m_ptrOrderProvider.
 	if (m_ptrOrderProvider.get()) {
 		m_itemsInOrder.sort(
-			bind(
-				&PageOrderProvider::precedes, m_ptrOrderProvider.get(),
-				bind(&Item::pageId, _1), bind(&Item::incompleteThumbnail, _1),
-				bind(&Item::pageId, _2), bind(&Item::incompleteThumbnail, _2) 
-			)
+			[this](auto const& item1, auto const& item2) {
+				return m_ptrOrderProvider->precedes(
+					item1.pageId, item1.incompleteThumbnail,
+					item2.pageId, item2.incompleteThumbnail
+				);
+			}
 		);
 	}
 	

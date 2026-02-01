@@ -20,8 +20,9 @@
 #define FAST_QUEUE_H_
 
 #include "NonCopyable.h"
-#include <boost/intrusive/list.hpp>
-#include <boost/type_traits/alignment_of.hpp>
+#include <list>
+#include <memory>
+#include <type_traits>
 #include <stddef.h>
 #include <stdint.h>
 #include <assert.h>
@@ -34,15 +35,15 @@ public:
 
 	FastQueue(FastQueue const& other);
 
-	~FastQueue() { m_chunkList.clear_and_dispose(ChunkDisposer()); }
+	~FastQueue() { }
 
 	FastQueue& operator=(FastQueue const& other);
 
 	bool const empty() const { return m_chunkList.empty(); }
 
-	T& front() { return *m_chunkList.front().pBegin; }
+	T& front() { return *m_chunkList.front()->pBegin; }
 
-	T const& front() const { return *m_chunkList.front().pBegin; }
+	T const& front() const { return *m_chunkList.front()->pBegin; }
 
 	void push(T const& t);
 
@@ -50,13 +51,15 @@ public:
 
 	void swap(FastQueue& other);
 private:
-	struct Chunk : public boost::intrusive::list_base_hook<>
+	struct Chunk
 	{
 		DECLARE_NON_COPYABLE(Chunk)
 	public:
+		// NOTE: Previously inherited from boost::intrusive::list_base_hook.
+		// Now managed by std::list. Can be re-implemented as intrusive_list in future.
 		Chunk(size_t capacity) {
 			uintptr_t const p = (uintptr_t)(this + 1);
-			size_t const alignment = boost::alignment_of<T>::value;
+			size_t const alignment = std::alignment_of<T>::value;
 			pBegin = (T*)(((p + alignment - 1) / alignment) * alignment);
 			pEnd = pBegin;
 			pBufferEnd = pBegin + capacity;
@@ -70,7 +73,7 @@ private:
 		}
 
 		static size_t storageRequirement(size_t capacity) {
-			return sizeof(Chunk) + boost::alignment_of<T>::value - 1 + capacity * sizeof(T);
+			return sizeof(Chunk) + std::alignment_of<T>::value - 1 + capacity * sizeof(T);
 		}
 		
 		T* pBegin;
@@ -79,17 +82,9 @@ private:
 		// An implicit array of T follows.
 	};
 
-	struct ChunkDisposer
-	{
-		void operator()(Chunk* chunk) {
-			chunk->~Chunk();
-			delete[] (char*)chunk;
-		}
-	};
-
-	typedef boost::intrusive::list<
-		Chunk, boost::intrusive::constant_time_size<false>
-	> ChunkList;
+	// NOTE: Was boost::intrusive::list. Now using std::list with std::unique_ptr.
+	// If performance becomes critical, consider implementing as intrusive_list again.
+	typedef std::list<std::unique_ptr<Chunk>> ChunkList;
 
 	static size_t defaultChunkCapacity() {
 		return (sizeof(T) >= 4096) ? 1 : 4096 / sizeof(T);
@@ -104,7 +99,7 @@ template<typename T>
 FastQueue<T>::FastQueue(FastQueue const& other)
 :	m_chunkCapacity(other.m_chunkCapacity)
 {
-	for (Chunk& chunk : other.m_chunkList) {
+	for (auto const& chunk : other.m_chunkList) {
 		for (T const* obj = chunk->pBegin; obj != chunk->pEnd; ++obj) {
 			push(*obj);
 		}
@@ -123,20 +118,21 @@ template<typename T>
 void
 FastQueue<T>::push(T const& t)
 {	
-	Chunk* chunk = 0;
+	Chunk* chunk = nullptr;
 
 	if (!m_chunkList.empty()) {
-		chunk = &m_chunkList.back();
+		chunk = m_chunkList.back().get();
 		if (chunk->pEnd == chunk->pBufferEnd) {
-			chunk = 0;
+			chunk = nullptr;
 		}
 	}
 
 	if (!chunk) {
 		// Create a new chunk.
 		char* buf = new char[Chunk::storageRequirement(m_chunkCapacity)];
-		chunk = new(buf) Chunk(m_chunkCapacity);
-		m_chunkList.push_back(*chunk);
+		Chunk* raw_chunk = new(buf) Chunk(m_chunkCapacity);
+		m_chunkList.push_back(std::unique_ptr<Chunk>(raw_chunk));
+		chunk = raw_chunk;
 	}
 
 	// Push to chunk.
@@ -150,12 +146,12 @@ FastQueue<T>::pop()
 {
 	assert(!empty());
 
-	Chunk* chunk = &m_chunkList.front();
+	Chunk* chunk = m_chunkList.front().get();
 	chunk->pBegin->~T();
 	++chunk->pBegin;
 	if (chunk->pBegin == chunk->pEnd) {
 		m_chunkList.pop_front();
-		ChunkDisposer()(chunk);
+		// unique_ptr destruye automaticamente
 	}
 }
 

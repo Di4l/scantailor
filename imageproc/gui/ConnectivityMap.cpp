@@ -19,7 +19,7 @@
 #include "ConnectivityMap.h"
 #include "BinaryImage.h"
 #include "InfluenceMap.h"
-#include "BitOps.h"
+#include "imageproc/BitOps.h"
 #include <QImage>
 #include <QColor>
 #include <QDebug>
