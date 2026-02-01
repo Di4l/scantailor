@@ -31,7 +31,6 @@
 #include <QScrollBar>
 #include <QStyle>
 #include <Qt>
-#include <boost/bind.hpp>
 #include <algorithm>
 #include <math.h>
 

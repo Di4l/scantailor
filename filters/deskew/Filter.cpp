@@ -27,8 +27,6 @@
 #include "PageId.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QString>
 #include <QObject>
 #include <QCoreApplication>

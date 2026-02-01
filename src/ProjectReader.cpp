@@ -26,7 +26,6 @@
 #include <QDir>
 #include <QDomElement>
 #include <QDomNode>
-#include <boost/bind.hpp>
 #include <set>
 
 ProjectReader::ProjectReader(QDomDocument const& doc)

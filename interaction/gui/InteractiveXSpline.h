@@ -1,3 +1,4 @@
+#include <functional>
  /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,7 +27,6 @@
 #include "VecNT.h"
 #include <QPointF>
 #include <QCoreApplication>
-#include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
@@ -34,9 +34,9 @@ class InteractiveXSpline : public InteractionHandler
 {
 	Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
 public:
-	typedef boost::function<QPointF (QPointF const&)> Transform;
-	typedef boost::function<void()> ModifiedCallback;
-	typedef boost::function<void()> DragFinishedCallback;
+	typedef std::function<QPointF (QPointF const&)> Transform;
+	typedef std::function<void()> ModifiedCallback;
+	typedef std::function<void()> DragFinishedCallback;
 
 	InteractiveXSpline();
 

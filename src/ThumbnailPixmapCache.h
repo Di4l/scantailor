@@ -23,7 +23,7 @@
 #include "RefCountable.h"
 #include "ThumbnailLoadResult.h"
 #include "AbstractCommand.h"
-#include <boost/weak_ptr.hpp>
+#include <memory>
 #include <memory>
 
 class ImageId;
@@ -118,7 +118,7 @@ public:
 	 */
 	Status loadRequest(
 		ImageId const& image_id, QPixmap& pixmap,
-		boost::weak_ptr<CompletionHandler> const& completion_handler);
+		std::weak_ptr<CompletionHandler> const& completion_handler);
 	
 	/**
 	 * \brief If no thumbnail exists for this image, create it.

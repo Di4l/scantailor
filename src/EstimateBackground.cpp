@@ -42,9 +42,6 @@
 #include <QTransform>
 #include <QDebug>
 #include <Qt>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/control_structures.hpp>
 #include <vector>
 #include <algorithm>
 #include <stdint.h>

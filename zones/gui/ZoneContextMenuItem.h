@@ -1,3 +1,4 @@
+#include <functional>
 /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,7 +21,6 @@
 #define ZONE_CONTEXT_MENU_ITEM_H_
 
 #include <QString>
-#include <boost/function.hpp>
 
 class InteractionState;
 class InteractionHandler;
@@ -38,7 +38,7 @@ public:
 	 * you will need to make sure it's disconnected from ZoneInteractionContext
 	 * before ZoneInteractionContext destroys.
 	 */
-	typedef boost::function<InteractionHandler*(InteractionState&)> Callback;
+	typedef std::function<InteractionHandler*(InteractionState&)> Callback;
 
 	ZoneContextMenuItem(QString const& label, Callback const& callback)
 		: m_label(label), m_callback(callback) {}

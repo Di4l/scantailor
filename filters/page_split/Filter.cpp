@@ -31,8 +31,6 @@
 #include "Params.h"
 #include "CacheDrivenTask.h"
 #include "OrthogonalRotation.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QString>
 #include <QObject>
 #include <QCoreApplication>

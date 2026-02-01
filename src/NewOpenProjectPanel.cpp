@@ -19,8 +19,6 @@
 #include "NewOpenProjectPanel.h.moc"
 #include "RecentProjects.h"
 #include "Utils.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QPalette>

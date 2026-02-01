@@ -24,6 +24,7 @@
 #include "OutOfMemoryHandler.h"
 #include "imageproc/Scale.h"
 #include "imageproc/GrayImage.h"
+#include "MultiIndexContainer.h"
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QThread>
@@ -39,18 +40,9 @@
 #include <QEvent>
 #include <QSize>
 #include <QDebug>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <vector>
 #include <new>
-
-using namespace ::boost;
-using namespace ::boost::multi_index;
-using namespace imageproc;
 
 class ThumbnailPixmapCache::Item
 {
@@ -130,16 +122,25 @@ protected:
 	virtual void customEvent(QEvent* e);
 private:
 	class LoadResultEvent;
-	class ItemsByKeyTag;
-	class LoadQueueTag;
-	class RemoveQueueTag;
+	
+	struct ItemsByKeyTag {};
+	struct LoadQueueTag {};
+	struct RemoveQueueTag {};
+	
+	// ImageId extractor from Item
+	struct ItemImageIdExtractor
+	{
+		ImageId operator()(Item const& item) const { return item.imageId; }
+	};
+	
+	using namespace st::multi_index;
 	
 	typedef multi_index_container<
 		Item,
 		indexed_by<
-			ordered_unique<tag<ItemsByKeyTag>, member<Item, ImageId, &Item::imageId> >,
-			sequenced<tag<LoadQueueTag> >,
-			sequenced<tag<RemoveQueueTag> >
+			ordered_unique_index<Item, ItemsByKeyTag, ItemImageIdExtractor>,
+			sequenced_index<Item, LoadQueueTag>,
+			sequenced_index<Item, RemoveQueueTag>
 		>
 	> Container;
 	
@@ -375,7 +376,7 @@ ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir)
 
 	m_thumbDir = thumb_dir;
 
-	BOOST_FOREACH(Item const& item, m_loadQueue) {
+	for (Item const& item : m_loadQueue) {
 		// This trick will make all queued tasks to expire.
 		m_totalLoadAttempts = std::max(
 			m_totalLoadAttempts,
@@ -834,7 +835,7 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
 	// Notify listeners.
 	ThumbnailLoadResult const load_result(result->status(), pixmap);
 	typedef boost::weak_ptr<CompletionHandler> WeakHandler;
-	BOOST_FOREACH (WeakHandler const& wh, completion_handlers) {
+	for (WeakHandler const& wh : completion_handlers) {
 		boost::shared_ptr<CompletionHandler> const sh(wh.lock());
 		if (sh.get()) {
 			(*sh)(load_result);

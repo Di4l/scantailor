@@ -19,36 +19,55 @@
 #ifndef REFCOUNTABLE_H_
 #define REFCOUNTABLE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <atomic>
+#include <memory>
 
-#include <QAtomicInt>
-
+/**
+ * \brief Reference-counted object base class using C++23 atomics.
+ * 
+ * Objects inheriting from this class can be managed by IntrusivePtr
+ * with automatic memory management when reference count reaches zero.
+ * 
+ * The reference counter is stored INSIDE the object (intrusive), not in
+ * a separate control block. This provides excellent cache locality and
+ * is ideal for GUI patterns with frequent ref/unref operations.
+ */
 class RefCountable
 {
 public:
-	RefCountable() : m_refCounter(0) {}
+	RefCountable() noexcept = default;//: m_refCounter(0) {}
 	
-	RefCountable(RefCountable const& other) {
-		// don't copy the reference counter!
+	// Non-copyable: reference counter is not shared between instances
+	RefCountable(RefCountable const&) noexcept {}
+	RefCountable& operator=(RefCountable const&) noexcept { return *this; }
+	
+	virtual ~RefCountable() = default;
+	
+	/**
+	 * Increment reference count.
+	 * Called by IntrusivePtr when taking ownership.
+	 */
+	void ref() const noexcept
+	{
+		m_refCounter.fetch_add(1, std::memory_order_relaxed);
 	}
 	
-	void operator=(RefCountable const& other) {
-		// don't copy the reference counter!
-	}
-	
-	virtual ~RefCountable() {}
-	
-	void ref() const { m_refCounter.fetchAndAddRelaxed(1); }
-	
-	void unref() const {
-		if (m_refCounter.fetchAndAddRelease(-1) == 1) {
+	/**
+	 * Decrement reference count.
+	 * When count reaches zero, deletes this object automatically.
+	 * Called by IntrusivePtr when releasing ownership.
+	 */
+	void unref() const noexcept
+	{
+		if (m_refCounter.fetch_sub(1, std::memory_order_release) == 1)
+		{
+			std::atomic_thread_fence(std::memory_order_acquire);
 			delete this;
 		}
 	}
+
 private:
-	mutable QAtomicInt m_refCounter;
+	mutable std::atomic<int> m_refCounter {0};
 };
 
 #endif

@@ -30,7 +30,6 @@
 #include <Qt>
 #include <QLineF>
 #include <QDebug>
-#include <boost/lambda/lambda.hpp>
 
 ZoneCreationInteraction::ZoneCreationInteraction(
 	ZoneInteractionContext& context, InteractionState& interaction)

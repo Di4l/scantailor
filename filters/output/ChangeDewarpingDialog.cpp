@@ -20,8 +20,6 @@
 #include "ChangeDewarpingDialog.h.moc"
 #include "PageSelectionAccessor.h"
 #include "QtSignalForwarder.h"
-#include <boost/function.hpp>
-#include <boost/lambda/lambda.hpp>
 
 namespace output
 {

@@ -25,7 +25,6 @@
 #include "IntrusivePtr.h"
 #include <QObject>
 #include <boost/mpl/bool.hpp>
-#include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <map>
 

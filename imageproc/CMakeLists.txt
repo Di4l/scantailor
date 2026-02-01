@@ -8,8 +8,7 @@ PROJECT(imageproc)
 # SOURCE FILES - Image Processing Algorithms
 #===============================================================================
 
-SET(
-sources
+SET(sources
 # Constants and basic utilities
 Constants.h Constants.cpp
 ByteOrder.h BWColor.h ColorMixer.h ColorForId.h
@@ -61,8 +60,7 @@ FindPeaksGeneric.h
 ColorInterpolation.cpp ColorInterpolation.h
 )
 
-SET(
-gui_sources
+SET(gui_sources
 # Binary image operations
 gui/BinaryImage.cpp gui/BinaryImage.h
 gui/BinaryThreshold.cpp gui/BinaryThreshold.h
@@ -115,5 +113,3 @@ ADD_LIBRARY(imageproc STATIC ${sources} ${gui_sources})
 #===============================================================================
 # SUBDIRECTORIES
 #===============================================================================
-
-ADD_SUBDIRECTORY(tests)

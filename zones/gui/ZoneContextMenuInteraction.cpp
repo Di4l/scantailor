@@ -33,8 +33,6 @@
 #include <QCursor>
 #include <QMessageBox>
 #include <QDebug>
-#include <boost/foreach.hpp>
-#include <boost/bind.hpp>
 #include <boost/ref.hpp>
 #include <vector>
 #include <assert.h>
@@ -87,7 +85,7 @@ ZoneContextMenuInteraction::zonesUnderMouse(ZoneInteractionContext& context)
 
 	// Find zones containing the mouse position.
 	std::vector<Zone> selectable_zones;
-	BOOST_FOREACH(EditableZoneSet::Zone const& zone, context.zones()) {
+	for (EditableZoneSet::Zone const& zone : context.zones()) {
 		QPainterPath path;
 		path.setFillRule(Qt::WindingFill);
 		path.addPolygon(zone.spline()->toPolygon());
@@ -145,7 +143,7 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(
 			deleteMenuItemFor(*it)
 		);
 
-		BOOST_FOREACH(ZoneContextMenuItem const& item, menu_customizer(*it, std_items)) {
+		for (ZoneContextMenuItem const& item : menu_customizer(*it, std_items)) {
 			QAction* action = m_ptrMenu->addAction(pixmap, item.label());
 			new QtSignalForwarder(
 				action, SIGNAL(triggered()),

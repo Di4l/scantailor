@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -61,9 +62,7 @@
 #include "imageproc/ConnectivityMap.h"
 #include "imageproc/InfluenceMap.h"
 #include "config.h"
-#include <boost/foreach.hpp>
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <QImage>
 #include <QSize>
 #include <QPoint>
@@ -418,7 +417,7 @@ OutputGenerator::modifyBinarizationMask(
 	typedef PictureLayerProperty PLP;
 
 	// Pass 1: ERASER1
-	BOOST_FOREACH(Zone const& zone, zones) {
+	for (Zone const& zone : zones) {
 		if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
 			QPolygonF const poly(zone.spline().toPolygon());
 			PolygonRasterizer::fill(bw_mask, BLACK, xform.map(poly), Qt::WindingFill);
@@ -426,7 +425,7 @@ OutputGenerator::modifyBinarizationMask(
 	}
 
 	// Pass 2: PAINTER2
-	BOOST_FOREACH(Zone const& zone, zones) {
+	for (Zone const& zone : zones) {
 		if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
 			QPolygonF const poly(zone.spline().toPolygon());
 			PolygonRasterizer::fill(bw_mask, WHITE, xform.map(poly), Qt::WindingFill);
@@ -434,7 +433,7 @@ OutputGenerator::modifyBinarizationMask(
 	}
 
 	// Pass 1: ERASER3
-	BOOST_FOREACH(Zone const& zone, zones) {
+	for (Zone const& zone : zones) {
 		if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
 			QPolygonF const poly(zone.spline().toPolygon());
 			PolygonRasterizer::fill(bw_mask, BLACK, xform.map(poly), Qt::WindingFill);
@@ -1046,13 +1045,13 @@ OutputGenerator::processWithDewarping(
 		}
 	}
 
-	boost::shared_ptr<DewarpingPointMapper> mapper(
+	std::shared_ptr<DewarpingPointMapper> mapper(
 		new DewarpingPointMapper(
 			distortion_model, depth_perception.value(),
 			m_xform.transform(), m_contentRect
 		)
 	);
-	boost::function<QPointF(QPointF const&)> const orig_to_output(
+	std::function<QPointF(QPointF const&)> const orig_to_output(
 		boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
 	);
 
@@ -1208,10 +1207,10 @@ OutputGenerator::createDewarper(
 
 	std::vector<QPointF> top_polyline(distortion_model.topCurve().polyline());
 	std::vector<QPointF> bottom_polyline(distortion_model.bottomCurve().polyline());
-	BOOST_FOREACH(QPointF& pt, top_polyline) {
+	for (QPointF& pt : top_polyline) {
 		pt = distortion_model_to_target.map(pt);
 	}
-	BOOST_FOREACH(QPointF& pt, bottom_polyline) {
+	for (QPointF& pt : bottom_polyline) {
 		pt = distortion_model_to_target.map(pt);
 	}
 	return CylindricalSurfaceDewarper(
@@ -1773,7 +1772,7 @@ OutputGenerator::calcDominantBackgroundGrayLevel(QImage const& img)
 void
 OutputGenerator::applyFillZonesInPlace(
 	QImage& img, ZoneSet const& zones,
-	boost::function<QPointF(QPointF const&)> const& orig_to_output) const
+	std::function<QPointF(QPointF const&)> const& orig_to_output) const
 {
 	if (zones.empty()) {
 		return;
@@ -1786,7 +1785,7 @@ OutputGenerator::applyFillZonesInPlace(
 		painter.setRenderHint(QPainter::Antialiasing, true);
 		painter.setPen(Qt::NoPen);
 
-		BOOST_FOREACH(Zone const& zone, zones) {
+		for (Zone const& zone : zones) {
 			QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
 			QPolygonF const poly(zone.spline().transformed(orig_to_output).toPolygon());
 			painter.setBrush(color);
@@ -1817,13 +1816,13 @@ OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const
 void
 OutputGenerator::applyFillZonesInPlace(
 	imageproc::BinaryImage& img, ZoneSet const& zones,
-	boost::function<QPointF(QPointF const&)> const& orig_to_output) const
+	std::function<QPointF(QPointF const&)> const& orig_to_output) const
 {
 	if (zones.empty()) {
 		return;
 	}
 
-	BOOST_FOREACH(Zone const& zone, zones) {
+	for (Zone const& zone : zones) {
 		QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
 		BWColor const bw_color = qGray(color.rgb()) < 128 ? BLACK : WHITE;
 		QPolygonF const poly(zone.spline().transformed(orig_to_output).toPolygon());

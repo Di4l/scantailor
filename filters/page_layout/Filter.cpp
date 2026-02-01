@@ -32,8 +32,6 @@
 #include "OrderByWidthProvider.h"
 #include "OrderByHeightProvider.h"
 #include "Utils.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QRectF>
 #include <QSizeF>
 #include <QString>

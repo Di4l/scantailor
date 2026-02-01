@@ -1,3 +1,4 @@
+#include <functional>
 /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,7 +23,6 @@
 #include "zones/gui/EditableSpline.h"
 #include "SplineVertex.h"
 #include "zones/gui/EditableZoneSet.h"
-#include <boost/function.hpp>
 
 class InteractionHandler;
 class InteractionState;
@@ -32,26 +32,26 @@ class EditableZoneSet;
 class ZoneInteractionContext
 {
 public:
-	typedef boost::function<
+	typedef std::function<
 		InteractionHandler* ()
 	> DefaultInteractionCreator;
 
-	typedef boost::function<
+	typedef std::function<
 		InteractionHandler* (InteractionState& interaction)
 	> ZoneCreationInteractionCreator;
 
-	typedef boost::function<
+	typedef std::function<
 		InteractionHandler* (
 			InteractionState& interaction,
 			EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex
 		)
 	> VertexDragInteractionCreator;
 
-	typedef boost::function<
+	typedef std::function<
 		InteractionHandler* (InteractionState& interaction)
 	> ContextMenuInteractionCreator;
 
-	typedef boost::function<
+	typedef std::function<
 		void (EditableZoneSet::Zone const& zone)
 	> ShowPropertiesCommand;
 

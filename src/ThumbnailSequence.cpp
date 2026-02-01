@@ -1,3 +1,4 @@
+#include <functional>
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,14 +29,7 @@
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
 #include "ScopedIncDec.h"
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/mem_fun.hpp>
-#include <boost/function.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/foreach.hpp>
+#include "MultiIndexContainer.h"
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QGraphicsItemGroup>
@@ -70,9 +64,6 @@
 #include <stddef.h>
 #include <assert.h>
 
-using namespace ::boost::multi_index;
-using namespace ::boost::lambda;
-
 
 class ThumbnailSequence::Item
 {
@@ -101,7 +92,7 @@ private:
 class ThumbnailSequence::GraphicsScene : public QGraphicsScene
 {
 public:
-	typedef boost::function<void (QGraphicsSceneContextMenuEvent*)> ContextMenuEventCallback;
+	typedef std::function<void (QGraphicsSceneContextMenuEvent*)> ContextMenuEventCallback;
 
 	void setContextMenuEventCallback(ContextMenuEventCallback callback) {
 		m_contextMenuEventCallback = callback;
@@ -172,19 +163,24 @@ public:
 		
 	void itemSelectedByUser(CompositeItem* item, Qt::KeyboardModifiers modifiers);
 private:
-	class ItemsByIdTag;
-	class ItemsInOrderTag;
-	class SelectedThenUnselectedTag;
+	struct ItemsByIdTag {};
+	struct ItemsInOrderTag {};
+	struct SelectedThenUnselectedTag {};
+	
+	// PageId extractor from Item
+	struct ItemPageIdExtractor
+	{
+		PageId operator()(Item const& item) const { return item.pageId(); }
+	};
+	
+	using namespace st::multi_index;
 	
 	typedef multi_index_container<
 		Item,
 		indexed_by<
-			ordered_unique<
-				tag<ItemsByIdTag>,
-				const_mem_fun<Item, PageId const&, &Item::pageId>
-			>,
-			sequenced<tag<ItemsInOrderTag> >,
-			sequenced<tag<SelectedThenUnselectedTag> >
+			ordered_unique_index<Item, ItemsByIdTag, ItemPageIdExtractor>,
+			sequenced_index<Item, ItemsInOrderTag>,
+			sequenced_index<Item, SelectedThenUnselectedTag>
 		>
 	> Container;
 	
@@ -582,7 +578,7 @@ ThumbnailSequence::Impl::toPageSequence() const
 {
 	PageSequence pages;
 
-	BOOST_FOREACH(Item const& item, m_itemsInOrder) {
+	for (Item const& item : m_itemsInOrder) {
 		pages.append(item.pageInfo);
 	}
 
@@ -1020,7 +1016,7 @@ std::set<PageId>
 ThumbnailSequence::Impl::selectedItems() const
 {
 	std::set<PageId> selection;
-	BOOST_FOREACH(Item const& item, m_selectedThenUnselected) {
+	for (Item const& item : m_selectedThenUnselected) {
 		if (!item.isSelected()) {
 			break;
 		}
@@ -1266,7 +1262,7 @@ ThumbnailSequence::Impl::clearSelection()
 {
 	m_pSelectionLeader = 0;
 	
-	BOOST_FOREACH(Item const& item, m_selectedThenUnselected) {
+	for (Item const& item : m_selectedThenUnselected) {
 		if (!item.isSelected()) {
 			break;
 		}

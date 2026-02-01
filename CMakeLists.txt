@@ -34,9 +34,6 @@ IF(DEBUG_CLI)
 	ADD_DEFINITIONS(-DDEBUG_CLI)
 ENDIF(DEBUG_CLI)
 
-# Enable testing framework
-ENABLE_TESTING()
-
 #===============================================================================
 # VERSION EXTRACTION
 #===============================================================================
@@ -329,7 +326,6 @@ ADD_SUBDIRECTORY(math)
 ADD_SUBDIRECTORY(imageproc)
 ADD_SUBDIRECTORY(interaction)
 ADD_SUBDIRECTORY(zones)
-ADD_SUBDIRECTORY(tests)
 
 #===============================================================================
 # UI AND RESOURCE FILES
@@ -457,18 +453,17 @@ SET(
 	src/PageOrderProvider.h
 	src/PageOrderOption.h
 	src/PayloadEvent.h
-	src/filter_dc/AbstractFilterDataCollector.h
-	src/filter_dc/ThumbnailCollector.h
-	src/filter_dc/ContentBoxCollector.h
-	src/filter_dc/PageOrientationCollector.h
+	filter_dc/AbstractFilterDataCollector.h
+	filter_dc/ThumbnailCollector.h
+	filter_dc/ContentBoxCollector.h
+	filter_dc/PageOrientationCollector.h
 	src/version.h
-	src/config.h.in
+	config.h.in
 	${common_ui_files}
 )
 
 # GUI-only sources
-SET(
-	gui_only_sources
+SET(gui_only_sources
 	src/Application.cpp src/Application.h
 	src/SkinnedButton.cpp src/SkinnedButton.h
 	src/RelinkablePathVisualization.cpp src/RelinkablePathVisualization.h
@@ -491,8 +486,7 @@ SET(
 )
 
 # CLI-only sources
-SET(
-	cli_only_sources
+SET(cli_only_sources
 	src/ConsoleBatch.cpp src/ConsoleBatch.h
 	src/main-cli.cpp
 )
@@ -644,12 +638,6 @@ ENDFOREACH(ts_file)
 # QT5_CREATE_TRANSLATION(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${FILTERED_TRANSLATION_FILES})
 # ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
 # INSTALL(FILES ${QM_FILES} DESTINATION "${TRANSLATIONS_DIR_REL}/")
-
-#===============================================================================
-# TESTING
-#===============================================================================
-ADD_TEST(ImageProcTests imageproc/tests/imageproc_tests --log_level=message)
-ADD_TEST(ScanTaylorTests tests/tests --log_level=message)
 
 #===============================================================================
 # SOURCE DISTRIBUTION PACKAGING

@@ -24,27 +24,14 @@
 #include "Alignment.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
+#include "MultiIndexContainer.h"
 #include <QSizeF>
 #include <QMutex>
 #include <QMutexLocker>
-#include <boost/foreach.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/multi_index/mem_fun.hpp>
-#include <boost/multi_index/composite_key.hpp>
 #include <algorithm>
 #include <functional> // for std::greater<>
 #include <vector>
 #include <stddef.h>
-
-
-using namespace ::boost;
-using namespace ::boost::multi_index;
-
-namespace page_layout
-{
 
 class Settings::Item
 {
@@ -155,41 +142,50 @@ public:
 		PageId const& page_id, QSizeF const& hard_size_mm,
 		Alignment const& alignment) const;
 private:
-	class SequencedTag;
-	class DescWidthTag;
-	class DescHeightTag;
+	struct SequencedTag {};
+	struct PageIdTag {};
+	struct DescWidthTag {};
+	struct DescHeightTag {};
+	
+	// PageId extractor
+	struct PageIdExtractor
+	{
+		PageId operator()(Item const& item) const { return item.pageId; }
+	};
+	
+	// Composite key extractor for Width ordering (alignedWithOthers DESC, hardWidthMM DESC)
+	struct WidthKeyExtractor
+	{
+		using key_type = std::pair<bool, double>;
+		
+		static key_type extract(Item const& item)
+		{
+			// We use std::pair<bool, double>, and with std::greater<> comparator,
+			// this will order by: alignedWithOthers DESC, then hardWidthMM DESC
+			return {item.alignedWithOthers(), item.hardWidthMM()};
+		}
+	};
+	
+	// Composite key extractor for Height ordering (alignedWithOthers DESC, hardHeightMM DESC)
+	struct HeightKeyExtractor
+	{
+		using key_type = std::pair<bool, double>;
+		
+		static key_type extract(Item const& item)
+		{
+			return {item.alignedWithOthers(), item.hardHeightMM()};
+		}
+	};
+	
+	using namespace st::multi_index;
 	
 	typedef multi_index_container<
 		Item,
 		indexed_by<
-			ordered_unique<member<Item, PageId, &Item::pageId> >,
-			sequenced<tag<SequencedTag> >,
-			ordered_non_unique<
-				tag<DescWidthTag>,
-				// ORDER BY alignedWithOthers DESC, hardWidthMM DESC
-				composite_key<
-					Item,
-					const_mem_fun<Item, bool, &Item::alignedWithOthers>,
-					const_mem_fun<Item, double, &Item::hardWidthMM>
-				>,
-				composite_key_compare<
-					std::greater<bool>,
-					std::greater<double>
-				>
-			>,
-			ordered_non_unique<
-				tag<DescHeightTag>,
-				// ORDER BY alignedWithOthers DESC, hardHeightMM DESC
-				composite_key<
-					Item,
-					const_mem_fun<Item, bool, &Item::alignedWithOthers>,
-					const_mem_fun<Item, double, &Item::hardHeightMM>
-				>,
-				composite_key_compare<
-					std::greater<bool>,
-					std::greater<double>
-				>
-			>
+			ordered_unique_index<Item, PageIdTag, PageIdExtractor>,
+			sequenced_index<Item, SequencedTag>,
+			ordered_non_unique_index<Item, DescWidthTag, WidthKeyExtractor, std::greater<std::pair<bool, double>>>,
+			ordered_non_unique_index<Item, DescHeightTag, HeightKeyExtractor, std::greater<std::pair<bool, double>>>
 		>
 	> Container;
 	
@@ -386,7 +382,7 @@ Settings::Impl::performRelinking(AbstractRelinker const& relinker)
 	QMutexLocker locker(&m_mutex);
 	Container new_items;
 
-	BOOST_FOREACH(Item const& item, m_unorderedItems) {
+	for (Item const& item : m_unorderedItems) {
 		RelinkablePath const old_path(item.pageId.imageId().filePath(), RelinkablePath::File);
 		Item new_item(item);
 		new_item.pageId.imageId().setFilePath(relinker.substitutionPathFor(old_path));

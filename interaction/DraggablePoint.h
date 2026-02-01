@@ -1,3 +1,4 @@
+#include <functional>
  /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,16 +22,15 @@
 
 #include "interaction/gui/DraggableObject.h"
 #include <QPointF>
-#include <boost/function.hpp>
 
 class DraggablePoint : public DraggableObject
 {
 public:
-	typedef boost::function<
+	typedef std::function<
 		QPointF ()
 	> PositionCallback;
 
-	typedef boost::function<
+	typedef std::function<
 		void (QPointF const&)
 	> MoveRequestCallback;
 

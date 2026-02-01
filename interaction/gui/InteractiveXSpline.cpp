@@ -23,7 +23,6 @@
 #include <QCursor>
 #include <QMouseEvent>
 #include <Qt>
-#include <boost/bind.hpp>
 
 struct InteractiveXSpline::NoOp
 {

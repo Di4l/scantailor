@@ -32,9 +32,6 @@
 #include <QColor>
 #include <Qt>
 #include <QtGlobal>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <vector>
 #include <deque>
 #include <algorithm>
@@ -160,7 +157,7 @@ RansacAlgo::buildAndAssessModel(Segment const& seed_segment)
 	RansacModel cur_model;
 	cur_model.add(seed_segment);
 	
-	BOOST_FOREACH(Segment const& seg, m_rSegments) {
+	for (Segment const& seg : m_rSegments) {
 		double const cos = seg.unitVec.dot(seed_segment.unitVec);
 		if (cos > m_cosThreshold) {
 			cur_model.add(seg);
@@ -346,7 +343,7 @@ SequentialColumnProcessor::interpolateSegments(std::vector<Segment> const& segme
 	Vec2d accum_vec;
 	double accum_weight = 0;
 
-	BOOST_FOREACH(Segment const& seg, segments) {
+	for (Segment const& seg : segments) {
 		double const weight = sqrt(double(seg.vertDist));
 		accum_vec += weight * seg.unitVec;
 		accum_weight += weight;
@@ -363,7 +360,7 @@ SequentialColumnProcessor::interpolateSegments(std::vector<Segment> const& segme
 	// normal now points *inside* the image, towards the other bound.
 	
 	// Now find the vertex in m_path through which our line should pass.
-	BOOST_FOREACH(QPoint const& pt, m_path) {
+	for (QPoint const& pt : m_path) {
 		if (normal.dot(pt - line.p1()) < 0) {
 			line.setP1(pt);
 			line.setP2(line.p1() + accum_vec);
@@ -394,7 +391,7 @@ SequentialColumnProcessor::visualizeEnvelope(QImage const& background)
 	painter.setOpacity(0.7);
 	QRectF rect(0, 0, 9, 9);
 
-	BOOST_FOREACH(QPoint pt, m_path) {
+	for (QPoint pt : m_path) {
 		rect.moveCenter(pt + QPointF(0.5, 0.5));
 		painter.drawEllipse(rect);
 	}
@@ -413,7 +410,7 @@ QImage visualizeSegments(QImage const& background, std::vector<Segment> const& s
 	painter.setPen(pen);
 	painter.setOpacity(0.7);
 
-	BOOST_FOREACH(Segment const& seg, segments) {
+	for (Segment const& seg : segments) {
 		painter.drawLine(seg.line);
 	}
 

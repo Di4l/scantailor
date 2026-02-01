@@ -37,8 +37,6 @@
 #include <QColor>
 #include <QDebug>
 #include <Qt>
-#include <boost/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <algorithm>
 #include <math.h>
 #include <assert.h>

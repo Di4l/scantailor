@@ -1,3 +1,4 @@
+#include <functional>
 /*
 	Scan Tailor - Interactive post-processing tool for scanned pages.
 	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,7 +26,6 @@
 #include <QPointF>
 #include <QPixmap>
 #include <QCoreApplication>
-#include <boost/function.hpp>
 
 namespace page_split
 {
@@ -34,8 +34,8 @@ class UnremoveButton : public InteractionHandler
 {
 	Q_DECLARE_TR_FUNCTIONS(page_split::UnremoveButton)
 public:
-	typedef boost::function<QPointF()> PositionGetter;
-	typedef boost::function<void()> ClickCallback;
+	typedef std::function<QPointF()> PositionGetter;
+	typedef std::function<void()> ClickCallback;
 
 	UnremoveButton(PositionGetter const& position_getter);
 

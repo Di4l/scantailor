@@ -29,8 +29,6 @@
 #include "ProjectWriter.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <QString>
 #include <QObject>
 #include <QCoreApplication>

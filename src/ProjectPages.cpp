@@ -25,11 +25,7 @@
 #include "PageSequence.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-#include <boost/foreach.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/member.hpp>
+#include "MultiIndexContainer.h"
 #include <QMutexLocker>
 #include <QFileInfo>
 #include <QSize>
@@ -50,7 +46,7 @@ ProjectPages::ProjectPages(
 {
 	initSubPagesInOrder(layout_direction);
 	
-	BOOST_FOREACH(ImageInfo const& image, info) {
+	for (ImageInfo const& image : info) {
 		ImageDesc image_desc(image);
 		
 		// Enforce some rules.
@@ -74,7 +70,7 @@ ProjectPages::ProjectPages(
 {
 	initSubPagesInOrder(layout_direction);
 	
-	BOOST_FOREACH(ImageFileInfo const& file, files) {
+	for (ImageFileInfo const& file : files) {
 		QString const& file_path = file.fileInfo().absoluteFilePath();
 		std::vector<ImageMetadata> const& images = file.imageInfo();
 		int const num_images = images.size();
@@ -177,12 +173,12 @@ ProjectPages::listRelinkablePaths(VirtualFunction1<void, RelinkablePath const&>&
 		QMutexLocker locker(&m_mutex);
 		
 		files.reserve(m_images.size());
-		BOOST_FOREACH(ImageDesc const& image, m_images) {
+		for (ImageDesc const& image : m_images) {
 			files.push_back(image.id.filePath());
 		}
 	}
 
-	BOOST_FOREACH(QString const& file, files) {
+	for (QString const& file : files) {
 		sink(RelinkablePath(file, RelinkablePath::File));
 	}
 }
@@ -192,7 +188,7 @@ ProjectPages::performRelinking(AbstractRelinker const& relinker)
 {
 	QMutexLocker locker(&m_mutex);
 
-	BOOST_FOREACH(ImageDesc& image, m_images) {
+	for (ImageDesc& image : m_images) {
 		RelinkablePath const old_path(image.id.filePath(), RelinkablePath::File);
 		QString const new_path(relinker.substitutionPathFor(old_path));
 		image.id.setFilePath(new_path);
@@ -340,7 +336,7 @@ ProjectPages::validateDpis() const
 {
 	QMutexLocker locker(&m_mutex);
 	
-	BOOST_FOREACH(ImageDesc const& image, m_images) {
+	for (ImageDesc const& image : m_images) {
 		if (!image.metadata.isDpiOK()) {
 			return false;
 		}
@@ -362,31 +358,41 @@ struct File
 	operator ImageFileInfo() const { return ImageFileInfo(fileName, metadata); }
 };
 
+struct FileByNameTag {};
+struct SequencedTag {};
+
+struct FileNameExtractor
+{
+	QString operator()(File const& f) const { return f.fileName; }
+};
+
+using namespace st::multi_index;
+
 } // anonymous namespace
 
 std::vector<ImageFileInfo>
 ProjectPages::toImageFileInfo() const
 {
-	using namespace boost::multi_index;
-	
-	multi_index_container<
+	typedef multi_index_container<
 		File,
 		indexed_by<
-			ordered_unique<member<File, QString, &File::fileName> >,
-			sequenced<>
+			ordered_unique_index<File, FileByNameTag, FileNameExtractor>,
+			sequenced_index<File, SequencedTag>
 		>
-	> files;
+	> FileContainer;
+	
+	FileContainer files;
 	
 	{
 		QMutexLocker locker(&m_mutex);
 		
-		BOOST_FOREACH(ImageDesc const& image, m_images) {
+		for (ImageDesc const& image : m_images) {
 			File const file(image.id.filePath());
 			files.insert(file).first->metadata.push_back(image.metadata);
 		}
 	}
 	
-	return std::vector<ImageFileInfo>(files.get<1>().begin(), files.get<1>().end());
+	return std::vector<ImageFileInfo>(files.get<SequencedTag>().begin(), files.get<SequencedTag>().end());
 }
 
 void
@@ -395,10 +401,10 @@ ProjectPages::updateMetadataFrom(std::vector<ImageFileInfo> const& files)
 	typedef std::map<ImageId, ImageMetadata> MetadataMap;
 	MetadataMap metadata_map;
 	
-	BOOST_FOREACH(ImageFileInfo const& file, files) {
+	for (ImageFileInfo const& file : files) {
 		QString const file_path(file.fileInfo().absoluteFilePath());
 		int page = 0;
-		BOOST_FOREACH(ImageMetadata const& metadata, file.imageInfo()) {
+		for (ImageMetadata const& metadata : file.imageInfo()) {
 			metadata_map[ImageId(file_path, page)] = metadata;
 			++page;
 		}
@@ -406,7 +412,7 @@ ProjectPages::updateMetadataFrom(std::vector<ImageFileInfo> const& files)
 	
 	QMutexLocker locker(&m_mutex);
 	
-	BOOST_FOREACH(ImageDesc& image, m_images) {
+	for (ImageDesc& image : m_images) {
 		MetadataMap::const_iterator const it(metadata_map.find(image.id));
 		if (it != metadata_map.end()) {
 			image.metadata = it->second;

@@ -21,7 +21,6 @@
 #include "zones/gui/ZoneCreationInteraction.h"
 #include "zones/gui/ZoneVertexDragInteraction.h"
 #include "zones/gui/ZoneContextMenuInteraction.h"
-#include <boost/bind.hpp>
 
 ZoneInteractionContext::ZoneInteractionContext(
 	ImageViewBase& image_view, EditableZoneSet& zones)

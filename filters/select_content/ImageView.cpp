@@ -32,7 +32,6 @@
 #include <QCursor>
 #include <QDebug>
 #include <Qt>
-#include <boost/bind.hpp>
 #include <algorithm>
 
 namespace select_content

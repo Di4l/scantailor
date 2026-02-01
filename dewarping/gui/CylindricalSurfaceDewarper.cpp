@@ -24,7 +24,6 @@
 #include <QLineF>
 #include <QtGlobal>
 #include <QDebug>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <math.h>
 #include <assert.h>
@@ -248,7 +247,7 @@ CylindricalSurfaceDewarper::fourPoint2DHomography(
 	int i = 0;
 
 	typedef std::pair<QPointF, QPointF> Pair;
-	BOOST_FOREACH(Pair const& pair, pairs) {
+	for (Pair const& pair : pairs) {
 		QPointF const from(pair.first);
 		QPointF const to(pair.second);
 		
@@ -297,7 +296,7 @@ CylindricalSurfaceDewarper::threePoint1DHomography(
 	double* pb = B.data();
 
 	typedef std::pair<double, double> Pair;
-	BOOST_FOREACH(Pair const& pair, pairs) {
+	for (Pair const& pair : pairs) {
 		double const from = pair.first;
 		double const to = pair.second;
 		
