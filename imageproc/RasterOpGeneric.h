@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_RASTER_OP_GENERIC_H_
 #define IMAGEPROC_RASTER_OP_GENERIC_H_
 
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <QSize>
 #include <stdint.h>
 #include <assert.h>

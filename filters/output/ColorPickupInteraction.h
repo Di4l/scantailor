@@ -19,9 +19,9 @@
 #ifndef OUTPUT_COLOR_PICKUP_INTERACTION_H_
 #define OUTPUT_COLOR_PICKUP_INTERACTION_H_
 
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
-#include "EditableZoneSet.h"
+#include "zones/gui/EditableZoneSet.h"
 #include "FillColorProperty.h"
 #include "IntrusivePtr.h"
 #include <QCoreApplication>

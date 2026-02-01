@@ -19,7 +19,7 @@
 #ifndef DRAGGABLE_POINT_H_
 #define DRAGGABLE_POINT_H_
 
-#include "DraggableObject.h"
+#include "interaction/gui/DraggableObject.h"
 #include <QPointF>
 #include <boost/function.hpp>
 

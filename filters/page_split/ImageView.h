@@ -20,11 +20,11 @@
 #define PAGE_SPLIT_IMAGEVIEW_H_
 
 #include "ImageViewBase.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
-#include "ObjectDragHandler.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/ZoomHandler.h"
+#include "interaction/gui/ObjectDragHandler.h"
 #include "DraggablePoint.h"
-#include "DraggableLineSegment.h"
+#include "interaction/gui/DraggableLineSegment.h"
 #include "PageLayout.h"
 #include "UnremoveButton.h"
 #include "ImageId.h"

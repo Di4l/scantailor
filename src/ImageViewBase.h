@@ -21,7 +21,7 @@
 
 #include "Margins.h"
 #include "IntrusivePtr.h"
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
 #include "ImagePixmapUnion.h"
 #include <QTimer>

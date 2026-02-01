@@ -28,10 +28,10 @@
 #include "PageId.h"
 #include "ZoneInteractionContext.h"
 #include "ColorPickupInteraction.h"
-#include "EditableSpline.h"
-#include "EditableZoneSet.h"
-#include "ZoomHandler.h"
-#include "DragHandler.h"
+#include "zones/gui/EditableSpline.h"
+#include "zones/gui/EditableZoneSet.h"
+#include "interaction/gui/ZoomHandler.h"
+#include "interaction/gui/DragHandler.h"
 #include <boost/function.hpp>
 #include <QPoint>
 #include <QPointF>

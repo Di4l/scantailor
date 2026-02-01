@@ -17,10 +17,10 @@
 */
 
 #include "ZoneInteractionContext.h"
-#include "ZoneDefaultInteraction.h"
-#include "ZoneCreationInteraction.h"
-#include "ZoneVertexDragInteraction.h"
-#include "ZoneContextMenuInteraction.h"
+#include "zones/gui/ZoneDefaultInteraction.h"
+#include "zones/gui/ZoneCreationInteraction.h"
+#include "zones/gui/ZoneVertexDragInteraction.h"
+#include "zones/gui/ZoneContextMenuInteraction.h"
 #include <boost/bind.hpp>
 
 ZoneInteractionContext::ZoneInteractionContext(

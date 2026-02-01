@@ -19,7 +19,7 @@
 #ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_
 #define DEWARPING_DEWARPING_POINT_MAPPER_H_
 
-#include "CylindricalSurfaceDewarper.h"
+#include "dewarping/gui/CylindricalSurfaceDewarper.h"
 
 class QRect;
 class QTransform;

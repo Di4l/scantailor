@@ -19,7 +19,7 @@
 #ifndef ZONE_H_
 #define ZONE_H_
 
-#include "SerializableSpline.h"
+#include "zones/gui/SerializableSpline.h"
 #include "IntrusivePtr.h"
 #include "PropertySet.h"
 

@@ -17,7 +17,7 @@
 */
 
 #include "SlicedHistogram.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "BitOps.h"
 #include <QRect>
 #include <stdexcept>

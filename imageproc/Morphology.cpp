@@ -17,10 +17,10 @@
 */
 
 #include "Morphology.h"
-#include "BinaryImage.h"
-#include "GrayImage.h"
+#include "imageproc/gui/BinaryImage.h"
+#include "imageproc/gui/GrayImage.h"
 #include "RasterOp.h"
-#include "Grayscale.h"
+#include "imageproc/gui/Grayscale.h"
 #include <QPoint>
 #include <QSize>
 #include <QRect>

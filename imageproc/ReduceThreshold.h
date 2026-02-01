@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_REDUCETHRESHOLD_H_
 #define IMAGEPROC_REDUCETHRESHOLD_H_
 
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 
 namespace imageproc
 {

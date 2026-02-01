@@ -19,9 +19,9 @@
 #include "PolynomialSurface.h"
 #include "LeastSquaresFit.h"
 #include "AlignedArray.h"
-#include "BinaryImage.h"
-#include "GrayImage.h"
-#include "Grayscale.h"
+#include "imageproc/gui/BinaryImage.h"
+#include "imageproc/gui/GrayImage.h"
+#include "imageproc/gui/Grayscale.h"
 #include "BitOps.h"
 #include <QDebug>
 #include <boost/foreach.hpp>

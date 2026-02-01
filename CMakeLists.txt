@@ -42,7 +42,7 @@ ENABLE_TESTING()
 #===============================================================================
 # Copy version.h to build directory to avoid conflicts
 CONFIGURE_FILE(
-	"${PROJECT_SOURCE_DIR}/version.h"
+	"${PROJECT_SOURCE_DIR}/src/version.h"
 	"${PROJECT_BINARY_DIR}/.version.h" COPYONLY
 )
 
@@ -52,7 +52,7 @@ IF(NOT "${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
 ENDIF()
 
 # Extract VERSION from version.h
-FILE(READ "${PROJECT_SOURCE_DIR}/version.h" version_h_contents)
+FILE(READ "${PROJECT_SOURCE_DIR}/src/version.h" version_h_contents)
 STRING(
 	REGEX REPLACE
 	".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
@@ -75,7 +75,7 @@ ENDIF()
 #===============================================================================
 # INCLUDE DIRECTORIES (PRIMARY)
 #===============================================================================
-INCLUDE_DIRECTORIES(. foundation math interaction zones)
+INCLUDE_DIRECTORIES(. src foundation math interaction zones)
 
 #===============================================================================
 # CMAKE MODULES AND HELPERS
@@ -375,126 +375,126 @@ ENDIF()
 # Common sources (shared between GUI and CLI)
 SET(
 	common_sources
-	BackgroundExecutor.cpp BackgroundExecutor.h
-	OpenGLSupport.cpp OpenGLSupport.h
-	PixmapRenderer.cpp PixmapRenderer.h
-	BubbleAnimation.cpp BubbleAnimation.h
-	ProcessingIndicationWidget.cpp ProcessingIndicationWidget.h
-	NonOwningWidget.cpp NonOwningWidget.h
-	Dpi.cpp Dpi.h Dpm.cpp Dpm.h
-	SmartFilenameOrdering.cpp SmartFilenameOrdering.h
-	AbstractRelinker.h
-	RelinkablePath.cpp RelinkablePath.h
-	ImageInfo.cpp ImageInfo.h
-	ImageFileInfo.cpp ImageFileInfo.h
-	ImageMetadata.cpp ImageMetadata.h
-	RecentProjects.cpp RecentProjects.h
-	OutOfMemoryHandler.cpp OutOfMemoryHandler.h
-	CommandLine.cpp CommandLine.h
-	PageSelectionAccessor.cpp PageSelectionAccessor.h
-	PageSelectionProvider.h
-	ContentSpanFinder.cpp ContentSpanFinder.h
-	PhysicalTransformation.cpp PhysicalTransformation.h
-	ImageTransformation.cpp ImageTransformation.h
-	ImagePixmapUnion.h
-	ImageViewBase.cpp ImageViewBase.h
-	BasicImageView.cpp BasicImageView.h
-	StageListView.cpp StageListView.h
-	DebugImageView.cpp DebugImageView.h
-	TabbedDebugImages.cpp TabbedDebugImages.h
-	ThumbnailLoadResult.h
-	ThumbnailPixmapCache.cpp ThumbnailPixmapCache.h
-	ThumbnailBase.cpp ThumbnailBase.h
-	ThumbnailFactory.cpp ThumbnailFactory.h
-	IncompleteThumbnail.cpp IncompleteThumbnail.h
-	ContentBoxPropagator.cpp ContentBoxPropagator.h
-	PageOrientationPropagator.cpp PageOrientationPropagator.h
-	DebugImages.cpp DebugImages.h
-	ImageId.cpp ImageId.h
-	PageId.cpp PageId.h
-	PageInfo.cpp PageInfo.h
-	BackgroundTask.cpp BackgroundTask.h
-	ProcessingTaskQueue.cpp ProcessingTaskQueue.h
-	PageSequence.cpp PageSequence.h
-	StageSequence.cpp StageSequence.h
-	ProjectPages.cpp ProjectPages.h
-	FilterData.cpp FilterData.h
-	ImageMetadataLoader.cpp ImageMetadataLoader.h
-	TiffReader.cpp TiffReader.h
-	TiffWriter.cpp TiffWriter.h
-	PngMetadataLoader.cpp PngMetadataLoader.h
-	TiffMetadataLoader.cpp TiffMetadataLoader.h
-	JpegMetadataLoader.cpp JpegMetadataLoader.h
-	ImageLoader.cpp ImageLoader.h
-	ErrorWidget.cpp ErrorWidget.h
-	OrthogonalRotation.cpp OrthogonalRotation.h
-	WorkerThread.cpp WorkerThread.h
-	LoadFileTask.cpp LoadFileTask.h
-	FilterOptionsWidget.cpp FilterOptionsWidget.h
-	TaskStatus.h FilterUiInterface.h
-	ProjectReader.cpp ProjectReader.h
-	ProjectWriter.cpp ProjectWriter.h
-	XmlMarshaller.cpp XmlMarshaller.h
-	XmlUnmarshaller.cpp XmlUnmarshaller.h
-	AtomicFileOverwriter.cpp AtomicFileOverwriter.h
-	EstimateBackground.cpp EstimateBackground.h
-	Despeckle.cpp Despeckle.h
-	ThreadPriority.cpp ThreadPriority.h
-	FileNameDisambiguator.cpp FileNameDisambiguator.h
-	OutputFileNameGenerator.cpp OutputFileNameGenerator.h
-	PageRange.cpp PageRange.h
-	SelectedPage.cpp SelectedPage.h
-	Utils.cpp Utils.h
-	PageView.h
-	AutoManualMode.h
-	AbstractCommand.h
-	AbstractFilter.h
-	BeforeOrAfter.h
-	FilterResult.h
-	CompositeCacheDrivenTask.h
-	Margins.h
-	ChangedStateItemDelegate.h
-	PageOrderProvider.h
-	PageOrderOption.h
-	PayloadEvent.h
-	filter_dc/AbstractFilterDataCollector.h
-	filter_dc/ThumbnailCollector.h
-	filter_dc/ContentBoxCollector.h
-	filter_dc/PageOrientationCollector.h
-	version.h
-	config.h.in
+	src/BackgroundExecutor.cpp src/BackgroundExecutor.h
+	src/OpenGLSupport.cpp src/OpenGLSupport.h
+	src/PixmapRenderer.cpp src/PixmapRenderer.h
+	src/BubbleAnimation.cpp src/BubbleAnimation.h
+	src/ProcessingIndicationWidget.cpp src/ProcessingIndicationWidget.h
+	src/NonOwningWidget.cpp src/NonOwningWidget.h
+	src/Dpi.cpp src/Dpi.h src/Dpm.cpp src/Dpm.h
+	src/SmartFilenameOrdering.cpp src/SmartFilenameOrdering.h
+	src/AbstractRelinker.h
+	src/RelinkablePath.cpp src/RelinkablePath.h
+	src/ImageInfo.cpp src/ImageInfo.h
+	src/ImageFileInfo.cpp src/ImageFileInfo.h
+	src/ImageMetadata.cpp src/ImageMetadata.h
+	src/RecentProjects.cpp src/RecentProjects.h
+	src/OutOfMemoryHandler.cpp src/OutOfMemoryHandler.h
+	src/CommandLine.cpp src/CommandLine.h
+	src/PageSelectionAccessor.cpp src/PageSelectionAccessor.h
+	src/PageSelectionProvider.h
+	src/ContentSpanFinder.cpp src/ContentSpanFinder.h
+	src/PhysicalTransformation.cpp src/PhysicalTransformation.h
+	src/ImageTransformation.cpp src/ImageTransformation.h
+	src/ImagePixmapUnion.h
+	src/ImageViewBase.cpp src/ImageViewBase.h
+	src/BasicImageView.cpp src/BasicImageView.h
+	src/StageListView.cpp src/StageListView.h
+	src/DebugImageView.cpp src/DebugImageView.h
+	src/TabbedDebugImages.cpp src/TabbedDebugImages.h
+	src/ThumbnailLoadResult.h
+	src/ThumbnailPixmapCache.cpp src/ThumbnailPixmapCache.h
+	src/ThumbnailBase.cpp src/ThumbnailBase.h
+	src/ThumbnailFactory.cpp src/ThumbnailFactory.h
+	src/IncompleteThumbnail.cpp src/IncompleteThumbnail.h
+	src/ContentBoxPropagator.cpp src/ContentBoxPropagator.h
+	src/PageOrientationPropagator.cpp src/PageOrientationPropagator.h
+	src/DebugImages.cpp src/DebugImages.h
+	src/ImageId.cpp src/ImageId.h
+	src/PageId.cpp src/PageId.h
+	src/PageInfo.cpp src/PageInfo.h
+	src/BackgroundTask.cpp src/BackgroundTask.h
+	src/ProcessingTaskQueue.cpp src/ProcessingTaskQueue.h
+	src/PageSequence.cpp src/PageSequence.h
+	src/StageSequence.cpp src/StageSequence.h
+	src/ProjectPages.cpp src/ProjectPages.h
+	src/FilterData.cpp src/FilterData.h
+	src/ImageMetadataLoader.cpp src/ImageMetadataLoader.h
+	src/TiffReader.cpp src/TiffReader.h
+	src/TiffWriter.cpp src/TiffWriter.h
+	src/PngMetadataLoader.cpp src/PngMetadataLoader.h
+	src/TiffMetadataLoader.cpp src/TiffMetadataLoader.h
+	src/JpegMetadataLoader.cpp src/JpegMetadataLoader.h
+	src/ImageLoader.cpp src/ImageLoader.h
+	src/ErrorWidget.cpp src/ErrorWidget.h
+	src/OrthogonalRotation.cpp src/OrthogonalRotation.h
+	src/WorkerThread.cpp src/WorkerThread.h
+	src/LoadFileTask.cpp src/LoadFileTask.h
+	src/FilterOptionsWidget.cpp src/FilterOptionsWidget.h
+	src/TaskStatus.h src/FilterUiInterface.h
+	src/ProjectReader.cpp src/ProjectReader.h
+	src/ProjectWriter.cpp src/ProjectWriter.h
+	src/XmlMarshaller.cpp src/XmlMarshaller.h
+	src/XmlUnmarshaller.cpp src/XmlUnmarshaller.h
+	src/AtomicFileOverwriter.cpp src/AtomicFileOverwriter.h
+	src/EstimateBackground.cpp src/EstimateBackground.h
+	src/Despeckle.cpp src/Despeckle.h
+	src/ThreadPriority.cpp src/ThreadPriority.h
+	src/FileNameDisambiguator.cpp src/FileNameDisambiguator.h
+	src/OutputFileNameGenerator.cpp src/OutputFileNameGenerator.h
+	src/PageRange.cpp src/PageRange.h
+	src/SelectedPage.cpp src/SelectedPage.h
+	src/Utils.cpp src/Utils.h
+	src/PageView.h
+	src/AutoManualMode.h
+	src/AbstractCommand.h
+	src/AbstractFilter.h
+	src/BeforeOrAfter.h
+	src/FilterResult.h
+	src/CompositeCacheDrivenTask.h
+	src/Margins.h
+	src/ChangedStateItemDelegate.h
+	src/PageOrderProvider.h
+	src/PageOrderOption.h
+	src/PayloadEvent.h
+	src/filter_dc/AbstractFilterDataCollector.h
+	src/filter_dc/ThumbnailCollector.h
+	src/filter_dc/ContentBoxCollector.h
+	src/filter_dc/PageOrientationCollector.h
+	src/version.h
+	src/config.h.in
 	${common_ui_files}
 )
 
 # GUI-only sources
 SET(
 	gui_only_sources
-	Application.cpp Application.h
-	SkinnedButton.cpp SkinnedButton.h
-	RelinkablePathVisualization.cpp RelinkablePathVisualization.h
-	RelinkingModel.cpp RelinkingModel.h
-	RelinkingSortingModel.cpp RelinkingSortingModel.h
-	RelinkingListView.cpp RelinkingListView.h
-	RelinkingDialog.cpp RelinkingDialog.h
-	SettingsDialog.cpp SettingsDialog.h
-	FixDpiDialog.cpp FixDpiDialog.h
-	LoadFilesStatusDialog.cpp LoadFilesStatusDialog.h
-	ProjectCreationContext.cpp ProjectCreationContext.h
-	ProjectOpeningContext.cpp ProjectOpeningContext.h
-	OutOfMemoryDialog.cpp OutOfMemoryDialog.h
-	ThumbnailSequence.cpp ThumbnailSequence.h
-	ProjectFilesDialog.cpp ProjectFilesDialog.h
-	NewOpenProjectPanel.cpp NewOpenProjectPanel.h
-	SystemLoadWidget.cpp SystemLoadWidget.h
-	MainWindow.cpp MainWindow.h
-	main.cpp
+	src/Application.cpp src/Application.h
+	src/SkinnedButton.cpp src/SkinnedButton.h
+	src/RelinkablePathVisualization.cpp src/RelinkablePathVisualization.h
+	src/RelinkingModel.cpp src/RelinkingModel.h
+	src/RelinkingSortingModel.cpp src/RelinkingSortingModel.h
+	src/RelinkingListView.cpp src/RelinkingListView.h
+	src/RelinkingDialog.cpp src/RelinkingDialog.h
+	src/SettingsDialog.cpp src/SettingsDialog.h
+	src/FixDpiDialog.cpp src/FixDpiDialog.h
+	src/LoadFilesStatusDialog.cpp src/LoadFilesStatusDialog.h
+	src/ProjectCreationContext.cpp src/ProjectCreationContext.h
+	src/ProjectOpeningContext.cpp src/ProjectOpeningContext.h
+	src/OutOfMemoryDialog.cpp src/OutOfMemoryDialog.h
+	src/ThumbnailSequence.cpp src/ThumbnailSequence.h
+	src/ProjectFilesDialog.cpp src/ProjectFilesDialog.h
+	src/NewOpenProjectPanel.cpp src/NewOpenProjectPanel.h
+	src/SystemLoadWidget.cpp src/SystemLoadWidget.h
+	src/MainWindow.cpp src/MainWindow.h
+	src/main.cpp
 )
 
 # CLI-only sources
 SET(
 	cli_only_sources
-	ConsoleBatch.cpp ConsoleBatch.h
-	main-cli.cpp
+	src/ConsoleBatch.cpp src/ConsoleBatch.h
+	src/main-cli.cpp
 )
 
 SOURCE_GROUP("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})

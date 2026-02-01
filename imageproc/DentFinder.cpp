@@ -17,7 +17,7 @@
 */
 
 #include "DentFinder.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "BWColor.h"
 #include <assert.h>
 

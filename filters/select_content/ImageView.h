@@ -20,11 +20,11 @@
 #define SELECT_CONTENT_IMAGEVIEW_H_
 
 #include "ImageViewBase.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/ZoomHandler.h"
 #include "DraggablePoint.h"
-#include "DraggableLineSegment.h"
-#include "ObjectDragHandler.h"
+#include "interaction/gui/DraggableLineSegment.h"
+#include "interaction/gui/ObjectDragHandler.h"
 #include <QRectF>
 #include <QSizeF>
 #include <QString>

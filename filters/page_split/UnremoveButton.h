@@ -19,7 +19,7 @@
 #ifndef UNREMOVE_BUTTON_H_
 #define UNREMOVE_BUTTON_H_
 
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
 #include "Proximity.h"
 #include <QPointF>

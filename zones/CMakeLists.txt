@@ -21,20 +21,23 @@ SET(SOURCES
     SplineVertex.h
     SplineSegment.cpp
     SplineSegment.h
-    EditableSpline.cpp
-    EditableSpline.h
-    SerializableSpline.cpp
-    SerializableSpline.h
     Zone.cpp
     Zone.h
     ZoneSet.cpp
     ZoneSet.h
+    ZoneInteractionContext.cpp
+    ZoneInteractionContext.h
+)
+
+SET(GUI_SOURCES
+    EditableSpline.cpp
+    EditableSpline.h
+    SerializableSpline.cpp
+    SerializableSpline.h
     EditableZoneSet.cpp
     EditableZoneSet.h
     BasicSplineVisualizer.cpp
     BasicSplineVisualizer.h
-    ZoneInteractionContext.cpp
-    ZoneInteractionContext.h
     ZoneDefaultInteraction.cpp
     ZoneDefaultInteraction.h
     ZoneCreationInteraction.cpp
@@ -45,6 +48,8 @@ SET(SOURCES
     ZoneContextMenuInteraction.h
     ZoneContextMenuItem.h
 )
+
+SET(SOURCES ${SOURCES} gui/${GUI_SOURCES})
 
 SOURCE_GROUP(Sources FILES ${SOURCES})
 

@@ -19,8 +19,8 @@
 #ifndef IMAGEPROC_GRAYRASTEROP_H_
 #define IMAGEPROC_GRAYRASTEROP_H_
 
-#include "Grayscale.h"
-#include "GrayImage.h"
+#include "imageproc/gui/Grayscale.h"
+#include "imageproc/gui/GrayImage.h"
 #include <QPoint>
 #include <QRect>
 #include <QSize>

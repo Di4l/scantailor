@@ -17,17 +17,20 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 #===============================================================================
 
 SET(SOURCES
-    DraggableObject.h
     DraggablePoint.cpp
     DraggablePoint.h
+    InteractionState.cpp
+    InteractionState.h
+)
+
+SET(GUI_SOURCES
+    DraggableObject.h
     DraggableLineSegment.cpp
     DraggableLineSegment.h
     ObjectDragHandler.cpp
     ObjectDragHandler.h
     InteractionHandler.cpp
     InteractionHandler.h
-    InteractionState.cpp
-    InteractionState.h
     DragHandler.cpp
     DragHandler.h
     DragWatcher.cpp
@@ -37,6 +40,8 @@ SET(SOURCES
     InteractiveXSpline.cpp
     InteractiveXSpline.h
 )
+
+SET(SOURCES ${SOURCES} gui/${GUI_SOURCES})
 
 SOURCE_GROUP(Sources FILES ${SOURCES})
 

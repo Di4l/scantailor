@@ -20,8 +20,8 @@
 */
 
 #include "SEDM.h"
-#include "BinaryImage.h"
-#include "ConnectivityMap.h"
+#include "imageproc/gui/BinaryImage.h"
+#include "imageproc/gui/ConnectivityMap.h"
 #include "Morphology.h"
 #include "SeedFill.h"
 #include "RasterOp.h"

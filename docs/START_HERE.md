@@ -160,8 +160,6 @@ docs/
    - Guía de lectura
    - Next steps
 
-
-
 ---
 
 ## 🎯 RECOMENDACIÓN EN UNA FRASE

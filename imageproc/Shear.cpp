@@ -18,7 +18,7 @@
 
 #include "Shear.h"
 #include "RasterOp.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <QRect>
 #include <QPoint>
 #include <stdexcept>

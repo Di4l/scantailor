@@ -20,8 +20,8 @@
 #define OUTPUT_IMAGEVIEW_H_
 
 #include "ImageViewBase.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/ZoomHandler.h"
 #include <QColor>
 
 class ImageTransformation;

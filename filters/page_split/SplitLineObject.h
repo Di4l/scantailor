@@ -19,7 +19,7 @@
 #ifndef PAGE_SPLIT_SPLIT_LINE_OBJECT_H_
 #define PAGE_SPLIT_SPLIT_LINE_OBJECT_H_
 
-#include "DraggableObject.h"
+#include "interaction/gui/DraggableObject.h"
 
 namespace page_split
 {

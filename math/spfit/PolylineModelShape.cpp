@@ -19,9 +19,9 @@
 #include "PolylineModelShape.h"
 #include "FrenetFrame.h"
 #include "NumericTraits.h"
-#include "XSpline.h"
+#include "math/gui/XSpline.h"
 #include "VecNT.h"
-#include "ToLineProjector.h"
+#include "math/gui/ToLineProjector.h"
 #include <QDebug>
 #include <boost/foreach.hpp>
 #include <stdexcept>

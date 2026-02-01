@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "ModelShape.h"
 #include "SqDistApproximant.h"
-#include "XSpline.h"
+#include "math/gui/XSpline.h"
 #include "VecNT.h"
 #include "FlagOps.h"
 #include <QPointF>

@@ -12,26 +12,32 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 SET(
 GENERIC_SOURCES
-# Linear algebra and solvers
+# Linear algebra and solvers (CORE)
 LinearSolver.cpp LinearSolver.h
 MatrixCalc.h
 HomographicTransform.h
 
-# Geometric calculations
-SidesOfLine.cpp SidesOfLine.h
-ToLineProjector.cpp ToLineProjector.h
-ArcLengthMapper.cpp ArcLengthMapper.h
-LineIntersectionScalar.cpp LineIntersectionScalar.h
-LineBoundedByRect.cpp LineBoundedByRect.h
-PolylineIntersector.cpp PolylineIntersector.h
-
-# Function representations
+# Function representations (CORE)
 LinearFunction.cpp LinearFunction.h
 QuadraticFunction.cpp QuadraticFunction.h
-XSpline.cpp XSpline.h
+ArcLengthMapper.cpp ArcLengthMapper.h
+)
+
+SET(
+GENERIC_GUI_SOURCES
+# Geometric calculations (GUI)
+gui/SidesOfLine.cpp gui/SidesOfLine.h
+gui/ToLineProjector.cpp gui/ToLineProjector.h
+gui/LineIntersectionScalar.cpp gui/LineIntersectionScalar.h
+gui/LineBoundedByRect.cpp gui/LineBoundedByRect.h
+gui/PolylineIntersector.cpp gui/PolylineIntersector.h
+
+# Function representations (GUI)
+gui/XSpline.cpp gui/XSpline.h
 )
 
 SOURCE_GROUP("Sources" FILES ${GENERIC_SOURCES})
+SOURCE_GROUP("GUI Sources" FILES ${GENERIC_GUI_SOURCES})
 
 #===============================================================================
 # SOURCE FILES - Spline Fitting Framework
@@ -71,7 +77,7 @@ SOURCE_GROUP("Sources\\Differentiation Framework" FILES ${ADIFF_SOURCES})
 # BUILD TARGET
 #===============================================================================
 
-ADD_LIBRARY(math STATIC ${GENERIC_SOURCES} ${SPFIT_SOURCES} ${ADIFF_SOURCES})
+ADD_LIBRARY(math STATIC ${GENERIC_SOURCES} ${GENERIC_GUI_SOURCES} ${SPFIT_SOURCES} ${ADIFF_SOURCES})
 
 #===============================================================================
 # SUBDIRECTORIES - TESTS

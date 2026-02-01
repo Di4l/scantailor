@@ -22,8 +22,8 @@
 #include "ImageViewBase.h"
 #include "OrthogonalRotation.h"
 #include "ImageTransformation.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/ZoomHandler.h"
 
 namespace fix_orientation
 {

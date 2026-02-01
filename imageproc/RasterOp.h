@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_RASTEROP_H_
 #define IMAGEPROC_RASTEROP_H_
 
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <QPoint>
 #include <QRect>
 #include <QSize>

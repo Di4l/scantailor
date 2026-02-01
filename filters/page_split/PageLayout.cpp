@@ -20,7 +20,7 @@
 #include "NumericTraits.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "ToLineProjector.h"
+#include "math/gui/ToLineProjector.h"
 #include "imageproc/PolygonUtils.h"
 #include <QPolygonF>
 #include <QSizeF>

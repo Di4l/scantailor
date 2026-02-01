@@ -17,7 +17,7 @@
 */
 
 #include "UpscaleIntegerTimes.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <QSize>
 #include <QRect>
 #include <stdexcept>

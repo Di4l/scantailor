@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PolygonUtils.h"
+#include "imageproc/gui/PolygonUtils.h"
 #include <QPolygonF>
 #include <QPointF>
 #include <QLineF>

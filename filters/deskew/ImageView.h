@@ -21,9 +21,9 @@
 
 #include "ImageViewBase.h"
 #include "ImageTransformation.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
-#include "ObjectDragHandler.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/ZoomHandler.h"
+#include "interaction/gui/ObjectDragHandler.h"
 #include "DraggablePoint.h"
 #include <QPolygonF>
 #include <QPoint>

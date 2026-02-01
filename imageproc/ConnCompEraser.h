@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "Connectivity.h"
 #include "ConnComp.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <stack>
 #include <stdint.h>
 

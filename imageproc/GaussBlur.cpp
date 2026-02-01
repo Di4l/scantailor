@@ -20,7 +20,7 @@
 */
 
 #include "GaussBlur.h"
-#include "GrayImage.h"
+#include "imageproc/gui/GrayImage.h"
 #include "Constants.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>

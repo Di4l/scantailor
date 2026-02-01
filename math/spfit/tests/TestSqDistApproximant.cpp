@@ -18,7 +18,7 @@
 
 #include "SqDistApproximant.h"
 #include "VecNT.h"
-#include "ToLineProjector.h"
+#include "math/gui/ToLineProjector.h"
 #include <QPointF>
 #include <QLineF>
 #include <boost/test/auto_unit_test.hpp>

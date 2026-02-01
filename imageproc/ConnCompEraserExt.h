@@ -23,7 +23,7 @@
 #include "Connectivity.h"
 #include "ConnCompEraser.h"
 #include "ConnComp.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 
 class QRect;
 

@@ -17,6 +17,7 @@ Toda la documentación está en:
 - **[`docs/`](./docs/)** - Análisis técnico, planning y ejemplos
   - 👉 Comienza: [`docs/START_HERE.md`](./docs/START_HERE.md)
   - 📖 Índice: [`docs/INDEX.md`](./docs/INDEX.md)
+  - 🏗️ Estructura del proyecto: [`docs/PROJECT_STRUCTURE.md`](./docs/PROJECT_STRUCTURE.md)
 
 ## Guía Rápida
 
@@ -28,6 +29,9 @@ Toda la documentación está en:
 
 **¿Necesitas entender la arquitectura?**  
 → Lee [`docs/ARCHITECTURE_CORE_ANALYSIS.md`](./docs/ARCHITECTURE_CORE_ANALYSIS.md)
+
+**¿Quieres entender la estructura del código?**  
+→ Lee [`docs/PROJECT_STRUCTURE.md`](./docs/PROJECT_STRUCTURE.md)
 
 **¿Quieres verlo todo?**  
 → Ve a [`docs/INDEX.md`](./docs/INDEX.md)

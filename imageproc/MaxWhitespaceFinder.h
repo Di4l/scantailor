@@ -20,7 +20,7 @@
 #define IMAGEPROC_MAX_WHITESPACE_FINDER_H_
 
 #include "NonCopyable.h"
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "IntegralImage.h"
 #include <QRect>
 #include <QSize>

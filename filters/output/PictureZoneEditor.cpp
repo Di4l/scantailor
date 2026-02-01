@@ -21,7 +21,7 @@
 #include "NonCopyable.h"
 #include "Zone.h"
 #include "ZoneSet.h"
-#include "SerializableSpline.h"
+#include "zones/gui/SerializableSpline.h"
 #include "PropertySet.h"
 #include "PictureLayerProperty.h"
 #include "PictureZonePropDialog.h"

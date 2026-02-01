@@ -19,9 +19,9 @@
 #ifndef ZONE_INTERACTION_CONTEXT_H_
 #define ZONE_INTERACTION_CONTEXT_H_
 
-#include "EditableSpline.h"
+#include "zones/gui/EditableSpline.h"
 #include "SplineVertex.h"
-#include "EditableZoneSet.h"
+#include "zones/gui/EditableZoneSet.h"
 #include <boost/function.hpp>
 
 class InteractionHandler;

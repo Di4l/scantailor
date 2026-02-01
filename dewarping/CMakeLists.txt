@@ -11,34 +11,38 @@ PROJECT("Dewarping library")
 #===============================================================================
 
 SET(SOURCES
-    Curve.cpp
-    Curve.h
-    DistortionModel.cpp
-    DistortionModel.h
-    DistortionModelBuilder.cpp
-    DistortionModelBuilder.h
-    DetectVertContentBounds.cpp
-    DetectVertContentBounds.h
-    TowardsLineTracer.cpp
-    TowardsLineTracer.h
-    TextLineTracer.cpp
-    TextLineTracer.h
-    TextLineRefiner.cpp
-    TextLineRefiner.h
-    TopBottomEdgeTracer.cpp
-    TopBottomEdgeTracer.h
-    CylindricalSurfaceDewarper.cpp
-    CylindricalSurfaceDewarper.h
     DewarpingPointMapper.cpp
     DewarpingPointMapper.h
-    RasterDewarper.cpp
-    RasterDewarper.h
+    DistortionModel.cpp
+    DistortionModel.h
+)
+
+SET(GUI_SOURCES
+    gui/Curve.cpp
+    gui/Curve.h
+    gui/DistortionModelBuilder.cpp
+    gui/DistortionModelBuilder.h
+    gui/DetectVertContentBounds.cpp
+    gui/DetectVertContentBounds.h
+    gui/TowardsLineTracer.cpp
+    gui/TowardsLineTracer.h
+    gui/TextLineTracer.cpp
+    gui/TextLineTracer.h
+    gui/TextLineRefiner.cpp
+    gui/TextLineRefiner.h
+    gui/TopBottomEdgeTracer.cpp
+    gui/TopBottomEdgeTracer.h
+    gui/CylindricalSurfaceDewarper.cpp
+    gui/CylindricalSurfaceDewarper.h
+    gui/RasterDewarper.cpp
+    gui/RasterDewarper.h
 )
 
 SOURCE_GROUP("Sources" FILES ${SOURCES})
+SOURCE_GROUP("GUI Sources" FILES ${GUI_SOURCES})
 
 #===============================================================================
 # Build Target
 #===============================================================================
 
-ADD_LIBRARY(dewarping STATIC ${SOURCES})
+ADD_LIBRARY(dewarping STATIC ${SOURCES} ${GUI_SOURCES})

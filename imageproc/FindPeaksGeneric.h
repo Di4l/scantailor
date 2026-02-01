@@ -19,7 +19,7 @@
 #ifndef IMAGEPROC_FIND_PEAKS_H_
 #define IMAGEPROC_FIND_PEAKS_H_
 
-#include "BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "Connectivity.h"
 #include "SeedFillGeneric.h"
 #include "LocalMinMaxGeneric.h"

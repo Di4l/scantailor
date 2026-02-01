@@ -17,18 +17,11 @@ NonCopyable.h IntrusivePtr.h RefCountable.h
 # Utility containers and helpers
 AlignedArray.h
 FastQueue.h
-SafeDeletingQObjectPtr.h
 ScopedIncDec.h ScopedDecInc.h
 Span.h VirtualFunction.h FlagOps.h
 # File and property management
-AutoRemovingFile.cpp AutoRemovingFile.h
 Proximity.cpp Proximity.h
 Property.h
-PropertyFactory.cpp PropertyFactory.h
-PropertySet.cpp PropertySet.h
-# Performance and Qt integration
-PerformanceTimer.cpp PerformanceTimer.h
-QtSignalForwarder.cpp QtSignalForwarder.h
 GridLineTraverser.cpp GridLineTraverser.h
 # Data structures
 StaticPool.h
@@ -40,6 +33,19 @@ PriorityQueue.h
 Grid.h
 ValueConv.h
 )
+
+SET(
+gui_sources
+# Qt-dependent utilities
+SafeDeletingQObjectPtr.h
+AutoRemovingFile.cpp AutoRemovingFile.h
+PerformanceTimer.cpp PerformanceTimer.h
+PropertyFactory.cpp PropertyFactory.h
+PropertySet.cpp PropertySet.h
+QtSignalForwarder.cpp QtSignalForwarder.h
+)
+
+SET(sources ${sources} gui/${gui_sources})
 
 SOURCE_GROUP("Sources" FILES ${sources})
 
