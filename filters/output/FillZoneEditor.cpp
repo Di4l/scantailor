@@ -85,7 +85,7 @@ FillZoneEditor::FillZoneEditor(
 	setMouseTracking(true);
 
 	m_context.setContextMenuInteractionCreator(
-		[this](auto arg) { createContextMenuInteraction(arg); }
+		[this](InteractionState& arg) { return createContextMenuInteraction(arg); }
 	);
 
 	connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));
@@ -223,8 +223,8 @@ FillZoneEditor::MenuCustomizer::operator()(
 	items.push_back(
 		ZoneContextMenuItem(
 			tr("Pick color"),
-			[zone, pEditor = m_pEditor](auto arg) {
-				pEditor->createColorPickupInteraction(zone, arg);
+			[zone, pEditor = m_pEditor](InteractionState& arg) {
+				return pEditor->createColorPickupInteraction(zone, arg);
 			}
 		)
 	);

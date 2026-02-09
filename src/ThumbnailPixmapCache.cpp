@@ -22,8 +22,8 @@
 #include "AtomicFileOverwriter.h"
 #include "RelinkablePath.h"
 #include "OutOfMemoryHandler.h"
-#include "imageproc/Scale.h"
-#include "imageproc/GrayImage.h"
+#include "imageproc/gui/Scale.h"
+#include "imageproc/gui/GrayImage.h"
 #include "MultiIndexContainer.h"
 #include <QCoreApplication>
 #include <QCryptographicHash>
@@ -116,37 +116,27 @@ public:
 	void ensureThumbnailExists(ImageId const& image_id, QImage const& image);
 	
 	void recreateThumbnail(ImageId const& image_id, QImage const& image);
-protected:
-	virtual void run();
 	
-	virtual void customEvent(QEvent* e);
-private:
-	class LoadResultEvent;
-	
-	struct ItemsByKeyTag {};
-	struct LoadQueueTag {};
-	struct RemoveQueueTag {};
-	
+	// Make container types public for method definitions
 	// ImageId extractor from Item
 	struct ItemImageIdExtractor
 	{
+		typedef ImageId key_type;
 		ImageId operator()(Item const& item) const { return item.imageId; }
 	};
-	
-	using namespace st::multi_index;
-	
-	typedef multi_index_container<
+
+	typedef st::multi_index::multi_index_container<
 		Item,
-		indexed_by<
-			ordered_unique_index<Item, ItemsByKeyTag, ItemImageIdExtractor>,
-			sequenced_index<Item, LoadQueueTag>,
-			sequenced_index<Item, RemoveQueueTag>
+		st::multi_index::indexed_by<
+			st::multi_index::ordered_unique_index<Item, ThumbnailPixmapCache::ItemsByKeyTag, ItemImageIdExtractor>,
+			st::multi_index::sequenced_index<Item, ThumbnailPixmapCache::LoadQueueTag>,
+			st::multi_index::sequenced_index<Item, ThumbnailPixmapCache::RemoveQueueTag>
 		>
 	> Container;
 	
-	typedef Container::index<ItemsByKeyTag>::type ItemsByKey;
-	typedef Container::index<LoadQueueTag>::type LoadQueue;
-	typedef Container::index<RemoveQueueTag>::type RemoveQueue;
+	typedef Container::index<ThumbnailPixmapCache::ItemsByKeyTag>::type ItemsByKey;
+	typedef Container::index<ThumbnailPixmapCache::LoadQueueTag>::type LoadQueue;
+	typedef Container::index<ThumbnailPixmapCache::RemoveQueueTag>::type RemoveQueue;
 	
 	class BackgroundLoader : public QObject
 	{
@@ -157,6 +147,13 @@ private:
 	private:
 		Impl& m_rOwner;
 	};
+	
+protected:
+	virtual void run();
+	
+	virtual void customEvent(QEvent* e);
+private:
+	class LoadResultEvent;
 	
 	void backgroundProcessing();
 	
@@ -170,17 +167,17 @@ private:
 	static QImage makeThumbnail(
 		QImage const& image, QSize const& max_thumb_size);
 	
-	void queuedToInProgress(LoadQueue::iterator const& lq_it);
+	void queuedToInProgress(LoadQueue::iterator& lq_it);
 	
 	void postLoadResult(
-		LoadQueue::iterator const& lq_it, QImage const& image,
+		LoadQueue::iterator& lq_it, QImage const& image,
 		ThumbnailLoadResult::Status status);
 	
 	void processLoadResult(LoadResultEvent* result);
 	
 	void removeExcessLocked();
 	
-	void removeItemLocked(RemoveQueue::iterator const& it);
+	void removeItemLocked(RemoveQueue::iterator it);
 	
 	void cachePixmapUnlocked(ImageId const& image_id, QPixmap const& pixmap);
 	
@@ -237,11 +234,13 @@ private:
 	bool m_shuttingDown;
 };
 
+// Note: ThumbnailPixmapCache::Impl container and index types are defined in the .h file
+// and cannot be redefined here due to private member access restrictions.
 
 class ThumbnailPixmapCache::Impl::LoadResultEvent : public QEvent
 {
 public:
-	LoadResultEvent(Impl::LoadQueue::iterator const& lq_t,
+	LoadResultEvent(Impl::LoadQueue::iterator& lq_t,
 		QImage const& image, ThumbnailLoadResult::Status status);
 	
 	virtual ~LoadResultEvent();
@@ -398,13 +397,13 @@ ThumbnailPixmapCache::Impl::request(
 		return LOAD_FAILED;
 	}
 	
-	ItemsByKey::iterator const k_it(m_itemsByKey.find(image_id));
+	ItemsByKey::iterator k_it(m_itemsByKey.find(image_id));
 	if (k_it != m_itemsByKey.end()) {
 		if (k_it->status == Item::LOADED) {
 			pixmap = k_it->pixmap;
 			
 			// Move it after all other candidates for removal.
-			RemoveQueue::iterator const rq_it(
+			RemoveQueue::iterator rq_it(
 				m_items.project<RemoveQueueTag>(k_it)
 			);
 			m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
@@ -457,7 +456,7 @@ ThumbnailPixmapCache::Impl::request(
 	}
 	
 	// Create a new item.
-	LoadQueue::iterator const lq_it(
+	LoadQueue::iterator lq_it(
 		m_loadQueue.push_front(
 			Item(image_id, m_totalLoadAttempts, Item::QUEUED)
 		).first
@@ -556,7 +555,7 @@ ThumbnailPixmapCache::Impl::recreateThumbnail(
 	
 	QMutexLocker const locker2(&m_mutex);
 	
-	ItemsByKey::iterator const k_it(m_itemsByKey.find(image_id));
+	ItemsByKey::iterator k_it(m_itemsByKey.find(image_id));
 	if (k_it == m_itemsByKey.end()) {
 		return;
 	}
@@ -703,7 +702,7 @@ ThumbnailPixmapCache::Impl::getThumbFilePath(
 		).toHex()
 	);
 	QString const orig_path_hash_str(
-		QString::fromAscii(orig_path_hash.data(), orig_path_hash.size())
+		QString::fromLatin1(orig_path_hash.data(), orig_path_hash.size())
 	);
 	
 	QFileInfo const orig_img_path(image_id.filePath());
@@ -714,7 +713,7 @@ ThumbnailPixmapCache::Impl::getThumbFilePath(
 	thumb_file_path += QString::number(image_id.zeroBasedPage());
 	thumb_file_path += QChar('_');
 	thumb_file_path += orig_path_hash_str;
-	thumb_file_path += QString::fromAscii(".png");
+	thumb_file_path += QString::fromLatin1(".png");
 	
 	return thumb_file_path;
 }
@@ -733,7 +732,7 @@ ThumbnailPixmapCache::Impl::makeThumbnail(
 	
 	if (image.format() == QImage::Format_Indexed8 && image.isGrayscale()) {
 		// This will be faster than QImage::scale().
-		return scaleToGray(GrayImage(image), to_size);
+		return imageproc::scaleToGray(imageproc::GrayImage(image), to_size);
 	}
 	
 	return image.scaled(
@@ -743,7 +742,7 @@ ThumbnailPixmapCache::Impl::makeThumbnail(
 }
 
 void
-ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& lq_it)
+ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator& lq_it)
 {
 	assert(lq_it->status == Item::QUEUED);
 	lq_it->status = Item::IN_PROGRESS;
@@ -762,7 +761,7 @@ ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& lq_it)
 
 void
 ThumbnailPixmapCache::Impl::postLoadResult(
-	LoadQueue::iterator const& lq_it, QImage const& image,
+	LoadQueue::iterator& lq_it, QImage const& image,
 	ThumbnailLoadResult::Status const status)
 {
 	LoadResultEvent* e = new LoadResultEvent(lq_it, image, status);
@@ -786,14 +785,14 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
 			return;
 		}
 		
-		LoadQueue::iterator const lq_it(result->lqIter());
-		RemoveQueue::iterator const rq_it(
-			m_items.project<RemoveQueueTag>(lq_it)
-		);
-		
-		Item const& item = *lq_it;
-		
-		if (result->status() == ThumbnailLoadResult::LOADED
+	LoadQueue::iterator lq_it(result->lqIter());
+	RemoveQueue::iterator rq_it(
+		m_items.project<RemoveQueueTag>(lq_it)
+	);
+	
+	Item const& item = *lq_it;
+	
+	if (result->status() == ThumbnailLoadResult::LOADED
 				&& pixmap.isNull()) {
 			// That's a special case caused by cachePixmapLocked().
 			assert(!item.pixmap.isNull());
@@ -856,7 +855,7 @@ ThumbnailPixmapCache::Impl::removeExcessLocked()
 
 void
 ThumbnailPixmapCache::Impl::removeItemLocked(
-	RemoveQueue::iterator const& it)
+	RemoveQueue::iterator it)
 {
 	switch (it->status) {
 		case Item::QUEUED:
@@ -897,7 +896,7 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(
 			? Item::LOAD_FAILED : Item::LOADED;
 	
 	// Check if such item already exists.
-	ItemsByKey::iterator const k_it(m_itemsByKey.find(image_id));
+	ItemsByKey::iterator k_it(m_itemsByKey.find(image_id));
 	if (k_it == m_itemsByKey.end()) {
 		// Existing item not found.
 		
@@ -905,7 +904,7 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(
 		removeExcessLocked();
 		
 		// Insert our new item.
-		RemoveQueue::iterator const rq_it(
+		RemoveQueue::iterator rq_it(
 			m_removeQueue.insert(
 				m_endOfLoadedItems,
 				Item(image_id, m_totalLoadAttempts, new_status)
@@ -943,7 +942,7 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(
 		
 		assert(!k_it->completionHandlers.empty());
 		
-		LoadQueue::iterator const lq_it(
+		LoadQueue::iterator lq_it(
 			m_items.project<LoadQueueTag>(k_it)
 		);
 		
@@ -959,7 +958,7 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(
 	k_it->pixmap = pixmap;
 	
 	if (new_status == Item::LOADED) {
-		RemoveQueue::iterator const rq_it(
+		RemoveQueue::iterator rq_it(
 			m_items.project<RemoveQueueTag>(k_it)
 		);
 		m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
@@ -991,7 +990,7 @@ ThumbnailPixmapCache::Item::Item(Item const& other)
 /*=============== ThumbnailPixmapCache::Impl::LoadResultEvent ===============*/
 
 ThumbnailPixmapCache::Impl::LoadResultEvent::LoadResultEvent(
-	Impl::LoadQueue::iterator const& lq_it, QImage const& image,
+	Impl::LoadQueue::iterator& lq_it, QImage const& image,
 	ThumbnailLoadResult::Status const status)
 :	QEvent(QEvent::User),
 	m_lqIter(lq_it),

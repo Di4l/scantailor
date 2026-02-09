@@ -34,9 +34,9 @@
 ZoneCreationInteraction::ZoneCreationInteraction(
 	ZoneInteractionContext& context, InteractionState& interaction)
 :	m_rContext(context),
-	m_dragHandler(context.imageView(), [](QPointF const&) { return true; }),
+	m_dragHandler(context.imageView(), [](InteractionState const&) { return true; }),
 	m_dragWatcher(m_dragHandler),
-	m_zoomHandler(context.imageView(), [](QPointF const&) { return true; }),
+	m_zoomHandler(context.imageView(), [](InteractionState const&) { return true; }),
 	m_ptrSpline(new EditableSpline)
 {
 	QPointF const screen_mouse_pos(

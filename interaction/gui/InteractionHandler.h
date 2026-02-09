@@ -71,6 +71,8 @@ public:
 	void makeFirstFollower(InteractionHandler& handler);
 
 	void makeLastFollower(InteractionHandler& handler);
+
+	void unlinkFromChain();
 protected:
 	virtual void onPaint(
 		QPainter& painter, InteractionState const& interaction) {}

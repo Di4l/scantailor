@@ -21,8 +21,8 @@
 #include "DebugImages.h"
 #include "Dpi.h"
 #include "FastQueue.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/ConnectivityMap.h"
+#include "imageproc/gui/BinaryImage.h"
+#include "imageproc/gui/ConnectivityMap.h"
 #include "imageproc/Connectivity.h"
 #include <QtGlobal>
 #include <QImage>

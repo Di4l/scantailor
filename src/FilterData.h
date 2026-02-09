@@ -19,8 +19,8 @@
 #ifndef FILTERDATA_H_
 #define FILTERDATA_H_
 
-#include "imageproc/BinaryThreshold.h"
-#include "imageproc/GrayImage.h"
+#include "imageproc/gui/BinaryThreshold.h"
+#include "imageproc/gui/GrayImage.h"
 #include "ImageTransformation.h"
 #include <QImage>
 

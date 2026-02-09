@@ -32,6 +32,7 @@
 #include <QSize>
 #include <QString>
 #include <QPainter>
+#include <QPainterPath>
 #include <QBrush>
 #include <QPen>
 #include <QColor>
@@ -80,72 +81,72 @@ ImageView::ImageView(
 	for (int i = 0; i < 4; ++i) {
 		// Proximity priority - inner rect higher than middle, corners higher than edges.
 		m_innerCorners[i].setProximityPriorityCallback(
-			[](auto) { return 4; }
+			[]() { return 4; }
 		);
 		m_innerEdges[i].setProximityPriorityCallback(
-			[](auto) { return 3; }
+			[]() { return 3; }
 		);
 		m_middleCorners[i].setProximityPriorityCallback(
-			[](auto) { return 2; }
+			[]() { return 2; }
 		);
 		m_middleEdges[i].setProximityPriorityCallback(
-			[](auto) { return 1; }
+			[]() { return 1; }
 		);
 
 		// Proximity.
 		m_innerCorners[i].setProximityCallback(
-			[this, i](auto arg) { cornerProximity(masks_by_corner[i], &m_innerRect, arg); }
+			[this, i](QPointF const& arg) { return cornerProximity(masks_by_corner[i], &m_innerRect, arg); }
 		);
 		m_middleCorners[i].setProximityCallback(
-			[this, i](auto arg) { cornerProximity(masks_by_corner[i], &m_middleRect, arg); }
+			[this, i](QPointF const& arg) { return cornerProximity(masks_by_corner[i], &m_middleRect, arg); }
 		);
 		m_innerEdges[i].setProximityCallback(
-			[this, i](auto arg) { edgeProximity(masks_by_edge[i], &m_innerRect, arg); }
+			[this, i](QPointF const& arg) { return edgeProximity(masks_by_edge[i], &m_innerRect, arg); }
 		);
 		m_middleEdges[i].setProximityCallback(
-			[this, i](auto arg) { edgeProximity(masks_by_edge[i], &m_middleRect, arg); }
+			[this, i](QPointF const& arg) { return edgeProximity(masks_by_edge[i], &m_middleRect, arg); }
 		);
 
 		// Drag initiation.
 		m_innerCorners[i].setDragInitiatedCallback(
-			[this](auto arg) { dragInitiated(arg); }
+			[this](QPointF const& arg) { dragInitiated(arg); }
 		);
 		m_middleCorners[i].setDragInitiatedCallback(
-			[this](auto arg) { dragInitiated(arg); }
+			[this](QPointF const& arg) { dragInitiated(arg); }
 		);
 		m_innerEdges[i].setDragInitiatedCallback(
-			[this](auto arg) { dragInitiated(arg); }
+			[this](QPointF const& arg) { dragInitiated(arg); }
 		);
 		m_middleEdges[i].setDragInitiatedCallback(
-			[this](auto arg) { dragInitiated(arg); }
+			[this](QPointF const& arg) { dragInitiated(arg); }
 		);
 
 		// Drag continuation.
 		m_innerCorners[i].setDragContinuationCallback(
-			[this, i](auto arg) { innerRectDragContinuation(masks_by_corner[i], arg); }
+			[this, i](QPointF const& arg) { innerRectDragContinuation(masks_by_corner[i], arg); }
 		);
 		m_middleCorners[i].setDragContinuationCallback(
-			[this, i](auto arg) { middleRectDragContinuation(masks_by_corner[i], arg); }
+			[this, i](QPointF const& arg) { middleRectDragContinuation(masks_by_corner[i], arg); }
 		);
 		m_innerEdges[i].setDragContinuationCallback(
-			[this, i](auto arg) { innerRectDragContinuation(masks_by_edge[i], arg); }
+			[this, i](QPointF const& arg) { innerRectDragContinuation(masks_by_edge[i], arg); }
 		);
 		m_middleEdges[i].setDragContinuationCallback(
-			[this, i](auto arg) { middleRectDragContinuation(masks_by_edge[i], arg); }
+			[this, i](QPointF const& arg) { middleRectDragContinuation(masks_by_edge[i], arg); }
 		);
 
 		// Drag finishing.
 		m_innerCorners[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 		m_middleCorners[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 		m_innerEdges[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 		m_middleEdges[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 
 		m_innerCornerHandlers[i].setObject(&m_innerCorners[i]);

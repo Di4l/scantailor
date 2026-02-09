@@ -17,9 +17,9 @@
 */
 
 #include "XSpline.h"
-#include "math/VecNT.h"
-#include "math/MatT.h"
-#include "math/NumericTraits.h"
+#include "VecNT.h"
+#include "MatT.h"
+#include "NumericTraits.h"
 #include "ToLineProjector.h"
 #include "adiff/SparseMap.h"
 #include "adiff/Function.h"

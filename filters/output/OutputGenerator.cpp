@@ -33,34 +33,34 @@
 #include "ZoneSet.h"
 #include "PictureLayerProperty.h"
 #include "FillColorProperty.h"
-#include "dewarping/CylindricalSurfaceDewarper.h"
-#include "dewarping/TextLineTracer.h"
-#include "dewarping/TopBottomEdgeTracer.h"
-#include "dewarping/DistortionModelBuilder.h"
+#include "dewarping/gui/CylindricalSurfaceDewarper.h"
+#include "dewarping/gui/TextLineTracer.h"
+#include "dewarping/gui/TopBottomEdgeTracer.h"
+#include "dewarping/gui/DistortionModelBuilder.h"
 #include "dewarping/DewarpingPointMapper.h"
-#include "dewarping/RasterDewarper.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/BinaryThreshold.h"
-#include "imageproc/Binarize.h"
+#include "dewarping/gui/RasterDewarper.h"
+#include "imageproc/gui/GrayImage.h"
+#include "imageproc/gui/BinaryImage.h"
+#include "imageproc/gui/BinaryThreshold.h"
+#include "imageproc/gui/Binarize.h"
 #include "imageproc/BWColor.h"
 #include "imageproc/Transform.h"
-#include "imageproc/Scale.h"
+#include "imageproc/gui/Scale.h"
 #include "imageproc/Morphology.h"
 #include "imageproc/Connectivity.h"
 #include "imageproc/ConnCompEraser.h"
 #include "imageproc/SeedFill.h"
 #include "imageproc/Constants.h"
-#include "imageproc/Grayscale.h"
+#include "imageproc/gui/Grayscale.h"
 #include "imageproc/RasterOp.h"
 #include "imageproc/GrayRasterOp.h"
 #include "imageproc/PolynomialSurface.h"
-#include "imageproc/SavGolFilter.h"
-#include "imageproc/DrawOver.h"
-#include "imageproc/AdjustBrightness.h"
-#include "imageproc/PolygonRasterizer.h"
-#include "imageproc/ConnectivityMap.h"
-#include "imageproc/InfluenceMap.h"
+#include "imageproc/gui/SavGolFilter.h"
+#include "imageproc/gui/DrawOver.h"
+#include "imageproc/gui/AdjustBrightness.h"
+#include "imageproc/gui/PolygonRasterizer.h"
+#include "imageproc/gui/ConnectivityMap.h"
+#include "imageproc/gui/InfluenceMap.h"
 #include "config.h"
 #include <memory>
 #include <QImage>
@@ -70,6 +70,7 @@
 #include <QRectF>
 #include <QPointF>
 #include <QPolygonF>
+#include <QPainterPath>
 #include <QPainter>
 #include <QColor>
 #include <QPen>
@@ -1807,9 +1808,8 @@ OutputGenerator::applyFillZonesInPlace(
 void
 OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const
 {
-	typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
 	applyFillZonesInPlace(
-		img, zones, [xform = m_xform.transform()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); }
+		img, zones, [xform = m_xform.transform()](QPointF const& arg) { return xform.map(arg); }
 	);
 }
 
@@ -1838,9 +1838,8 @@ void
 OutputGenerator::applyFillZonesInPlace(
 	imageproc::BinaryImage& img, ZoneSet const& zones) const
 {
-	typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
 	applyFillZonesInPlace(
-		img, zones, [xform = m_xform.transform()](auto arg) { return ((MapPointFunc)&QTransform::map)(xform, arg); }
+		img, zones, [xform = m_xform.transform()](QPointF const& arg) { return xform.map(arg); }
 	);
 }
 

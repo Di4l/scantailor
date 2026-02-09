@@ -351,3 +351,34 @@ InteractionHandler::defaultInteractionPermitter(InteractionState const& interact
 {
 	return !interaction.captured();
 }
+void
+InteractionHandler::unlinkFromChain()
+{
+	// Remove this handler from all preceedors' followers lists
+	if (m_ptrPreceeders && !m_ptrPreceeders->m_handlers.empty()) {
+		for (auto& preceeder : m_ptrPreceeders->m_handlers) {
+			auto& followers = preceeder->m_ptrFollowers->m_handlers;
+			for (auto it = followers.begin(); it != followers.end(); ++it) {
+				if (it->get() == this) {
+					followers.erase(it);
+					break;
+				}
+			}
+		}
+		m_ptrPreceeders->clear();
+	}
+	
+	// Remove this handler from all followers' preceedors lists
+	if (m_ptrFollowers && !m_ptrFollowers->m_handlers.empty()) {
+		for (auto& follower : m_ptrFollowers->m_handlers) {
+			auto& preceeders = follower->m_ptrPreceeders->m_handlers;
+			for (auto it = preceeders.begin(); it != preceeders.end(); ++it) {
+				if (it->get() == this) {
+					preceeders.erase(it);
+					break;
+				}
+			}
+		}
+		m_ptrFollowers->clear();
+	}
+}

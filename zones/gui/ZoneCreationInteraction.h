@@ -19,11 +19,11 @@
 #ifndef ZONE_CREATION_INTERACTION_H_
 #define ZONE_CREATION_INTERACTION_H_
 
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
-#include "DragHandler.h"
-#include "DragWatcher.h"
-#include "ZoomHandler.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/DragWatcher.h"
+#include "interaction/gui/ZoomHandler.h"
 #include "BasicSplineVisualizer.h"
 #include "EditableSpline.h"
 #include <QPointF>

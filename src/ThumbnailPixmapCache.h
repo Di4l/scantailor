@@ -38,6 +38,11 @@ class ThumbnailPixmapCache : public RefCountable
 public:
 	enum Status { LOADED, LOAD_FAILED, QUEUED };
 	
+	// Tags for multi-index container (needed for public access)
+	struct ItemsByKeyTag {};
+	struct LoadQueueTag {};
+	struct RemoveQueueTag {};
+	
 	typedef AbstractCommand1<
 		void, ThumbnailLoadResult const&
 	> CompletionHandler;
@@ -140,11 +145,13 @@ public:
 	 * \note This function may be called from any thread, even concurrently.
 	 */
 	void recreateThumbnail(ImageId const& image_id, QImage const& image);
-private:
+	
+	// Forward declaration of container types for Impl
 	class Item;
 	class Impl;
 	
-	std::auto_ptr<Impl> m_ptrImpl;
+private:
+	std::unique_ptr<Impl> m_ptrImpl;
 };
 
 #endif

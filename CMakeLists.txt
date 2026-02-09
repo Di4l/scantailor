@@ -76,7 +76,16 @@ ENDIF()
 FIND_PACKAGE(Qt5 COMPONENTS Core Gui Widgets Xml REQUIRED)
 SET(CMAKE_AUTOMOC OFF)
 SET(CMAKE_AUTORCC OFF)
-SET(CMAKE_AUTOUIC OFF)
+SET(CMAKE_AUTOUIC ON)
+SET(CMAKE_AUTOUIC_SEARCH_PATHS 
+	"${CMAKE_SOURCE_DIR}/ui"
+	"${CMAKE_SOURCE_DIR}/filters/deskew/ui"
+	"${CMAKE_SOURCE_DIR}/filters/fix_orientation/ui"
+	"${CMAKE_SOURCE_DIR}/filters/output/ui"
+	"${CMAKE_SOURCE_DIR}/filters/page_layout/ui"
+	"${CMAKE_SOURCE_DIR}/filters/page_split/ui"
+	"${CMAKE_SOURCE_DIR}/filters/select_content/ui"
+	"${CMAKE_SOURCE_DIR}/crash_reporter/ui")
 
 # Include Qt5 headers
 INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
@@ -555,7 +564,7 @@ ENDIF(WIN32)
 
 # Core library (common code)
 ADD_LIBRARY(stcore STATIC ${common_sources} ${common_ui_sources})
-TARGET_LINK_LIBRARIES(stcore Qt5::Core Qt5::Gui Qt5::Xml)
+TARGET_LINK_LIBRARIES(stcore Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml)
 
 # GUI application
 ADD_EXECUTABLE(
@@ -576,7 +585,7 @@ TARGET_LINK_LIBRARIES(
 	scantailor
 	fix_orientation page_split deskew select_content page_layout output
 	stcore dewarping zones interaction imageproc math foundation
-	Qt5::Core Qt5::Gui Qt5::Xml
+	Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml
 	${EXTRA_LIBS}
 )
 
@@ -585,7 +594,7 @@ TARGET_LINK_LIBRARIES(
 	scantailor-cli
 	fix_orientation page_split deskew select_content page_layout output
 	stcore dewarping zones interaction imageproc math foundation
-	Qt5::Core Qt5::Gui Qt5::Xml
+	Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml
 	${EXTRA_LIBS}
 )
 

@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MULTIINDEXCONTAINER_H_
-#define MULTIINDEXCONTAINER_H_
+#pragma once
 
 #include <vector>
 #include <map>
 #include <memory>
 #include <functional>
 #include <algorithm>
+#include <utility>
 #include <stdexcept>
 #include <type_traits>
 #include <tuple>
@@ -56,6 +56,11 @@ struct member
     {
         return item.*Member;
     }
+    
+    key_type operator()(const T& item) const
+    {
+        return extract(item);
+    }
 };
 
 template<typename... KeyExtractors>
@@ -66,6 +71,11 @@ struct composite_key
     static key_type extract(const auto& item)
     {
         return std::make_tuple(KeyExtractors::extract(item)...);
+    }
+    
+    key_type operator()(const auto& item) const
+    {
+        return extract(item);
     }
 };
 
@@ -132,6 +142,16 @@ public:
         }
         
         T* operator->() noexcept
+        {
+            return &(*m_storage)[m_map_it->second];
+        }
+
+        T& operator*() const noexcept
+        {
+            return (*m_storage)[m_map_it->second];
+        }
+
+        T* operator->() const noexcept
         {
             return &(*m_storage)[m_map_it->second];
         }
@@ -306,6 +326,28 @@ public:
     {
         return const_iterator(this->m_storage, m_index.cend());
     }
+
+    iterator iterator_to(T const& value) noexcept
+    {
+        const T* ptr = &value;
+        for (auto it = m_index.begin(); it != m_index.end(); ++it) {
+            if (&(*this->m_storage)[it->second] == ptr) {
+                return iterator(this->m_storage, it);
+            }
+        }
+        return end();
+    }
+
+    const_iterator iterator_to(T const& value) const noexcept
+    {
+        const T* ptr = &value;
+        for (auto it = m_index.cbegin(); it != m_index.cend(); ++it) {
+            if (&(*this->m_storage)[it->second] == ptr) {
+                return const_iterator(this->m_storage, it);
+            }
+        }
+        return end();
+    }
     
     size_t size() const noexcept
     {
@@ -317,13 +359,25 @@ public:
         return m_index.empty();
     }
     
+    template<typename Modifier>
+    void modify(iterator it, Modifier modifier)
+    {
+        size_t const pos = it.m_map_it->second;
+        T& item = (*this->m_storage)[pos];
+        typename map_type::iterator map_it = it.m_map_it;
+        modifier(item);
+        key_type const new_key = KeyExtractor()(item);
+        m_index.erase(map_it);
+        it.m_map_it = m_index.insert({ new_key, pos }).first;
+    }
+
     // -------- Index Updates --------
     void on_insert(size_t pos) override
     {
         if (pos < this->m_storage->size())
         {
             const auto& item = (*this->m_storage)[pos];
-            auto key = KeyExtractor::extract(item);
+            auto key = KeyExtractor()(item);
             m_index[key] = pos;
         }
     }
@@ -699,6 +753,16 @@ public:
         {
             return &(*m_storage)[*m_order_it];
         }
+
+        T& operator*() const noexcept
+        {
+            return (*m_storage)[*m_order_it];
+        }
+
+        T* operator->() const noexcept
+        {
+            return &(*m_storage)[*m_order_it];
+        }
         
         iterator& operator++() noexcept
         {
@@ -878,6 +942,94 @@ public:
     {
         m_order.clear();
     }
+
+    void pop_front()
+    {
+        if (!m_order.empty()) {
+            m_order.erase(m_order.begin());
+        }
+    }
+
+    template<typename Compare>
+    void sort(Compare comp)
+    {
+        std::sort(m_order.begin(), m_order.end(), [this, &comp](size_t lhs, size_t rhs) {
+            return comp((*this->m_storage)[lhs], (*this->m_storage)[rhs]);
+        });
+    }
+
+    iterator iterator_to(T const& value) noexcept
+    {
+        const T* ptr = &value;
+        auto it = std::find_if(m_order.begin(), m_order.end(), [this, ptr](size_t idx) {
+            return &(*this->m_storage)[idx] == ptr;
+        });
+        return iterator(this->m_storage, it);
+    }
+
+    const_iterator iterator_to(T const& value) const noexcept
+    {
+        const T* ptr = &value;
+        auto it = std::find_if(m_order.cbegin(), m_order.cend(), [this, ptr](size_t idx) {
+            return &(*this->m_storage)[idx] == ptr;
+        });
+        return const_iterator(this->m_storage, it);
+    }
+    
+    // -------- Relocate (move element to different position) --------
+    iterator relocate(iterator position, iterator element) noexcept
+    {
+        if (element == position)
+            return position;
+        
+        // Get the storage indices
+        size_t elem_storage_idx = *element.m_order_it;
+        
+        // Find and erase the element from current position
+        auto elem_order_it = element.m_order_it;
+        auto new_order_it = m_order.erase(elem_order_it);
+        
+        // Insert at new position
+        auto insert_it = m_order.insert(position.m_order_it, elem_storage_idx);
+        
+        return iterator(this->m_storage, insert_it);
+    }
+    
+    // -------- push_front (add to beginning, used for FIFO queues) --------
+    std::pair<iterator, bool> push_front(const T& value) noexcept
+    {
+        size_t pos = this->m_storage->size();
+        this->m_storage->push_back(value);
+        m_order.insert(m_order.begin(), pos);
+        return {iterator(this->m_storage, m_order.begin()), true};
+    }
+    
+    // -------- insert (insert at position) --------
+    std::pair<iterator, bool> insert(iterator position, const T& value) noexcept
+    {
+        size_t pos = this->m_storage->size();
+        this->m_storage->push_back(value);
+        auto it = m_order.insert(position.m_order_it, pos);
+        return {iterator(this->m_storage, it), true};
+    }
+    
+    // -------- erase (erase at position) --------
+    iterator erase(iterator position) noexcept
+    {
+        size_t storage_idx = *position.m_order_it;
+        auto next_it = m_order.erase(position.m_order_it);
+        
+        // Adjust indices in m_order that were after the erased element
+        for (auto& idx : m_order)
+        {
+            if (idx > storage_idx)
+                idx--;
+        }
+        
+        // Mark the element as invalid in storage (we're not actually removing from storage)
+        // This is because storage uses push_back, so we can't erase from middle
+        return iterator(this->m_storage, next_it);
+    }
 };
 
 // ============================================================================
@@ -965,6 +1117,21 @@ private:
     }
 };
 
+
+// ============================================================================
+// INDEX TYPE RESOLUTION HELPER
+// ============================================================================
+
+// Forward declaration for index type resolution
+template<typename T, typename IndexedBy>
+class multi_index_container;
+
+// Template to get the correct index type from a multi_index_container
+template<typename Container, typename Tag>
+struct container_index;
+
+// Specializations for each index tag will be provided after multi_index_container is fully defined
+
 // ============================================================================
 // MULTI_INDEX_CONTAINER
 // ============================================================================
@@ -980,6 +1147,14 @@ public:
     using value_type = T;
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
+    
+    // -------- Index type accessor (compatible with boost::multi_index) --------
+    template<typename Tag>
+    struct index
+    {
+        // Delegate to helper struct defined after class
+        using type = typename container_index<multi_index_container, Tag>::type;
+    };
     
     multi_index_container() noexcept
     {
@@ -1035,6 +1210,47 @@ public:
     const auto& get() const noexcept
     {
         return get_impl<Tag, 0>();
+    }
+    
+    // -------- Project (convert iterator from one index to another) --------
+    // Accepts an iterator from any index and returns an iterator in the target index
+    template<typename Tag, typename SourceIterator>
+    auto project(SourceIterator source_it) noexcept -> typename index<Tag>::type::iterator
+    {
+        // Get reference to the actual element in storage
+        const T& element = *source_it;
+        
+        // Find the element pointer in storage
+        const T* element_ptr = &element;
+        
+        // Get the target index
+        auto& target_index = get<Tag>();
+        
+        // Find the element in the target index by comparing pointers
+        for (auto it = target_index.begin(); it != target_index.end(); ++it)
+        {
+            if (&(*it) == element_ptr)
+                return it;
+        }
+        
+        return target_index.end();
+    }
+
+    template<typename Tag, typename SourceIterator>
+    auto project(SourceIterator source_it) const noexcept -> typename index<Tag>::type::const_iterator
+    {
+        const T& element = *source_it;
+        const T* element_ptr = &element;
+
+        auto const& target_index = get<Tag>();
+
+        for (auto it = target_index.begin(); it != target_index.end(); ++it)
+        {
+            if (&(*it) == element_ptr)
+                return it;
+        }
+
+        return target_index.end();
     }
     
     // -------- Direct storage access --------
@@ -1106,7 +1322,32 @@ private:
     }
 };
 
+// ============================================================================
+// INDEX TYPE SPECIALIZATIONS (for Boost-like interface)
+// ============================================================================
+
+// Generic specialization - should not be used
+template<typename Container, typename Tag>
+struct container_index {};
+
+// Specialization for multi_index_container types
+// This needs to be defined after multi_index_container is complete
+template<typename T, typename IndexedBy, typename Tag>
+struct container_index<multi_index_container<T, IndexedBy>, Tag>;
+
+// Helper to get the actual type from get<Tag>()
+namespace {
+    template<typename Container, typename Tag>
+    auto get_index_type(Container&) -> decltype(std::declval<Container>().template get<Tag>());
+}
+
+// Properly specialize container_index
+template<typename T, typename IndexedBy, typename Tag>
+struct container_index<multi_index_container<T, IndexedBy>, Tag>
+{
+    using type = std::remove_reference_t<std::remove_const_t<decltype(get_index_type<multi_index_container<T, IndexedBy>, Tag>(std::declval<multi_index_container<T, IndexedBy>&>()))>>;
+};
+
 } // namespace multi_index
 } // namespace st
 
-#endif

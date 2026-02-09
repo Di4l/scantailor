@@ -121,7 +121,7 @@ ProjectWriter::processDirectories(QDomDocument& doc) const
 {
 	QDomElement dirs_el(doc.createElement("directories"));
 	
-	for (Directory const& dir : m_dirs.get<Sequenced>()) {
+	for (Directory const& dir : m_dirs.get<SequencedTag>()) {
 		QDomElement dir_el(doc.createElement("directory"));
 		dir_el.setAttribute("id", dir.numericId);
 		dir_el.setAttribute("path", dir.path);
@@ -136,7 +136,7 @@ ProjectWriter::processFiles(QDomDocument& doc) const
 {
 	QDomElement files_el(doc.createElement("files"));
 	
-	for (File const& file : m_files.get<Sequenced>()) {
+	for (File const& file : m_files.get<SequencedTag>()) {
 		QFileInfo const file_info(file.path);
 		QString const& dir_path = file_info.absolutePath();
 		QDomElement file_el(doc.createElement("file"));
@@ -154,7 +154,7 @@ ProjectWriter::processImages(QDomDocument& doc) const
 {
 	QDomElement images_el(doc.createElement("images"));
 	
-	for (Image const& image : m_images.get<Sequenced>()) {
+	for (Image const& image : m_images.get<SequencedTag>()) {
 		QDomElement image_el(doc.createElement("image"));
 		image_el.setAttribute("id", image.numericId);
 		image_el.setAttribute("subPages", image.numSubPages);
@@ -218,16 +218,16 @@ ProjectWriter::processPages(QDomDocument& doc) const
 int
 ProjectWriter::dirId(QString const& dir_path) const
 {
-	Directories::const_iterator const it(m_dirs.find(dir_path));
-	assert(it != m_dirs.end());
+	auto it(m_dirs.get<DirectoryByPathTag>().find(dir_path));
+	assert(it != m_dirs.get<DirectoryByPathTag>().end());
 	return it->numericId;
 }
 
 int
 ProjectWriter::fileId(QString const& file_path) const
 {
-	Files::const_iterator const it(m_files.find(file_path));
-	if (it != m_files.end()) {
+	auto it(m_files.get<FileByPathTag>().find(file_path));
+	if (it != m_files.get<FileByPathTag>().end()) {
 		return it->numericId;
 	} else {
 		return -1;
@@ -237,8 +237,8 @@ ProjectWriter::fileId(QString const& file_path) const
 QString
 ProjectWriter::packFilePath(QString const& file_path) const
 {
-	Files::const_iterator const it(m_files.find(file_path));
-	if (it != m_files.end()) {
+	auto it(m_files.get<FileByPathTag>().find(file_path));
+	if (it != m_files.get<FileByPathTag>().end()) {
 		return QString::number(it->numericId);
 	} else {
 		return QString();
@@ -248,23 +248,23 @@ ProjectWriter::packFilePath(QString const& file_path) const
 int
 ProjectWriter::imageId(ImageId const& image_id) const
 {
-	Images::const_iterator const it(m_images.find(image_id));
-	assert(it != m_images.end());
+	auto it(m_images.get<ImageByIdTag>().find(image_id));
+	assert(it != m_images.get<ImageByIdTag>().end());
 	return it->numericId;
 }
 
 int
 ProjectWriter::pageId(PageId const& page_id) const
 {
-	Pages::const_iterator const it(m_pages.find(page_id));
-	assert(it != m_pages.end());
+	auto it(m_pages.get<PageByIdTag>().find(page_id));
+	assert(it != m_pages.get<PageByIdTag>().end());
 	return it->numericId;
 }
 
 void
 ProjectWriter::enumImagesImpl(VirtualFunction2<void, ImageId const&, int>& out) const
 {
-	for (Image const& image : m_images.get<Sequenced>()) {
+	for (Image const& image : m_images.get<SequencedTag>()) {
 		out(image.id, image.numericId);
 	}
 }
@@ -272,7 +272,7 @@ ProjectWriter::enumImagesImpl(VirtualFunction2<void, ImageId const&, int>& out) 
 void
 ProjectWriter::enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) const
 {
-	for (Page const& page : m_pages.get<Sequenced>()) {
+	for (Page const& page : m_pages.get<SequencedTag>()) {
 		out(page.id, page.numericId);
 	}
 }

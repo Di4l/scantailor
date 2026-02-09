@@ -18,7 +18,7 @@
 
 #include "DistortionModelBuilder.h"
 #include "dewarping/DistortionModel.h"
-#include "dewarping/CylindricalSurfaceDewarper.h"
+#include "CylindricalSurfaceDewarper.h"
 #include "math/gui/LineBoundedByRect.h"
 #include "math/gui/ToLineProjector.h"
 #include "math/gui/SidesOfLine.h"

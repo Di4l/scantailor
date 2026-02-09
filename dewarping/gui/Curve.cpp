@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dewarping/Curve.h"
+#include "Curve.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 #include "VecNT.h"

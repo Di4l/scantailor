@@ -17,7 +17,7 @@
 */
 
 #include "Params.h"
-#include "../../Utils.h"
+#include "src/Utils.h"
 #include <QDomDocument>
 #include <QDomElement>
 

@@ -433,7 +433,7 @@ PageLayout::typeToString(Type const type)
 			break;
 	}
 	
-	return QString::fromAscii(str);
+	return QString::fromLatin1(str);
 }
 
 /**

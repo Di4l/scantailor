@@ -80,16 +80,15 @@ private:
 	// QString extractor from Task
 	struct TaskPathExtractor
 	{
+		using key_type = QString;
 		QString operator()(Task const& task) const { return task.path; }
 	};
 	
-	using namespace st::multi_index;
-	
-	typedef multi_index_container<
+	typedef st::multi_index::multi_index_container<
 		Task,
-		indexed_by<
-			ordered_unique_index<Task, OrderedByPathTag, TaskPathExtractor>,
-			sequenced_index<Task, OrderedByPriorityTag>
+		st::multi_index::indexed_by<
+			st::multi_index::ordered_unique_index<Task, OrderedByPathTag, TaskPathExtractor>,
+			st::multi_index::sequenced_index<Task, OrderedByPriorityTag>
 		>
 	> TaskList;
 
@@ -398,13 +397,18 @@ RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path, int
 		return;
 	}
 
-	std::pair<TasksByPath::iterator, bool> const ins(
-		m_rTasksByPath.insert(Task(path, row))
-	);
+	TasksByPath::iterator path_it(m_rTasksByPath.find(path));
+	if (path_it == m_rTasksByPath.end()) {
+		m_tasks.insert(Task(path, row));
+		path_it = m_rTasksByPath.find(path);
+	} else {
+		path_it->row = row;
+	}
 
-	// Whether inserted or being already there, move it to the front of priority queue.
+	// Move this entry to the front of priority queue.
+	auto const priority_it = m_tasks.project<OrderedByPriorityTag>(path_it);
 	m_rTasksByPriority.relocate(
-		m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
+		m_rTasksByPriority.end(), priority_it
 	);
 
 	if (!isRunning()) {

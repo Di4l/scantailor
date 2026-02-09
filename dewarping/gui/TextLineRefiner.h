@@ -22,7 +22,7 @@
 #include "Grid.h"
 #include "VecNT.h"
 #include "Dpi.h"
-#include "imageproc/GrayImage.h"
+#include "imageproc/gui/GrayImage.h"
 #include <QPointF>
 #include <QLineF>
 #include <vector>

@@ -25,6 +25,7 @@
 #include "imageproc/Constants.h"
 #include "imageproc/SeedFill.h"
 #include "imageproc/RasterOp.h"
+#include "imageproc/Morphology.h"
 #include "imageproc/SeedFill.h"
 #include "Grayscale.h"
 #include <QSize>

@@ -115,58 +115,61 @@ private:
 	// DirectoryByPath extractor
 	struct DirectoryPathExtractor
 	{
+		typedef QString key_type;
 		QString operator()(Directory const& d) const { return d.path; }
 	};
 	
 	// FileByPath extractor
 	struct FilePathExtractor
 	{
+		typedef QString key_type;
 		QString operator()(File const& f) const { return f.path; }
 	};
 	
 	// ImageById extractor
 	struct ImageIdExtractor
 	{
+		typedef ImageId key_type;
 		ImageId operator()(Image const& i) const { return i.id; }
 	};
 	
 	// PageById extractor
 	struct PageIdExtractor
 	{
+		typedef PageId key_type;
 		PageId operator()(Page const& p) const { return p.id; }
 	};
-	
-	using namespace st::multi_index;
-	
-	typedef multi_index_container<
+
+private:
+	typedef st::multi_index::multi_index_container<
 		Directory,
-		indexed_by<
-			ordered_unique_index<Directory, DirectoryByPathTag, DirectoryPathExtractor>,
-			sequenced_index<Directory, SequencedTag>
+		st::multi_index::indexed_by<
+			st::multi_index::ordered_unique_index<Directory, DirectoryByPathTag, DirectoryPathExtractor>,
+			st::multi_index::sequenced_index<Directory, SequencedTag>
 		>
 	> Directories;
 	
-	typedef multi_index_container<
+	typedef st::multi_index::multi_index_container<
 		File,
-		indexed_by<
-			ordered_unique_index<File, FileByPathTag, FilePathExtractor>,
-			sequenced_index<File, SequencedTag>
+		st::multi_index::indexed_by<
+			st::multi_index::ordered_unique_index<File, FileByPathTag, FilePathExtractor>,
+			st::multi_index::sequenced_index<File, SequencedTag>
 		>
 	> Files;
 	
-	typedef multi_index_container<
+	typedef st::multi_index::multi_index_container<
 		Image,
-		indexed_by<
-			ordered_unique_index<Image, ImageByIdTag, ImageIdExtractor>,
-			sequenced_index<Image, SequencedTag>
+		st::multi_index::indexed_by<
+			st::multi_index::ordered_unique_index<Image, ImageByIdTag, ImageIdExtractor>,
+			st::multi_index::sequenced_index<Image, SequencedTag>
 		>
 	> Images;
 	
-	typedef multi_index_container<
+	typedef st::multi_index::multi_index_container<
 		Page,
-		indexed_by<
-			ordered_unique_index<Page, PageByIdTag, PageIdExtractor>,
-			sequenced_index<Page, SequencedTag>
+		st::multi_index::indexed_by<
+			st::multi_index::ordered_unique_index<Page, PageByIdTag, PageIdExtractor>,
+			st::multi_index::sequenced_index<Page, SequencedTag>
 		>
 	> Pages;
 	

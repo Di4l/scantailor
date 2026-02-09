@@ -17,7 +17,9 @@
 */
 
 // #include "TabbedDebugImages.h.moc"
+#include "TabbedDebugImages.h"
 #include "DebugImageView.h"
+#include <algorithm>
 
 TabbedDebugImages::TabbedDebugImages(QWidget* parent)
 :	QTabWidget(parent)
@@ -30,8 +32,13 @@ void
 TabbedDebugImages::currentTabChanged(int const idx)
 {
 	if (DebugImageView* div = dynamic_cast<DebugImageView*>(widget(idx))) {
-		div->unlink();
-		m_liveViews.push_back(*div);
+		// Remove from list if already present
+		m_liveViews.erase(
+			std::remove_if(m_liveViews.begin(), m_liveViews.end(),
+				[div](DebugImageView* v) { return v == div; }),
+			m_liveViews.end()
+		);
+		m_liveViews.push_back(div);
 		removeExcessLiveViews();
 		div->setLive(true);
 	}
@@ -40,9 +47,8 @@ TabbedDebugImages::currentTabChanged(int const idx)
 void
 TabbedDebugImages::removeExcessLiveViews()
 {
-	int remaining = m_liveViews.size();
-	for (; remaining > MAX_LIVE_VIEWS; --remaining) {
-		m_liveViews.front().setLive(false);
-		m_liveViews.erase(m_liveViews.begin());
+	while (m_liveViews.size() > MAX_LIVE_VIEWS) {
+		m_liveViews.front()->setLive(false);
+		m_liveViews.pop_front();
 	}
 }

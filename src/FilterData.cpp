@@ -19,7 +19,7 @@
 #include "FilterData.h"
 #include "Dpm.h"
 #include "Dpi.h"
-#include "imageproc/Grayscale.h"
+#include "imageproc/gui/Grayscale.h"
 
 using namespace imageproc;
 

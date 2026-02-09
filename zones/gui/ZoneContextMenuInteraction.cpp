@@ -25,6 +25,7 @@
 #include <QRectF>
 #include <QPolygonF>
 #include <QMenu>
+#include <QPainterPath>
 #include <QPixmap>
 #include <QIcon>
 #include <QPainter>
@@ -55,7 +56,8 @@ ZoneContextMenuInteraction::create(
 {
 	return create(
 		context, interaction,
-		[](QMenu& menu, ZoneSet const& zones) { defaultMenuCustomizer(menu, zones); }
+		[](EditableZoneSet::Zone const& zone, StandardMenuItems const& std_items) 
+		{ return defaultMenuCustomizer(zone, std_items); }
 	);
 }
 
@@ -210,7 +212,7 @@ ZoneContextMenuInteraction::menuAboutToHide()
 		makePeerPreceeder(*next_handler);
 	}
 
-	unlink();
+	unlinkFromChain();
 	m_rContext.imageView().update();
 	deleteLater();
 }
@@ -227,7 +229,7 @@ ZoneContextMenuInteraction::menuItemTriggered(
 		makePeerPreceeder(*next_handler);
 	}
 
-	unlink();
+	unlinkFromChain();
 	m_rContext.imageView().update();
 	deleteLater();
 }
@@ -260,7 +262,7 @@ ZoneContextMenuInteraction::deleteMenuItemFor(
 {
 	return ZoneContextMenuItem(
 		tr("Delete"),
-		[this, zone]() { deleteRequest(zone); }
+		[this, zone](InteractionState&) { deleteRequest(zone); return nullptr; }
 	);
 }
 
@@ -270,7 +272,7 @@ ZoneContextMenuInteraction::propertiesMenuItemFor(
 {
 	return ZoneContextMenuItem(
 		tr("Properties"),
-		[this, zone]() { propertiesRequest(zone); }
+		[this, zone](InteractionState&) { propertiesRequest(zone); return nullptr; }
 	);
 }
 

@@ -21,12 +21,12 @@
 #include "Dpi.h"
 #include "DebugImages.h"
 #include "imageproc/Transform.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/Grayscale.h"
+#include "imageproc/gui/GrayImage.h"
+#include "imageproc/gui/Grayscale.h"
 #include "imageproc/GrayRasterOp.h"
 #include "imageproc/Morphology.h"
-#include "imageproc/MorphGradientDetect.h"
-#include "imageproc/HoughLineDetector.h"
+#include "imageproc/gui/MorphGradientDetect.h"
+#include "imageproc/gui/HoughLineDetector.h"
 #include "imageproc/Constants.h"
 #include <QLineF>
 #include <QSizeF>

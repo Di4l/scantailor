@@ -19,7 +19,7 @@
 #include "DespeckleVisualization.h"
 #include "ImageViewBase.h"
 #include "Dpi.h"
-#include "imageproc/BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "imageproc/SEDM.h"
 #include <QPainter>
 #include <stdint.h>

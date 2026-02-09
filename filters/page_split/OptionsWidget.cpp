@@ -27,6 +27,7 @@
 #include "ProjectPages.h"
 #include "ScopedIncDec.h"
 #include <QPixmap>
+#include <QButtonGroup>
 #include <assert.h>
 
 namespace page_split

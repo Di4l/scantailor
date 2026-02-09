@@ -31,7 +31,7 @@
 #include "interaction/gui/ZoomHandler.h"
 #include "interaction/gui/DragHandler.h"
 #include "ImagePixmapUnion.h"
-#include "imageproc/BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <QTransform>
 #include <QPoint>
 #include <QTimer>

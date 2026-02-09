@@ -92,25 +92,21 @@ ImageView::setupCuttersInteraction()
 				[this, i, j]() { return handlePosition(i, j); }
 			);
 			m_handles[i][j].setMoveRequestCallback(
-				[this, i, j](auto arg) { handleMoveRequest(i, j, arg); }
+				[this, i, j](QPointF const& arg) { handleMoveRequest(i, j, arg); }
 			);
 			m_handles[i][j].setDragFinishedCallback(
-				[this]() { dragFinished(); }
+				[this](QPointF const&) { dragFinished(); }
 			);
-
-			m_handleInteractors[i][j].setObject(&m_handles[i][j]);
-			m_handleInteractors[i][j].setProximityStatusTip(tip);
-			makeLastFollower(m_handleInteractors[i][j]);
 		}
-		
+
 		m_lineSegments[i].setPositionCallback(
 			[this, i]() { return linePosition(i); }
 		);
 		m_lineSegments[i].setMoveRequestCallback(
-			[this, i](auto arg) { lineMoveRequest(i, arg); }
+			[this, i](QLineF const& arg) { lineMoveRequest(i, arg); }
 		);
 		m_lineSegments[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 
 		m_lineInteractors[i].setObject(&m_lineSegments[i]);
@@ -123,9 +119,9 @@ ImageView::setupCuttersInteraction()
 	// Turn off cutters we don't need anymore.
 	for (int i = num_cutters; i < 2; ++i) {
 		for (int j = 0; j < 2; ++j) {
-			m_handleInteractors[i][j].unlink();
+			m_handleInteractors[i][j].unlinkFromChain();
 		}
-		m_lineInteractors[i].unlink();
+		m_lineInteractors[i].unlinkFromChain();
 	}
 }
 
@@ -375,7 +371,7 @@ ImageView::unremoveLeftPage()
 	PageInfo page_info(
 		m_ptrPages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE))
 	);
-	m_leftUnremoveButton.unlink();
+	m_leftUnremoveButton.unlinkFromChain();
 	m_leftPageRemoved = false;
 	
 	update();
@@ -392,7 +388,7 @@ ImageView::unremoveRightPage()
 	PageInfo page_info(
 		m_ptrPages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE))
 	);
-	m_rightUnremoveButton.unlink();
+	m_rightUnremoveButton.unlinkFromChain();
 	m_rightPageRemoved = false;
 	
 	update();

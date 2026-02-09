@@ -19,10 +19,10 @@
 #ifndef ZONE_DEFAULT_INTERACTION_H_
 #define ZONE_DEFAULT_INTERACTION_H_
 
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
-#include "DragHandler.h"
-#include "DragWatcher.h"
+#include "interaction/gui/DragHandler.h"
+#include "interaction/gui/DragWatcher.h"
 #include "BasicSplineVisualizer.h"
 #include "EditableSpline.h"
 #include "SplineVertex.h"

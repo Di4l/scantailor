@@ -363,6 +363,7 @@ struct SequencedTag {};
 
 struct FileNameExtractor
 {
+	typedef QString key_type;
 	QString operator()(File const& f) const { return f.fileName; }
 };
 
@@ -392,7 +393,11 @@ ProjectPages::toImageFileInfo() const
 		}
 	}
 	
-	return std::vector<ImageFileInfo>(files.get<SequencedTag>().begin(), files.get<SequencedTag>().end());
+	std::vector<ImageFileInfo> result;
+	for (const auto& file : files.get<SequencedTag>()) {
+		result.push_back(file);
+	}
+	return result;
 }
 
 void

@@ -21,7 +21,7 @@
 #define ZONE_CONTEXT_MENU_INTERACTION_H_
 
 #include "ZoneContextMenuItem.h"
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"
@@ -129,7 +129,7 @@ private:
 	std::vector<Zone> m_selectableZones;
 	InteractionState::Captor m_interaction;
 	Visualizer m_visualizer;
-	std::auto_ptr<QMenu> m_ptrMenu;
+	std::unique_ptr<QMenu> m_ptrMenu;
 	int m_highlightedZoneIdx;
 	bool m_menuItemTriggered;
 #ifdef Q_WS_MAC

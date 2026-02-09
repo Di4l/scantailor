@@ -31,7 +31,7 @@
 #include "Dpi.h"
 #include "Dpm.h"
 #include "ImageTransformation.h"
-#include "imageproc/BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "imageproc/BWColor.h"
 #include "imageproc/OrthogonalRotation.h"
 #include "imageproc/SkewFinder.h"
@@ -64,7 +64,7 @@ class Task::UiUpdater : public FilterResult
 {
 public:
 	UiUpdater(IntrusivePtr<Filter> const& filter,
-		std::auto_ptr<DebugImages> dbg_img,
+		DebugImages* dbg_img,
 		QImage const& image, PageId const& page_id,
 		ImageTransformation const& xform,
 		OptionsWidget::UiData const& ui_data,
@@ -75,7 +75,7 @@ public:
 	virtual IntrusivePtr<AbstractFilter> filter() { return m_ptrFilter; }
 private:
 	IntrusivePtr<Filter> m_ptrFilter;
-	std::auto_ptr<DebugImages> m_ptrDbg;
+	DebugImages* m_ptrDbg;
 	QImage m_image;
 	QImage m_downscaledImage;
 	PageId m_pageId;
@@ -116,7 +116,7 @@ Task::process(TaskStatus const& status, FilterData const& data)
 
 	CommandLine const& cli = CommandLine::get();
 
-	std::auto_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
+	std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
 	if (params.get()) {
 		if (!deps.matches(params->dependencies()) && (params->mode() == MODE_AUTO) && !cli.hasDeskewAngle() && !cli.hasDeskew()) {
 			params.reset();
@@ -196,7 +196,7 @@ Task::process(TaskStatus const& status, FilterData const& data)
 	} else {
 		return FilterResultPtr(
 			new UiUpdater(
-				m_ptrFilter, m_ptrDbg, data.origImage(),
+				m_ptrFilter, m_ptrDbg.get(), data.origImage(),
 				m_pageId, new_xform, ui_data, m_batchProcessing
 			)
 		);
@@ -268,7 +268,7 @@ Task::from150dpi(QSize const& size, Dpi const& target_dpi)
 
 Task::UiUpdater::UiUpdater(
 	IntrusivePtr<Filter> const& filter,
-	std::auto_ptr<DebugImages> dbg_img,
+	DebugImages* dbg_img,
 	QImage const& image, PageId const& page_id,
 	ImageTransformation const& xform,
 	OptionsWidget::UiData const& ui_data,
@@ -300,7 +300,7 @@ Task::UiUpdater::updateUI(FilterUiInterface* ui)
 	}
 	
 	ImageView* view = new ImageView(m_image, m_downscaledImage, m_xform);
-	ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+	ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg);
 	
 	QObject::connect(
 		view, SIGNAL(manualDeskewAngleSet(double)),

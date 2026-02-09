@@ -22,6 +22,7 @@
 #include "NonCopyable.h"
 #include "Proximity.h"
 #include <list>
+#include <algorithm>
 #include <QCursor>
 #include <QString>
 
@@ -34,7 +35,7 @@ public:
 	class Captor
 	{
 		// NOTE: Previously inherited from boost::intrusive::list_base_hook with auto_unlink.
-		// Now managed by std::list. Can be re-implemented as intrusive_list in future.
+		// Now managed by std::list. Captor holds reference to InteractionState for unlink support.
 		friend class InteractionState;
 	private:
 		struct CopyHelper
@@ -43,12 +44,26 @@ public:
 
 			CopyHelper(Captor* cap) : captor(cap) {}
 		};
+
+		InteractionState* m_owner;
+
+		void swap_nodes(Captor& other) {
+			std::swap(m_proximityCursor, other.m_proximityCursor);
+			std::swap(m_interactionCursor, other.m_interactionCursor);
+			std::swap(m_proximityStatusTip, other.m_proximityStatusTip);
+			std::swap(m_interactionStatusTip, other.m_interactionStatusTip);
+		}
+
+		void unlink();
+
+		bool is_linked() const { return m_owner != nullptr; }
+
 	public:
-		Captor() {}
+		Captor() : m_owner(nullptr) {}
 
-		Captor(Captor& other) { swap_nodes(other); }
+		Captor(Captor& other) : m_owner(nullptr) { swap_nodes(other); }
 
-		Captor(CopyHelper other) { swap_nodes(*other.captor); }
+		Captor(CopyHelper other) : m_owner(nullptr) { swap_nodes(*other.captor); }
 
 		Captor& operator=(Captor& other);
 

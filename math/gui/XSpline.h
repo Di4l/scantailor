@@ -20,9 +20,9 @@
 #define XSPLINE_H_
 
 #include "spfit/FittableSpline.h"
-#include "math/QuadraticFunction.h"
-#include "math/VirtualFunction.h"
-#include "math/NumericTraits.h"
+#include "QuadraticFunction.h"
+#include "VirtualFunction.h"
+#include "NumericTraits.h"
 #include <QPointF>
 #include <QLineF>
 #include <vector>

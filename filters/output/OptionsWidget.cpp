@@ -28,7 +28,7 @@
 #include "ZoneSet.h"
 #include "PictureZoneComparator.h"
 #include "FillZoneComparator.h"
-#include "../../Utils.h"
+#include "src/Utils.h"
 #include "ScopedIncDec.h"
 #include "config.h"
 #include <QtGlobal>
@@ -533,7 +533,7 @@ OptionsWidget::reloadIfNecessary()
 	DepthPerception saved_depth_perception;
 	DespeckleLevel saved_despeckle_level = DESPECKLE_CAUTIOUS;
 	
-	std::auto_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(m_pageId));
+	std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(m_pageId));
 	if (output_params.get()) {
 		saved_picture_zones = output_params->pictureZones();
 		saved_fill_zones = output_params->fillZones();
@@ -579,7 +579,7 @@ OptionsWidget::updateDpiDisplay()
 {
 	if (m_outputDpi.horizontal() != m_outputDpi.vertical()) {
 		dpiLabel->setText(
-			QString::fromAscii("%1 x %2")
+			QString::fromLatin1("%1 x %2")
 			.arg(m_outputDpi.horizontal()).arg(m_outputDpi.vertical())
 		);
 	} else {

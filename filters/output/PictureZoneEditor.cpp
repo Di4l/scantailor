@@ -34,7 +34,7 @@
 #include "AbstractCommand.h"
 #include "imageproc/Transform.h"
 #include "imageproc/Constants.h"
-#include "imageproc/GrayImage.h"
+#include "imageproc/gui/GrayImage.h"
 #include <QPointer>
 #include <QPainter>
 #include <QColor>

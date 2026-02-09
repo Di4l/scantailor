@@ -71,7 +71,7 @@ CommandLine::parseCli(QStringList const& argv)
 	// skip first argument (scantailor)
 	for (int i=1; i<argv.size(); i++) {
 #ifdef DEBUG_CLI
-	std::cout << "arg[" << i << "]=" << argv[i].toAscii().constData() << "\n";
+	std::cout << "arg[" << i << "]=" << argv[i].toLatin1().constData() << "\n";
 #endif
 		if (rx.exactMatch(argv[i])) {
 			// option with a value
@@ -119,7 +119,7 @@ CommandLine::parseCli(QStringList const& argv)
 
 #ifdef DEBUG_CLI
 	QStringList params = m_options.keys();
-	for (int i=0; i<params.size(); i++) { std::cout << params[i].toAscii().constData() << "=" << m_options[params[i]].toAscii().constData() << "\n"; }
+	for (int i=0; i<params.size(); i++) { std::cout << params[i].toLatin1().constData() << "=" << m_options[params[i]].toLatin1().constData() << "\n"; }
 	std::cout << "Images: " << CommandLine::m_images.size() << "\n";
 #endif
 }
@@ -360,7 +360,7 @@ CommandLine::fetchContentRect()
 		return QRectF(rx.cap(1).toFloat(), rx.cap(2).toFloat(), rx.cap(3).toFloat(), rx.cap(4).toFloat());
 	}
 
-	std::cout << "invalid --content-box=" << m_options["content-box"].toAscii().constData() << "\n";
+	std::cout << "invalid --content-box=" << m_options["content-box"].toLatin1().constData() << "\n";
 	exit(1);
 }
 
@@ -381,7 +381,7 @@ CommandLine::fetchOrientation()
 	} else if (cli_orient == "upsidedown") {
 		orient = UPSIDEDOWN;
 	} else {
-		std::cout << "Wrong orientation " << m_options["orientation"].toAscii().constData() << "\n";
+		std::cout << "Wrong orientation " << m_options["orientation"].toLatin1().constData() << "\n";
 		exit(1);
 	}
 

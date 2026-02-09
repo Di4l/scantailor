@@ -63,13 +63,13 @@ ImageView::ImageView(
 	static int const masks_by_corner[] = { TOP|LEFT, TOP|RIGHT, BOTTOM|RIGHT, BOTTOM|LEFT };
 	for (int i = 0; i < 4; ++i) {
 		m_corners[i].setPositionCallback(
-			[this, i](auto) { return cornerPosition(masks_by_corner[i]); }
+			[this, i]() { return cornerPosition(masks_by_corner[i]); }
 		);
 		m_corners[i].setMoveRequestCallback(
 			[this, i](auto arg) { cornerMoveRequest(masks_by_corner[i], arg); }
 		);
 		m_corners[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 		m_cornerHandlers[i].setObject(&m_corners[i]);
 		m_cornerHandlers[i].setProximityStatusTip(drag_tip);
@@ -83,13 +83,13 @@ ImageView::ImageView(
 	static int const masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
 	for (int i = 0; i < 4; ++i) {
 		m_edges[i].setPositionCallback(
-			[this, i](auto) { return edgePosition(masks_by_edge[i]); }
+			[this, i]() { return edgePosition(masks_by_edge[i]); }
 		);
 		m_edges[i].setMoveRequestCallback(
 			[this, i](auto arg) { edgeMoveRequest(masks_by_edge[i], arg); }
 		);
 		m_edges[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 		m_edgeHandlers[i].setObject(&m_edges[i]);
 		m_edgeHandlers[i].setProximityStatusTip(drag_tip);

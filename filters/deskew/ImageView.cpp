@@ -72,7 +72,7 @@ ImageView::ImageView(
 			[this, i](auto arg) { handleMoveRequest(i, arg); }
 		);
 		m_handles[i].setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 
 		m_handleInteractors[i].setProximityStatusTip(tip);

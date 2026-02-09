@@ -20,11 +20,11 @@
 #include "ImageTransformation.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "../../Utils.h"
+#include "src/Utils.h"
 #include <QPolygonF>
 #include <QDomDocument>
 #include <QDomElement>
-#include <math.h>
+#include <cmath>
 
 namespace output
 {

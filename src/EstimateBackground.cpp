@@ -20,18 +20,18 @@
 #include "ImageTransformation.h"
 #include "TaskStatus.h"
 #include "DebugImages.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/BinaryImage.h"
+#include "imageproc/gui/GrayImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include "imageproc/BWColor.h"
 #include "imageproc/BitOps.h"
 #include "imageproc/Transform.h"
-#include "imageproc/Scale.h"
+#include "imageproc/gui/Scale.h"
 #include "imageproc/Morphology.h"
 #include "imageproc/Connectivity.h"
 #include "imageproc/PolynomialLine.h"
 #include "imageproc/PolynomialSurface.h"
-#include "imageproc/PolygonRasterizer.h"
-#include "imageproc/GrayImage.h"
+#include "imageproc/gui/PolygonRasterizer.h"
+#include "imageproc/gui/GrayImage.h"
 #include "imageproc/GrayRasterOp.h"
 #include "imageproc/RasterOpGeneric.h"
 #include "imageproc/SeedFill.h"
@@ -120,7 +120,8 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
 	GrayImage diff(image);
 	rasterOpGeneric(
 		diff.data(), diff.stride(), diff.size(),
-		method1.data(), method1.stride(), _1 -= _2
+		method1.data(), method1.stride(),
+		[](uint8_t& a, uint8_t b) { a -= b; }
 	);
 	if (dbg) {
 		dbg->add(diff, "raw_diff");
@@ -139,7 +140,7 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
 	rasterOpGeneric(
 		diff.data(), diff.stride(), diff.size(),
 		approximated.data(), approximated.stride(),
-		if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
+		[](uint8_t& a, uint8_t b) { a = (a > b) ? (a - b) : (b - a); }
 	);
 	approximated = GrayImage(); // save memory.
 	if (dbg) {

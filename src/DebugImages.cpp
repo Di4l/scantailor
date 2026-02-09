@@ -17,7 +17,7 @@
 */
 
 #include "DebugImages.h"
-#include "imageproc/BinaryImage.h"
+#include "imageproc/gui/BinaryImage.h"
 #include <QImage>
 #include <QImageWriter>
 #include <QTemporaryFile>

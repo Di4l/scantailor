@@ -17,11 +17,11 @@
 */
 
 #include "RasterDewarper.h"
-#include "dewarping/CylindricalSurfaceDewarper.h"
+#include "dewarping/gui/CylindricalSurfaceDewarper.h"
 #include "HomographicTransform.h"
 #include "VecNT.h"
 #include "imageproc/ColorMixer.h"
-#include "imageproc/GrayImage.h"
+#include "imageproc/gui/GrayImage.h"
 #include <QtGlobal>
 #include <QColor>
 #include <QImage>

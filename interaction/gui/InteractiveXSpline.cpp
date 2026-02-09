@@ -64,7 +64,7 @@ InteractiveXSpline::setSpline(XSpline const& spline)
 			[this, i](QPointF const& pos) { controlPointMoveRequest(i, pos); }
 		);
 		new_control_points[i].point.setDragFinishedCallback(
-			[this]() { dragFinished(); }
+			[this](QPointF const&) { dragFinished(); }
 		);
 
 		if (i == 0 || i == num_control_points - 1) {

@@ -20,7 +20,7 @@
 // #include "OptionsWidget.h.moc"
 #include "Settings.h"
 #include "ApplyDialog.h"
-#include "../../Utils.h"
+#include "src/Utils.h"
 #include "ScopedIncDec.h"
 #include "PageInfo.h"
 #include "PageId.h"
@@ -46,10 +46,10 @@ OptionsWidget::OptionsWidget(
 	m_topBottomLinked(true)
 {
 	m_chainIcon.addPixmap(
-		QPixmap(QString::fromAscii(":/icons/stock-vchain-24.png"))
+		QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png"))
 	);
 	m_brokenChainIcon.addPixmap(
-		QPixmap(QString::fromAscii(":/icons/stock-vchain-broken-24.png"))
+		QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png"))
 	);
 	
 	setupUi(this);

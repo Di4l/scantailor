@@ -27,8 +27,8 @@
 #include "Dpi.h"
 #include "ImageTransformation.h"
 #include "foundation/Span.h"
-#include "imageproc/Binarize.h"
-#include "imageproc/BinaryThreshold.h"
+#include "imageproc/gui/Binarize.h"
+#include "imageproc/gui/BinaryThreshold.h"
 #include "imageproc/BWColor.h"
 #include "imageproc/Morphology.h"
 #include "imageproc/Connectivity.h"
@@ -41,12 +41,12 @@
 #include "imageproc/RasterOp.h"
 #include "imageproc/Shear.h"
 #include "imageproc/OrthogonalRotation.h"
-#include "imageproc/Scale.h"
+#include "imageproc/gui/Scale.h"
 #include "imageproc/SlicedHistogram.h"
 #include "imageproc/Transform.h"
-#include "imageproc/Grayscale.h"
+#include "imageproc/gui/Grayscale.h"
 #include "imageproc/GrayRasterOp.h"
-#include "imageproc/PolygonRasterizer.h"
+#include "imageproc/gui/PolygonRasterizer.h"
 #include <QRect>
 #include <QRectF>
 #include <QSize>
@@ -102,7 +102,7 @@ struct CenterComparator
  * \param dbg An optional sink for debugging images.
  * \return The page layout detected or a null auto_ptr.
  */
-std::auto_ptr<PageLayout> autoDetectSinglePageLayout(
+std::unique_ptr<PageLayout> autoDetectSinglePageLayout(
 	LayoutType const layout_type,
 	std::vector<QLineF> const& ltr_lines,
 	QRectF const& virtual_image_rect,
@@ -139,14 +139,14 @@ std::auto_ptr<PageLayout> autoDetectSinglePageLayout(
 		}
 		
 		// Return a SINGLE_PAGE_UNCUT layout.
-		return std::auto_ptr<PageLayout>(new PageLayout(virtual_image_rect));
+		return std::unique_ptr<PageLayout>(new PageLayout(virtual_image_rect));
 	} while (false);
 	
 	if (ltr_lines.empty()) {
 		// Impossible to detect the layout type.
-		return std::auto_ptr<PageLayout>();
+		return std::unique_ptr<PageLayout>();
 	} else if (ltr_lines.size() > 1) {
-		return std::auto_ptr<PageLayout>(
+		return std::unique_ptr<PageLayout>(
 			new PageLayout(virtual_image_rect, ltr_lines.front(), ltr_lines.back())
 		);
 	} else {
@@ -157,14 +157,14 @@ std::auto_ptr<PageLayout> autoDetectSinglePageLayout(
 			QLineF const right_line(
 				virtual_image_rect.topRight(), virtual_image_rect.bottomRight()
 			);
-			return std::auto_ptr<PageLayout>(
+			return std::unique_ptr<PageLayout>(
 				new PageLayout(virtual_image_rect, line, right_line)
 			);
 		} else {
 			QLineF const left_line(
 				virtual_image_rect.topLeft(), virtual_image_rect.bottomLeft()
 			);
-			return std::auto_ptr<PageLayout>(
+			return std::unique_ptr<PageLayout>(
 				new PageLayout(virtual_image_rect, left_line, line)
 			);
 		}
@@ -178,15 +178,15 @@ std::auto_ptr<PageLayout> autoDetectSinglePageLayout(
  * \param image_size The dimentions of the page image.
  * \return The page layout detected or a null auto_ptr.
  */
-std::auto_ptr<PageLayout> autoDetectTwoPageLayout(
+std::unique_ptr<PageLayout> autoDetectTwoPageLayout(
 	std::vector<QLineF> const& ltr_lines,
 	QRectF const& virtual_image_rect)
 {
 	if (ltr_lines.empty()) {
 		// Impossible to detect the page layout.
-		return std::auto_ptr<PageLayout>();
+		return std::unique_ptr<PageLayout>();
 	} else if (ltr_lines.size() == 1) {
-		return std::auto_ptr<PageLayout>(
+		return std::unique_ptr<PageLayout>(
 			new PageLayout(virtual_image_rect, ltr_lines.front())
 		);
 	}
@@ -204,7 +204,7 @@ std::auto_ptr<PageLayout> autoDetectTwoPageLayout(
 		}
 	}
 	
-	return std::auto_ptr<PageLayout>(
+	return std::unique_ptr<PageLayout>(
 		new PageLayout(virtual_image_rect, *best_line)
 	);
 }
@@ -250,7 +250,7 @@ PageLayoutEstimator::estimatePageLayout(
 		return PageLayout(pre_xform.resultingRect());
 	}
 	
-	std::auto_ptr<PageLayout> layout(
+	std::unique_ptr<PageLayout> layout(
 		tryCutAtFoldingLine(layout_type, input, pre_xform, dbg)
 	);
 	if (layout.get()) {
@@ -300,7 +300,7 @@ private:
  * \return The detected page layout, or a null auto_ptr if page layout
  *         could not be detected.
  */
-std::auto_ptr<PageLayout>
+std::unique_ptr<PageLayout>
 PageLayoutEstimator::tryCutAtFoldingLine(
 	LayoutType const layout_type, QImage const& input,
 	ImageTransformation const& pre_xform, DebugImages* const dbg)

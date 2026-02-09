@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <functional>
 #include "TextLineTracer.h"
 #include "TextLineRefiner.h"
 #include "DetectVertContentBounds.h"
@@ -32,13 +33,15 @@
 #include "math/gui/LineBoundedByRect.h"
 #include "DistortionModelBuilder.h"
 #include "dewarping/DistortionModel.h"
-#include "dewarping/Curve.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/BinaryThreshold.h"
-#include "imageproc/Binarize.h"
-#include "imageproc/Grayscale.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/Scale.h"
+
+using namespace std::placeholders;
+#include "Curve.h"
+#include "imageproc/gui/BinaryImage.h"
+#include "imageproc/gui/BinaryThreshold.h"
+#include "imageproc/gui/Binarize.h"
+#include "imageproc/gui/Grayscale.h"
+#include "imageproc/gui/GrayImage.h"
+#include "imageproc/gui/Scale.h"
 #include "imageproc/Constants.h"
 #include "imageproc/GaussBlur.h"
 #include "imageproc/Sobel.h"
@@ -338,14 +341,14 @@ TextLineTracer::extractTextLines(
 
 	float const downscale = 1.0f / (255.0f * 8.0f);
 	horizontalSobel<float>(
-		width, height, image.data(), image.stride(), _1 * downscale,
-		aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
-		main_grid.data(), main_grid.stride(), _1 = _2
+		width, height, image.data(), image.stride(), [downscale](float x) { return x * downscale; },
+		aux_grid.data(), aux_grid.stride(), [](float& x, float val) { x = val; }, [](float x) { return x; },
+		main_grid.data(), main_grid.stride(), [](float& x, float val) { x = val; }
 	);
 	verticalSobel<float>(
-		width, height, image.data(), image.stride(), _1 * downscale,
-		aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
-		main_grid.data(), main_grid.stride(), _1 = _1 * direction[0] + _2 * direction[1]
+		width, height, image.data(), image.stride(), [downscale](float x) { return x * downscale; },
+		aux_grid.data(), aux_grid.stride(), [](float& x, float val) { x = val; }, [](float x) { return x; },
+		main_grid.data(), main_grid.stride(), [](float& x, float val) { x = val; }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, main_grid), "first_dir_deriv");
@@ -353,43 +356,52 @@ TextLineTracer::extractTextLines(
 
 	gaussBlurGeneric(
 		size, 6.0f, 6.0f,
-		main_grid.data(), main_grid.stride(), _1,
-		main_grid.data(), main_grid.stride(), _1 = _2
+		main_grid.data(), main_grid.stride(), [](float x) { return x; },
+		main_grid.data(), main_grid.stride(), [](float& x, float val) { x = val; }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, main_grid), "first_dir_deriv_blurred");
 	}
 
 	horizontalSobel<float>(
-		width, height, main_grid.data(), main_grid.stride(), _1,
-		aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
-		aux_grid.data(), aux_grid.stride(), _1 = _2
+		width, height, main_grid.data(), main_grid.stride(), [](float x) { return x; },
+		aux_grid.data(), aux_grid.stride(), [](float& x, float val) { x = val; }, [](float x) { return x; },
+		aux_grid.data(), aux_grid.stride(), [](float& x, float val) { x = val; }
 	);
 	verticalSobel<float>(
-		width, height, main_grid.data(), main_grid.stride(), _1,
-		main_grid.data(), main_grid.stride(), _1 = _2, _1,
-		main_grid.data(), main_grid.stride(), _1 = _2
+		width, height, main_grid.data(), main_grid.stride(), [](float x) { return x; },
+		main_grid.data(), main_grid.stride(), [](float& x, float val) { x = val; }, [](float x) { return x; },
+		main_grid.data(), main_grid.stride(), [](float& x, float val) { x = val; }
 	);
 	rasterOpGeneric(
 		aux_grid.data(), aux_grid.stride(), size,
-		main_grid.data(), main_grid.stride(), _2 = _1 * direction[0] + _2 * direction[1]
+		main_grid.data(), main_grid.stride(), [direction](auto aux, auto& main) { main = aux * direction[0] + aux * direction[1]; }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, main_grid), "second_dir_deriv");
 	}
 
 	float max = 0;
-	rasterOpGeneric(
-		main_grid.data(), main_grid.stride(), size,
-		if_then(_1 > var(max), var(max) = _1)
-	);
+	// Find maximum value in main_grid
+	for (int y = 0; y < size.height(); ++y) {
+		float const* row = main_grid.data() + y * main_grid.stride();
+		for (int x = 0; x < size.width(); ++x) {
+			if (row[x] > max) {
+				max = row[x];
+			}
+		}
+	}
 	float const threshold = max * 15.0f / 255.0f;
 
 	BinaryImage initial_binarization(image.size());
-	rasterOpGeneric(
-		initial_binarization, main_grid.data(), main_grid.stride(),
-		if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0))
-	);
+	// Threshold main_grid to initial_binarization
+	for (int y = 0; y < size.height(); ++y) {
+		uint32_t* dst_row = initial_binarization.data() + y * initial_binarization.wordsPerLine();
+		float const* src_row = main_grid.data() + y * main_grid.stride();
+		for (int x = 0; x < size.width(); ++x) {
+			dst_row[x] = src_row[x] > threshold ? uint32_t(1) : uint32_t(0);
+		}
+	}
 	if (dbg) {
 		dbg->add(initial_binarization, "initial_binarization");
 	}
@@ -404,8 +416,8 @@ TextLineTracer::extractTextLines(
 
 	gaussBlurGeneric(
 		size, 12.0f, 12.0f,
-		aux_grid.data(), aux_grid.stride(), _1,
-		aux_grid.data(), aux_grid.stride(), _1 = _2
+		aux_grid.data(), aux_grid.stride(), [](const float& x) { return x; },
+		aux_grid.data(), aux_grid.stride(), [](float& dst, float val) { dst = val; }
 	);
 	if (dbg) {
 		dbg->add(visualizeGradient(image, aux_grid), "blurred");
@@ -421,19 +433,27 @@ TextLineTracer::extractTextLines(
 	}
 	
 	BinaryImage post_binarization(image.size());
-	rasterOpGeneric(
-		post_binarization, aux_grid.data(), aux_grid.stride(),
-		if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0))
-	);
+	// Threshold aux_grid to post_binarization based on threshold
+	for (int y = 0; y < size.height(); ++y) {
+		uint32_t* dst_row = post_binarization.data() + y * post_binarization.wordsPerLine();
+		float const* src_row = aux_grid.data() + y * aux_grid.stride();
+		for (int x = 0; x < size.width(); ++x) {
+			dst_row[x] = src_row[x] > threshold ? uint32_t(1) : uint32_t(0);
+		}
+	}
 	if (dbg) {
 		dbg->add(post_binarization, "post_binarization");
 	}
 
 	BinaryImage obstacles(image.size());
-	rasterOpGeneric(
-		obstacles, aux_grid.data(), aux_grid.stride(),
-		if_then_else(_2 < -threshold, _1 = uint32_t(1), _1 = uint32_t(0))
-	);
+	// Find negative gradient values above threshold
+	for (int y = 0; y < size.height(); ++y) {
+		uint32_t* dst_row = obstacles.data() + y * obstacles.wordsPerLine();
+		float const* src_row = aux_grid.data() + y * aux_grid.stride();
+		for (int x = 0; x < size.width(); ++x) {
+			dst_row[x] = src_row[x] < -threshold ? uint32_t(1) : uint32_t(0);
+		}
+	}
 	if (dbg) {
 		dbg->add(obstacles, "obstacles");
 	}

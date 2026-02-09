@@ -179,7 +179,7 @@ ColorPickupInteraction::switchToDefaultInteraction()
 	m_ptrFillColorProp.reset();
 	m_interaction.release();
 	makePeerPreceeder(*m_rContext.createDefaultInteraction());
-	unlink();
+	//unlink();
 	m_rContext.imageView().update();
 }
 

@@ -55,7 +55,7 @@ class Task::UiUpdater : public FilterResult
 public:
 	UiUpdater(IntrusivePtr<Filter> const& filter,
 		IntrusivePtr<ProjectPages> const& pages,
-		std::auto_ptr<DebugImages> dbg_img,
+		DebugImages* dbg_img,
 		QImage const& image, PageInfo const& page_info,
 		ImageTransformation const& xform,
 		OptionsWidget::UiData const& ui_data,
@@ -67,7 +67,7 @@ public:
 private:
 	IntrusivePtr<Filter> m_ptrFilter;
 	IntrusivePtr<ProjectPages> m_ptrPages;
-	std::auto_ptr<DebugImages> m_ptrDbg;
+	DebugImages* m_ptrDbg;
 	QImage m_image;
 	QImage m_downscaledImage;
 	PageInfo m_pageInfo;
@@ -200,7 +200,7 @@ Task::process(TaskStatus const& status, FilterData const& data)
 	} else {
 		return FilterResultPtr(
 			new UiUpdater(
-				m_ptrFilter, m_ptrPages, m_ptrDbg, data.origImage(),
+				m_ptrFilter, m_ptrPages, m_ptrDbg.get(), data.origImage(),
 				m_pageInfo, data.xform(), ui_data, m_batchProcessing
 			)
 		);
@@ -213,7 +213,7 @@ Task::process(TaskStatus const& status, FilterData const& data)
 Task::UiUpdater::UiUpdater(
 	IntrusivePtr<Filter> const& filter,
 	IntrusivePtr<ProjectPages> const& pages,
-	std::auto_ptr<DebugImages> dbg_img,
+	DebugImages* dbg_img,
 	QImage const& image, PageInfo const& page_info,
 	ImageTransformation const& xform,
 	OptionsWidget::UiData const& ui_data,
@@ -250,7 +250,7 @@ Task::UiUpdater::updateUI(FilterUiInterface* ui)
 		m_ptrPages, m_pageInfo.imageId(),
 		m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved()
 	);
-	ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+	ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg);
 	
 	QObject::connect(
 		view, SIGNAL(invalidateThumbnail(PageInfo const&)),

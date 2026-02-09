@@ -26,8 +26,8 @@
 #include "math/gui/LineBoundedByRect.h"
 #include "GridLineTraverser.h"
 #include "MatrixCalc.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/Scale.h"
+#include "imageproc/gui/GrayImage.h"
+#include "imageproc/gui/Scale.h"
 #include "imageproc/Constants.h"
 #include "imageproc/GaussBlur.h"
 #include <QPoint>
@@ -765,8 +765,10 @@ TopBottomEdgeTracer::gaussBlurGradient(Grid<GridNode>& grid)
 {
 	gaussBlurGeneric(
 		QSize(grid.width(), grid.height()), 2.0f, 2.0f,
-		grid.data(), grid.stride(), [](auto const& node) { return node.absDirDeriv(); },
-		grid.data(), grid.stride(), [](auto& node, auto val) { node.blurred() = val; }
+		grid.data(), grid.stride(), 
+		[](const GridNode& node) { return node.absDirDeriv(); },
+		grid.data(), grid.stride(), 
+		[](GridNode& node, float val) { node.blurred = val; }
 	);
 }
 
@@ -832,7 +834,7 @@ TopBottomEdgeTracer::downTheHillSnake(
 		for (size_t node_idx = 0; node_idx < num_nodes; ++node_idx) {
 			Vec2f const pt(snake[node_idx]);
 			float const cur_external_energy = interpolatedGridValue(
-				grid, [](auto const& node) { return node.blurred(); }, pt, 1000
+				grid, [](auto const& node) { return node.blurred; }, pt, 1000
 			);
 
 			for (int displacement_idx = 0; displacement_idx < num_displacements; ++displacement_idx) {
@@ -842,7 +844,7 @@ TopBottomEdgeTracer::downTheHillSnake(
 				step.pathCost = 0;
 
 				float const adjusted_external_energy = interpolatedGridValue(
-					grid, [](auto const& node) { return node.blurred(); }, step.pt, 1000
+					grid, [](auto const& node) { return node.blurred; }, step.pt, 1000
 				);
 				if (displacement_idx == 0) {
 					step.pathCost += 100;

@@ -17,6 +17,7 @@
 */
 
 // #include "BasicImageView.h.moc"
+#include "BasicImageView.h"
 #include "ImageTransformation.h"
 #include "ImagePresentation.h"
 #include "Dpm.h"

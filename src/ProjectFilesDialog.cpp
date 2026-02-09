@@ -428,7 +428,7 @@ ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_files)
 	ItemList items;
 	std::for_each(
 		files.begin(), files.end(),
-		[&items](auto const& file) { pushItemWithFlags<Item, ItemList>(file, items, m_supportedExtensions); }
+		[this, &items](auto const& file) { pushItemWithFlags<Item, ItemList>(file, items, m_supportedExtensions); }
 	);
 	
 	m_ptrOffProjectFiles->assign(items.begin(), items.end());

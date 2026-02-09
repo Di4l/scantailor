@@ -21,7 +21,7 @@
 
 #include "BasicSplineVisualizer.h"
 #include "EditableSpline.h"
-#include "InteractionHandler.h"
+#include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
 #include <QPointF>
 #include <QCoreApplication>
