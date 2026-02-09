@@ -613,15 +613,23 @@ ThumbnailPixmapCache::Impl::backgroundProcessing()
 				}
 
 				lq_it = m_loadQueue.begin();
-				image_id = lq_it->imageId;
-
-				if (lq_it->status != Item::QUEUED) {
-					// All QUEUED items precede any other items
-					// in the load queue, so it means there are no
-					// QUEUED items at all.
+				if (lq_it == m_loadQueue.end())
+				{
 					assert(m_numQueuedItems == 0);
 					break;
 				}
+
+				while (lq_it != m_loadQueue.end() && lq_it->status != Item::QUEUED)
+				{
+					++lq_it;
+				}
+
+				if (lq_it == m_loadQueue.end())
+				{
+					assert(m_numQueuedItems == 0);
+					break;
+				}
+				image_id = lq_it->imageId;
 
 				// By marking the item as IN_PROGRESS, we prevent it
 				// from being processed again before the GUI thread

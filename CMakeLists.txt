@@ -416,7 +416,6 @@ SET(
 	src/ImagePixmapUnion.h
 	src/ImageViewBase.cpp src/ImageViewBase.h
 	src/BasicImageView.cpp src/BasicImageView.h
-	src/StageListView.cpp src/StageListView.h
 	src/DebugImageView.cpp src/DebugImageView.h
 	src/TabbedDebugImages.cpp src/TabbedDebugImages.h
 	src/ThumbnailLoadResult.h
@@ -487,6 +486,7 @@ SET(
 SET(gui_only_sources
 	src/Application.cpp src/Application.h
 	src/SkinnedButton.cpp src/SkinnedButton.h
+	src/StageListView.cpp src/StageListView.h
 	src/RelinkablePathVisualization.cpp src/RelinkablePathVisualization.h
 	src/RelinkingModel.cpp src/RelinkingModel.h
 	src/RelinkingSortingModel.cpp src/RelinkingSortingModel.h
