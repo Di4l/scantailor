@@ -182,6 +182,8 @@ private:
 	void cachePixmapUnlocked(ImageId const& image_id, QPixmap const& pixmap);
 	
 	void cachePixmapLocked(ImageId const& image_id, QPixmap const& pixmap);
+
+	RemoveQueue::iterator loadedItemsEnd();
 	
 	mutable QMutex m_mutex;
 	BackgroundLoader m_backgroundLoader;
@@ -455,21 +457,16 @@ ThumbnailPixmapCache::Impl::request(
 		return QUEUED;
 	}
 	
-	// Create a new item.
-	LoadQueue::iterator lq_it(
-		m_loadQueue.push_front(
-			Item(image_id, m_totalLoadAttempts, Item::QUEUED)
-		).first
-	);
-	// Now our new item is at the beginning of the load queue and at the
-	// end of the remove queue.
-	
+	// Insert a new item through the container so every index gets updated.
+	Item new_item(image_id, m_totalLoadAttempts, Item::QUEUED);
+	auto const insert_result = m_items.insert(new_item);
+	LoadQueue::iterator lq_it(m_items.project<LoadQueueTag>(insert_result.first));
+	lq_it = m_loadQueue.relocate(m_loadQueue.begin(), lq_it);
+
 	assert(lq_it->status == Item::QUEUED);
 	assert(lq_it->completionHandlers.empty());
-	
-	if (m_endOfLoadedItems == m_removeQueue.end()) {
-		m_endOfLoadedItems = m_items.project<RemoveQueueTag>(lq_it);
-	}
+
+	m_endOfLoadedItems = loadedItemsEnd();
 	lq_it->completionHandlers.push_back(*completion_handler);
 	
 	if (m_numQueuedItems++ == 0) {
@@ -848,12 +845,12 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
 			removeExcessLocked();
 			
 			item.status = Item::LOADED;
+		
+			RemoveQueue::iterator const boundary(loadedItemsEnd());
+			m_removeQueue.relocate(boundary, rq_it);
 			++m_numLoadedItems;
-			
-			// Move this item after all other LOADED items in
-			// the remove queue.
-			m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
-			
+			m_endOfLoadedItems = loadedItemsEnd();
+		
 			// Move to the end of load queue.
 			m_loadQueue.relocate(m_loadQueue.end(), lq_it);
 		} else if (result->status() == ThumbnailLoadResult::LOAD_FAILED) {
@@ -899,23 +896,31 @@ void
 ThumbnailPixmapCache::Impl::removeItemLocked(
 	RemoveQueue::iterator it)
 {
-	switch (it->status) {
-		case Item::QUEUED:
-			assert(m_numQueuedItems > 0);
-			--m_numQueuedItems;
-			break;
-		case Item::LOADED:
-			assert(m_numLoadedItems > 0);
-			--m_numLoadedItems;
-			break;
-		default:;
+	switch (it->status)
+	{
+	case Item::LOADED:
+		assert(m_numLoadedItems > 0);
+		--m_numLoadedItems;
+		break;
+
+	default: break;
 	}
-	
-	if (m_endOfLoadedItems == it) {
-		++m_endOfLoadedItems;
-	}
-	
+
 	m_removeQueue.erase(it);
+	m_endOfLoadedItems = loadedItemsEnd();
+}
+
+ThumbnailPixmapCache::Impl::RemoveQueue::iterator
+ThumbnailPixmapCache::Impl::loadedItemsEnd()
+{
+	RemoveQueue::iterator it(m_removeQueue.begin());
+	int remaining = m_numLoadedItems;
+	while (remaining > 0 && it != m_removeQueue.end())
+	{
+		++it;
+		--remaining;
+	}
+	return it;
 }
 
 void
@@ -955,13 +960,10 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(
 		// Our new item is now after all LOADED items in the
 		// remove queue and at the end of the load queue.
 		
-		if (new_status == Item::LOAD_FAILED) {
-			--m_endOfLoadedItems;
-		}
-		
 		rq_it->pixmap = pixmap;
 		
 		assert(rq_it->completionHandlers.empty());
+		m_endOfLoadedItems = loadedItemsEnd();
 		return;
 	}
 	
@@ -1005,6 +1007,7 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(
 		);
 		m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
 		++m_numLoadedItems;
+		m_endOfLoadedItems = loadedItemsEnd();
 	}
 }
 
