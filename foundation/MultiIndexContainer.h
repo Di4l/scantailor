@@ -981,17 +981,22 @@ public:
     {
         if (element == position)
             return position;
-        
-        // Get the storage indices
-        size_t elem_storage_idx = *element.m_order_it;
-        
-        // Find and erase the element from current position
-        auto elem_order_it = element.m_order_it;
-        auto new_order_it = m_order.erase(elem_order_it);
-        
-        // Insert at new position
-        auto insert_it = m_order.insert(position.m_order_it, elem_storage_idx);
-        
+
+        // Get the storage index for the item we're going to move.
+        size_t const elem_storage_idx = *element.m_order_it;
+
+        // Record both iterator positions as indices; erasing invalidates later iterators.
+        size_t insert_index = static_cast<size_t>(position.m_order_it - m_order.begin());
+        size_t const elem_index = static_cast<size_t>(element.m_order_it - m_order.begin());
+
+        // Remove the element from the current location.
+        m_order.erase(element.m_order_it);
+
+        if (insert_index > elem_index) {
+            --insert_index; // adjust because the erase shifted the later positions left.
+        }
+
+        auto insert_it = m_order.insert(m_order.begin() + insert_index, elem_storage_idx);
         return iterator(this->m_storage, insert_it);
     }
     

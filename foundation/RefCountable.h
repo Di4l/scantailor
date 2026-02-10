@@ -41,8 +41,6 @@ public:
 	RefCountable(RefCountable const&) noexcept {}
 	RefCountable& operator=(RefCountable const&) noexcept { return *this; }
 	
-	virtual ~RefCountable() = default;
-	
 	/**
 	 * Increment reference count.
 	 * Called by IntrusivePtr when taking ownership.
@@ -59,15 +57,23 @@ public:
 	 */
 	void unref() const noexcept
 	{
-		if (m_refCounter.fetch_sub(1, std::memory_order_release) == 1)
+		int const prev = m_refCounter.fetch_sub(1, std::memory_order_release);
+		if (prev == 1 && !m_beingDestroyed.exchange(true, std::memory_order_acq_rel))
 		{
 			std::atomic_thread_fence(std::memory_order_acquire);
 			delete this;
 		}
 	}
 
+protected:
+	virtual ~RefCountable()
+	{
+		m_beingDestroyed.store(true, std::memory_order_release);
+	}
+
 private:
 	mutable std::atomic<int> m_refCounter {0};
+	mutable std::atomic<bool> m_beingDestroyed {false};
 };
 
 #endif

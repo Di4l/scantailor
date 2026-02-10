@@ -79,8 +79,7 @@ InteractionHandler::InteractionHandler()
 
 InteractionHandler::~InteractionHandler()
 {
-	m_ptrPreceeders->clear();
-	m_ptrFollowers->clear();
+	unlinkFromChain();
 }
 
 void

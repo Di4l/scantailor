@@ -950,28 +950,45 @@ ThumbnailSequence::Impl::removePages(std::set<PageId> const& to_remove)
 {
 	m_sceneRect = QRectF(0, 0, 0, 0);
 
-	std::set<PageId>::const_iterator const to_remove_end(to_remove.end());
-	QPointF pos_delta(0, 0);
+	if (to_remove.empty())
+	{
+		commitSceneRect();
+		return;
+	}
 
-	ItemsInOrder::iterator ord_it(m_itemsInOrder.begin());
-	ItemsInOrder::iterator const ord_end(m_itemsInOrder.end());
-	while (ord_it != ord_end) {
-		if (to_remove.find(ord_it->pageInfo.id()) == to_remove_end) {
-			// Keeping this page.
-			if (pos_delta != QPointF(0, 0)) {
-				ord_it->composite->setPos(ord_it->composite->pos() + pos_delta);
-			}
-			ord_it->composite->updateSceneRect(m_sceneRect);
-			++ord_it;
-		} else {
-			// Removing this page.
-			if (m_pSelectionLeader == &*ord_it) {
-				m_pSelectionLeader = 0;
-			}
-			pos_delta.ry() -= ord_it->composite->boundingRect().height() + SPACING;
-			delete ord_it->composite;
-			m_itemsInOrder.erase(ord_it++);
+	bool removed_any = false;
+	for (PageId const& page_id : to_remove)
+	{
+		ItemsById::iterator const id_it(m_itemsById.find(page_id));
+		if (id_it == m_itemsById.end()) {
+			continue;
 		}
+		removed_any = true;
+		if (m_pSelectionLeader == &*id_it) {
+			m_pSelectionLeader = 0;
+		}
+		CompositeItem* const composite = id_it->composite;
+		std::vector<Item>& storage = m_items.storage();
+		Item* const item_ptr = &const_cast<Item&>(*id_it);
+		size_t const storage_idx = static_cast<size_t>(item_ptr - storage.data());
+		auto const storage_it = storage.begin() + storage_idx;
+		m_items.erase(storage_it);
+		delete composite;
+	}
+
+	if (!removed_any)
+	{
+		commitSceneRect();
+		return;
+	}
+
+	QPointF offset(0, 0);
+	for (Item& item : m_itemsInOrder)
+	{
+		CompositeItem* const composite = item.composite;
+		composite->setPos(composite->pos().x(), offset.y());
+		composite->updateSceneRect(m_sceneRect);
+		offset.ry() += composite->boundingRect().height() + SPACING;
 	}
 
 	commitSceneRect();
@@ -1251,13 +1268,19 @@ void
 ThumbnailSequence::Impl::clear()
 {
 	m_pSelectionLeader = 0;
-	
-	ItemsInOrder::iterator it(m_itemsInOrder.begin());
-	ItemsInOrder::iterator const end(m_itemsInOrder.end());
-	while (it != end) {
-		delete it->composite;
-		m_itemsInOrder.erase(it++);
+
+	// ItemsInOrder::iterator it(m_itemsInOrder.begin());
+	// ItemsInOrder::iterator const end(m_itemsInOrder.end());
+	// while (it != end)
+	// {
+	// 	CompositeItem* composite = it->composite;
+	// 	delete composite;
+	// 	it = m_itemsInOrder.erase(it);
+	// }
+	for (Item& item : m_items.storage()) {
+		delete item.composite;
 	}
+	m_items.clear();
 	
 	assert(m_graphicsScene.items().empty());
 	
@@ -1270,10 +1293,10 @@ ThumbnailSequence::Impl::clearSelection()
 {
 	m_pSelectionLeader = 0;
 	
-	for (Item const& item : m_selectedThenUnselected) {
-		if (!item.isSelected()) {
+	for (Item const& item : m_selectedThenUnselected)
+	{
+		if (!item.isSelected())
 			break;
-		}
 		item.setSelected(false);
 	}
 }
@@ -1509,12 +1532,24 @@ ThumbnailSequence::LabelGroup::LabelGroup(
 	std::unique_ptr<QGraphicsSimpleTextItem> normal_label,
 	std::unique_ptr<QGraphicsSimpleTextItem> bold_label,
 	std::unique_ptr<QGraphicsPixmapItem> pixmap)
-:	m_pNormalLabel(normal_label.get()),
-	m_pBoldLabel(bold_label.get())
 {
+	if (!normal_label) {
+		normal_label.reset(new QGraphicsSimpleTextItem(""));
+	}
+	if (!bold_label) {
+		bold_label.reset(new QGraphicsSimpleTextItem(normal_label->text()));
+		QFont bold_font(bold_label->font());
+		bold_font.setWeight(QFont::Bold);
+		bold_label->setFont(bold_font);
+		bold_label->setBrush(QApplication::palette().highlightedText());
+	}
+	
+	m_pNormalLabel = normal_label.get();
+	m_pBoldLabel = bold_label.get();
+
 	m_pNormalLabel->setVisible(true);
 	m_pBoldLabel->setVisible(false);
-	
+
 	addToGroup(normal_label.release());
 	addToGroup(bold_label.release());
 	if (pixmap.get()) {
@@ -1525,9 +1560,13 @@ ThumbnailSequence::LabelGroup::LabelGroup(
 void
 ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selection_leader)
 {
+	if (!m_pNormalLabel || !m_pBoldLabel) {
+		return;
+	}
+
 	m_pNormalLabel->setVisible(!selection_leader);
 	m_pBoldLabel->setVisible(selection_leader);
-	
+
 	if (selection_leader) {
 		assert(selected);
 	} else if (selected) {
