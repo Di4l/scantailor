@@ -50,9 +50,9 @@ ENDIF(ENABLE_CRASH_REPORTER)
 
 SET(
 crash_reporter_sources
-main.cpp
-CrashReportDialog.cpp CrashReportDialog.h
-MultipartFormData.cpp MultipartFormData.h
+ qt/main.cpp
+ qt/CrashReportDialog.cpp qt/CrashReportDialog.h
+ qt/MultipartFormData.cpp qt/MultipartFormData.h
 )
 
 SOURCE_GROUP("Sources" FILES ${crash_reporter_sources})
@@ -63,7 +63,7 @@ SOURCE_GROUP("Sources" FILES ${crash_reporter_sources})
 
 SET(CMAKE_AUTOMOC ON)
 
-FILE(GLOB ui_files "ui/*.ui")
+ FILE(GLOB ui_files "qt/ui/*.ui")
 SOURCE_GROUP("UI Files" FILES ${ui_files})
 QT5_WRAP_UI(ui_sources ${ui_files})
 SET_SOURCE_FILES_PROPERTIES(${ui_sources} PROPERTIES GENERATED TRUE)
@@ -72,7 +72,7 @@ SET_SOURCE_FILES_PROPERTIES(${ui_sources} PROPERTIES GENERATED TRUE)
 # SUBDIRECTORIES
 #===============================================================================
 
-ADD_SUBDIRECTORY(ui)
+ ADD_SUBDIRECTORY(qt/ui)
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 #===============================================================================
