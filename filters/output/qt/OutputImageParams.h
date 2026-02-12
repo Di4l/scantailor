@@ -22,7 +22,7 @@
 #include "Dpi.h"
 #include "ColorParams.h"
 #include "DewarpingMode.h"
-#include "dewarping/DistortionModel.h"
+#include "dewarping/qt/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
 #include <QSize>

@@ -22,7 +22,7 @@
 #include "PageSequence.h"
 #include "PageInfo.h"
 #include "ImageTransformation.h"
-#include "filters/page_layout/Filter.h"
+#include "filters/page_layout/qt/Filter.h"
 #include "filter_dc/ContentBoxCollector.h"
 #include <QRectF>
 

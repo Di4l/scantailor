@@ -17,9 +17,9 @@
 */
 
 #include "CacheDrivenTask.h"
-#include "Thumbnail.h"
+#include "qt/Thumbnail.h"
 #include "IncompleteThumbnail.h"
-#include "Settings.h"
+#include "qt/Settings.h"
 #include "PageInfo.h"
 #include "ImageTransformation.h"
 #include "filter_dc/AbstractFilterDataCollector.h"

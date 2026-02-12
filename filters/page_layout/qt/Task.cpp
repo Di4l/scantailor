@@ -29,7 +29,7 @@
 #include "ImageView.h"
 #include "ImageTransformation.h"
 #include "PhysicalTransformation.h"
-#include "filters/output/Task.h"
+#include "filters/output/qt/Task.h"
 #include <QSizeF>
 #include <QRectF>
 #include <QLineF>

@@ -17,7 +17,7 @@
 */
 
 #include "CacheDrivenTask.h"
-#include "Settings.h"
+#include "qt/Settings.h"
 #include "PageInfo.h"
 #include "PageId.h"
 #include "ImageId.h"

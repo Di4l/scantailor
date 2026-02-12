@@ -23,7 +23,7 @@
 #include "ApplyColorsDialog.h"
 #include "Settings.h"
 #include "Params.h"
-#include "dewarping/DistortionModel.h"
+#include "dewarping/qt/DistortionModel.h"
 #include "DespeckleLevel.h"
 #include "ZoneSet.h"
 #include "PictureZoneComparator.h"

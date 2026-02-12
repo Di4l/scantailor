@@ -26,12 +26,12 @@
 #include <QStringList>
 
 #include "Dpi.h"
-#include "filters/page_split/LayoutType.h"
-#include "filters/output/ColorParams.h"
-#include "filters/output/DespeckleLevel.h"
-#include "filters/output/DewarpingMode.h"
-#include "filters/output/DepthPerception.h"
-#include "filters/page_layout/Alignment.h"
+#include "filters/page_split/qt/LayoutType.h"
+#include "filters/output/qt/ColorParams.h"
+#include "filters/output/qt/DespeckleLevel.h"
+#include "filters/output/qt/DewarpingMode.h"
+#include "filters/output/qt/DepthPerception.h"
+#include "filters/page_layout/qt/Alignment.h"
 #include "ImageFileInfo.h"
 #include "Margins.h"
 #include "Despeckle.h"

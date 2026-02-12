@@ -25,8 +25,8 @@
 #include "IntrusivePtr.h"
 #include "FilterResult.h"
 #include "SafeDeletingQObjectPtr.h"
-#include "PictureZonePropFactory.h"
-#include "FillZonePropFactory.h"
+#include "qt/PictureZonePropFactory.h"
+#include "qt/FillZonePropFactory.h"
 
 class PageId;
 class PageSelectionAccessor;

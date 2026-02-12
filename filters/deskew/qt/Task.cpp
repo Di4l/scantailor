@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Task.h"
-#include "Filter.h"
+#include "../Task.h"
+#include "../Filter.h"
 #include "OptionsWidget.h"
 #include "Settings.h"
 #include "Params.h"
 #include "Dependencies.h"
 #include "TaskStatus.h"
 #include "DebugImages.h"
-#include "filters/select_content/Task.h"
+#include "filters/select_content/qt/Task.h"
 #include "FilterUiInterface.h"
 #include "ImageView.h"
 #include "FilterData.h"

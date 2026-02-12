@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dewarping/gui/CylindricalSurfaceDewarper.h"
+#include "dewarping/qt/gui/CylindricalSurfaceDewarper.h"
 #include "math/gui/ToLineProjector.h"
 #include "MatrixCalc.h"
 #include "VecNT.h"

@@ -11,31 +11,31 @@ PROJECT("Dewarping library")
 #===============================================================================
 
 SET(SOURCES
-    DewarpingPointMapper.cpp
-    DewarpingPointMapper.h
-    DistortionModel.cpp
-    DistortionModel.h
+    qt/DewarpingPointMapper.cpp
+    qt/DewarpingPointMapper.h
+    qt/DistortionModel.cpp
+    qt/DistortionModel.h
 )
 
 SET(GUI_SOURCES
-    gui/Curve.cpp
-    gui/Curve.h
-    gui/DistortionModelBuilder.cpp
-    gui/DistortionModelBuilder.h
-    gui/DetectVertContentBounds.cpp
-    gui/DetectVertContentBounds.h
-    gui/TowardsLineTracer.cpp
-    gui/TowardsLineTracer.h
-    gui/TextLineTracer.cpp
-    gui/TextLineTracer.h
-    gui/TextLineRefiner.cpp
-    gui/TextLineRefiner.h
-    gui/TopBottomEdgeTracer.cpp
-    gui/TopBottomEdgeTracer.h
-    gui/CylindricalSurfaceDewarper.cpp
-    gui/CylindricalSurfaceDewarper.h
-    gui/RasterDewarper.cpp
-    gui/RasterDewarper.h
+    qt/gui/Curve.cpp
+    qt/gui/Curve.h
+    qt/gui/DistortionModelBuilder.cpp
+    qt/gui/DistortionModelBuilder.h
+    qt/gui/DetectVertContentBounds.cpp
+    qt/gui/DetectVertContentBounds.h
+    qt/gui/TowardsLineTracer.cpp
+    qt/gui/TowardsLineTracer.h
+    qt/gui/TextLineTracer.cpp
+    qt/gui/TextLineTracer.h
+    qt/gui/TextLineRefiner.cpp
+    qt/gui/TextLineRefiner.h
+    qt/gui/TopBottomEdgeTracer.cpp
+    qt/gui/TopBottomEdgeTracer.h
+    qt/gui/CylindricalSurfaceDewarper.cpp
+    qt/gui/CylindricalSurfaceDewarper.h
+    qt/gui/RasterDewarper.cpp
+    qt/gui/RasterDewarper.h
 )
 
 SOURCE_GROUP("Sources" FILES ${SOURCES})

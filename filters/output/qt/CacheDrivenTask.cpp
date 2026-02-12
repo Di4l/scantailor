@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "CacheDrivenTask.h"
+#include "../CacheDrivenTask.h"
 #include "OutputGenerator.h"
 #include "PictureZoneComparator.h"
 #include "FillZoneComparator.h"

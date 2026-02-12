@@ -32,7 +32,7 @@
 #include "math/gui/ToLineProjector.h"
 #include "math/gui/LineBoundedByRect.h"
 #include "DistortionModelBuilder.h"
-#include "dewarping/DistortionModel.h"
+#include "dewarping/qt/DistortionModel.h"
 
 using namespace std::placeholders;
 #include "Curve.h"

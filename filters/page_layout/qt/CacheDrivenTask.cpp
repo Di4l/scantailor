@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "CacheDrivenTask.h"
+#include "../CacheDrivenTask.h"
 #include "Settings.h"
 #include "Params.h"
 #include "Thumbnail.h"

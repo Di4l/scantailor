@@ -19,7 +19,7 @@
 #ifndef DEWARPING_DISTORTION_MODEL_H_
 #define DEWARPING_DISTORTION_MODEL_H_
 
-#include "dewarping/gui/Curve.h"
+#include "dewarping/qt/gui/Curve.h"
 
 class QDomDocument;
 class QDomElement;

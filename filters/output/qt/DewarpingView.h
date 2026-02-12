@@ -26,7 +26,7 @@
 #include "interaction/gui/DragHandler.h"
 #include "interaction/gui/ZoomHandler.h"
 #include "DewarpingMode.h"
-#include "dewarping/DistortionModel.h"
+#include "dewarping/qt/DistortionModel.h"
 #include "DepthPerception.h"
 #include "Settings.h"
 #include "PageId.h"

@@ -24,10 +24,10 @@
 #include "IntrusivePtr.h"
 #include "AbstractFilter.h"
 #include "filters/fix_orientation/Filter.h"
-#include "filters/page_split/Filter.h"
+#include "filters/page_split/qt/Filter.h"
 #include "filters/deskew/Filter.h"
-#include "filters/select_content/Filter.h"
-#include "filters/page_layout/Filter.h"
+#include "filters/select_content/qt/Filter.h"
+#include "filters/page_layout/qt/Filter.h"
 #include "filters/output/Filter.h"
 #include <vector>
 

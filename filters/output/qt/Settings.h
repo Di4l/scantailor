@@ -26,7 +26,7 @@
 #include "ColorParams.h"
 #include "OutputParams.h"
 #include "DewarpingMode.h"
-#include "dewarping/DistortionModel.h"
+#include "dewarping/qt/DistortionModel.h"
 #include "DespeckleLevel.h"
 #include "ZoneSet.h"
 #include "PropertySet.h"

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Task.h"
-#include "Filter.h"
+#include "../Task.h"
+#include "../Filter.h"
 #include "OptionsWidget.h"
 #include "Settings.h"
 #include "FilterData.h"

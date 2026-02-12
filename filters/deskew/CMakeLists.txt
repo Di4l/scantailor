@@ -12,11 +12,15 @@ PROJECT("Deskew Filter")
 
 INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/qt/ui
+)
+
 #===============================================================================
 # UI Files (Qt Designer)
 #===============================================================================
 
-FILE(GLOB UI_FILES "ui/*.ui")
+FILE(GLOB UI_FILES "qt/ui/*.ui")
 QT5_WRAP_UI(UI_SOURCES ${UI_FILES})
 SET_SOURCE_FILES_PROPERTIES(${UI_SOURCES} PROPERTIES GENERATED TRUE)
 
@@ -28,26 +32,27 @@ SOURCE_GROUP("Generated" FILES ${UI_SOURCES})
 #===============================================================================
 
 SET(SOURCES
-    ImageView.cpp
-    ImageView.h
-    Thumbnail.cpp
-    Thumbnail.h
-    Filter.cpp
     Filter.h
-    OptionsWidget.cpp
-    OptionsWidget.h
-    Settings.cpp
-    Settings.h
-    Task.cpp
     Task.h
     CacheDrivenTask.cpp
     CacheDrivenTask.h
-    Dependencies.cpp
-    Dependencies.h
-    Params.cpp
-    Params.h
-    ApplyDialog.cpp
-    ApplyDialog.h
+
+    qt/ImageView.cpp
+    qt/ImageView.h
+    qt/Thumbnail.cpp
+    qt/Thumbnail.h
+    qt/Filter.cpp
+    qt/OptionsWidget.cpp
+    qt/OptionsWidget.h
+    qt/Settings.cpp
+    qt/Settings.h
+    qt/Task.cpp
+    qt/Dependencies.cpp
+    qt/Dependencies.h
+    qt/Params.cpp
+    qt/Params.h
+    qt/ApplyDialog.cpp
+    qt/ApplyDialog.h
 )
 
 SOURCE_GROUP("Sources" FILES ${SOURCES})
@@ -64,6 +69,10 @@ SET(CMAKE_AUTOMOC ON)
 #===============================================================================
 
 ADD_LIBRARY(deskew STATIC ${SOURCES} ${UI_SOURCES})
+
+target_include_directories(deskew PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 #===============================================================================
 # Translation Sources

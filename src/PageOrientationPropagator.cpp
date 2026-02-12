@@ -23,7 +23,7 @@
 #include "PageSequence.h"
 #include "PageView.h"
 #include "PageInfo.h"
-#include "filters/page_split/Filter.h"
+#include "filters/page_split/qt/Filter.h"
 #include "filter_dc/PageOrientationCollector.h"
 
 class PageOrientationPropagator::Collector : public PageOrientationCollector

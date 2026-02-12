@@ -17,7 +17,7 @@
 */
 
 #include "DistortionModel.h"
-#include "dewarping/gui/CylindricalSurfaceDewarper.h"
+#include "dewarping/qt/gui/CylindricalSurfaceDewarper.h"
 #include "NumericTraits.h"
 #include "VecNT.h"
 #include <QRectF>
