@@ -21,7 +21,7 @@
 
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
-#include "AutoRemovingFile.h"
+#include "qt/AutoRemovingFile.h"
 #include <QString>
 #include <deque>
 

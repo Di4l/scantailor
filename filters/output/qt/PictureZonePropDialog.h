@@ -20,7 +20,7 @@
 #define OUTPUT_PICTURE_ZONE_PROP_DIALOG_H_
 
 #include "ui_PictureZonePropDialog.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "IntrusivePtr.h"
 #include <QDialog>
 

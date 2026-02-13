@@ -24,7 +24,7 @@
 #include "DraggablePoint.h"
 #include "ObjectDragHandler.h"
 #include "InteractionState.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <QPointF>
 #include <QCoreApplication>
 #include <memory>

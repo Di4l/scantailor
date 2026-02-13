@@ -20,7 +20,7 @@
 #include "FrenetFrame.h"
 #include "NumericTraits.h"
 #include "math/gui/XSpline.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "math/gui/ToLineProjector.h"
 #include <QDebug>
 #include <stdexcept>

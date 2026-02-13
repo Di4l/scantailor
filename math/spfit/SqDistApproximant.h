@@ -19,7 +19,7 @@
 #ifndef SQDIST_APPROXIMANT_H_
 #define SQDIST_APPROXIMANT_H_
 
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "MatMNT.h"
 #include <QLineF>
 

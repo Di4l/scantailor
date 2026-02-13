@@ -26,7 +26,7 @@
 #include "Zone.h"
 #include "ZoneSet.h"
 #include "zones/gui/SerializableSpline.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "FillColorProperty.h"
 #include "Settings.h"
 #include "ImageTransformation.h"

@@ -17,7 +17,7 @@
 */
 
 #include "DraggableLineSegment.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 #include "ImageViewBase.h"
 #include <QPainter>
 #include <QTransform>

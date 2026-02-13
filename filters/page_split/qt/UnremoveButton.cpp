@@ -17,7 +17,7 @@
 */
 
 #include "UnremoveButton.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 #include <QRectF>
 #include <QTransform>
 #include <QPainter>

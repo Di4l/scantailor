@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "FittableSpline.h"
 #include "Optimizer.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <vector>
 
 namespace spfit

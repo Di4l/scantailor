@@ -19,7 +19,7 @@
 #ifndef DEBUG_IMAGE_VIEW_H_
 #define DEBUG_IMAGE_VIEW_H_
 
-#include "AutoRemovingFile.h"
+#include "qt/AutoRemovingFile.h"
 #include <QStackedWidget>
 #include <list>
 

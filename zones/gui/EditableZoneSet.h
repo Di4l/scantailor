@@ -21,7 +21,7 @@
 #define EDITABLE_ZONE_SET_H_
 
 #include "EditableSpline.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "IntrusivePtr.h"
 #include <QObject>
 #include <type_traits>

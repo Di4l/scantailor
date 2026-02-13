@@ -19,7 +19,7 @@
 #include "dewarping/qt/gui/CylindricalSurfaceDewarper.h"
 #include "math/gui/ToLineProjector.h"
 #include "MatrixCalc.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "NumericTraits.h"
 #include <QLineF>
 #include <QtGlobal>

@@ -19,7 +19,7 @@
 #ifndef TO_LINE_PROJECTOR_H_
 #define TO_LINE_PROJECTOR_H_
 
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <QPointF>
 #include <QLineF>
 

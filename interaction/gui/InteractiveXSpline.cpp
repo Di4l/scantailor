@@ -17,8 +17,8 @@
 */
 
 #include "InteractiveXSpline.h"
-#include "Proximity.h"
-#include "VecNT.h"
+#include "qt/Proximity.h"
+#include "qt/VecNT.h"
 #include "MatrixCalc.h"
 #include <QCursor>
 #include <QMouseEvent>

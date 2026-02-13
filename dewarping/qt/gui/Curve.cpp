@@ -19,7 +19,7 @@
 #include "Curve.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <QByteArray>
 #include <QDataStream>
 #include <QDomDocument>

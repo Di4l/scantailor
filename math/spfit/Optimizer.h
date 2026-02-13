@@ -23,7 +23,7 @@
 #include "FittableSpline.h"
 #include "SqDistApproximant.h"
 #include "VirtualFunction.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "MatT.h"
 #include "VecT.h"
 #include "LinearFunction.h"

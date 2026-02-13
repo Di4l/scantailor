@@ -18,7 +18,7 @@
 
 #include "DetectVertContentBounds.h"
 #include "DebugImages.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "math/gui/SidesOfLine.h"
 #include "imageproc/gui/BinaryImage.h"
 #include "imageproc/Constants.h"

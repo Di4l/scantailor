@@ -20,7 +20,7 @@
 #include "ZoneInteractionContext.h"
 #include "InteractionState.h"
 #include "ImageViewBase.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "ScopedIncDec.h"
 #include <QKeyEvent>
 #include <QMouseEvent>

@@ -19,7 +19,7 @@
 #include "PictureZoneComparator.h"
 #include "ZoneSet.h"
 #include "Zone.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "PictureLayerProperty.h"
 #include <QPolygonF>
 

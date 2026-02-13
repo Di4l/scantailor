@@ -17,7 +17,7 @@
 */
 
 #include "DraggablePoint.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 #include "ImageViewBase.h"
 
 DraggablePoint::DraggablePoint()

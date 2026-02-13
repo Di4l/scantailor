@@ -29,7 +29,7 @@
 #include "ProcessingIndicationWidget.h"
 #include "DebugImages.h"
 #include "TabbedDebugImages.h"
-#include "AutoRemovingFile.h"
+#include "qt/AutoRemovingFile.h"
 #include "TaskStatus.h"
 #include "Dpi.h"
 #include "imageproc/gui/BinaryImage.h"

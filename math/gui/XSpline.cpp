@@ -17,7 +17,7 @@
 */
 
 #include "XSpline.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "MatT.h"
 #include "NumericTraits.h"
 #include "ToLineProjector.h"

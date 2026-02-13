@@ -19,7 +19,7 @@
 #ifndef HOMOGRAPHIC_TRANSFORM_H_
 #define HOMOGRAPHIC_TRANSFORM_H_
 
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "MatrixCalc.h"
 #include <stddef.h>
 

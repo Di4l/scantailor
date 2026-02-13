@@ -29,7 +29,7 @@
 #include "dewarping/qt/DistortionModel.h"
 #include "DespeckleLevel.h"
 #include "ZoneSet.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include <QMutex>
 #include <map>
 #include <memory>

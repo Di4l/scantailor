@@ -24,7 +24,7 @@
 #include "PriorityQueue.h"
 #include "math/gui/ToLineProjector.h"
 #include "math/gui/LineBoundedByRect.h"
-#include "GridLineTraverser.h"
+#include "qt/GridLineTraverser.h"
 #include "MatrixCalc.h"
 #include "imageproc/gui/GrayImage.h"
 #include "imageproc/gui/Scale.h"

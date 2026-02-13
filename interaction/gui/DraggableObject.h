@@ -21,7 +21,7 @@
 #define DRAGGABLE_OBJECT_H_
 
 #include "InteractionState.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 
 class ObjectDragHandler;
 class QPoint;

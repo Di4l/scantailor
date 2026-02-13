@@ -19,7 +19,7 @@
 #include "DistortionModel.h"
 #include "dewarping/qt/gui/CylindricalSurfaceDewarper.h"
 #include "NumericTraits.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <QRectF>
 #include <QPointF>
 #include <QTransform>

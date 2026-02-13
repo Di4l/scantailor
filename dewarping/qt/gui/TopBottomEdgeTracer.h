@@ -20,7 +20,7 @@
 #define DEWARPING_TOP_BOTTOM_EDGE_TRACER_H_
 
 #include "Grid.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <QPointF>
 #include <QLineF>
 #include <QRectF>

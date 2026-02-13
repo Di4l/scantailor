@@ -19,7 +19,7 @@
 #include <functional>
 #include "TextLineRefiner.h"
 #include "Dpi.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "NumericTraits.h"
 #include "DebugImages.h"
 #include "imageproc/gui/GrayImage.h"

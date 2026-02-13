@@ -21,7 +21,7 @@
 #include "ZoneInteractionContext.h"
 #include "ImageViewBase.h"
 #include "EditableZoneSet.h"
-#include "QtSignalForwarder.h"
+#include "qt/QtSignalForwarder.h"
 #include <QRectF>
 #include <QPolygonF>
 #include <QMenu>

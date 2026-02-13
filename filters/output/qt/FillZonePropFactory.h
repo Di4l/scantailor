@@ -19,7 +19,7 @@
 #ifndef OUTPUT_FILL_ZONE_PROP_FACTORY_H_
 #define OUTPUT_FILL_ZONE_PROP_FACTORY_H_
 
-#include "PropertyFactory.h"
+#include "qt/PropertyFactory.h"
 
 namespace output
 {

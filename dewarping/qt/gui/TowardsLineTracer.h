@@ -19,7 +19,7 @@
 #ifndef DEWARPING_TOWARDS_LINE_TRACER_H_
 #define DEWARPING_TOWARDS_LINE_TRACER_H_
 
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "Grid.h"
 #include <QPoint>
 #include <QRect>

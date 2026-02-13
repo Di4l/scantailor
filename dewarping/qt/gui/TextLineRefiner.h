@@ -20,7 +20,7 @@
 #define DEWARPING_TEXT_LINE_REFINER_H_
 
 #include "Grid.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "Dpi.h"
 #include "imageproc/gui/GrayImage.h"
 #include <QPointF>

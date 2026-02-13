@@ -18,7 +18,7 @@
 
 #include "PictureZonePropDialog.h"
 // #include "PictureZonePropDialog.h.moc"
-#include "Property.h"
+#include "qt/Property.h"
 #include "PictureLayerProperty.h"
 
 namespace output

@@ -20,7 +20,7 @@
 #define INTERACTION_STATE_H_
 
 #include "NonCopyable.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 #include <list>
 #include <algorithm>
 #include <QCursor>

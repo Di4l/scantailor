@@ -19,7 +19,7 @@
 #include "ChangeDewarpingDialog.h"
 // #include "ChangeDewarpingDialog.h.moc"
 #include "PageSelectionAccessor.h"
-#include "QtSignalForwarder.h"
+#include "qt/QtSignalForwarder.h"
 #include <QButtonGroup>
 
 namespace output

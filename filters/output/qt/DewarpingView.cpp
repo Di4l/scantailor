@@ -20,7 +20,7 @@
 // #include "DewarpingView.h.moc"
 #include "ImagePresentation.h"
 #include "dewarping/qt/gui/Curve.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "MatrixCalc.h"
 #include "NumericTraits.h"
 #include "math/gui/ToLineProjector.h"

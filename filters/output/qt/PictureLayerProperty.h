@@ -19,7 +19,7 @@
 #ifndef OUTPUT_PICTURE_LAYER_PROPERTY_H_
 #define OUTPUT_PICTURE_LAYER_PROPERTY_H_
 
-#include "Property.h"
+#include "qt/Property.h"
 #include "IntrusivePtr.h"
 
 class PropertyFactory;

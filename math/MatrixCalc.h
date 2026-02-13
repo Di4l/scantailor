@@ -25,7 +25,7 @@
 #include "LinearSolver.h"
 #include "MatMNT.h"
 #include "MatT.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "VecT.h"
 #include <stddef.h>
 #include <assert.h>

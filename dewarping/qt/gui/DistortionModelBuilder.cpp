@@ -24,7 +24,7 @@
 #include "math/gui/SidesOfLine.h"
 #include "math/gui/XSpline.h"
 #include "DebugImages.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "MatMNT.h"
 #include "MatrixCalc.h"
 #include "spfit/FrenetFrame.h"

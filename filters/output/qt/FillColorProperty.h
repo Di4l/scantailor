@@ -19,7 +19,7 @@
 #ifndef OUTPUT_FILL_COLOR_PROPERTY_H_
 #define OUTPUT_FILL_COLOR_PROPERTY_H_
 
-#include "Property.h"
+#include "qt/Property.h"
 #include "IntrusivePtr.h"
 #include <QColor>
 #include <Qt>

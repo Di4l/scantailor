@@ -22,7 +22,7 @@
 
 #include "interaction/gui/InteractionHandler.h"
 #include "InteractionState.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 #include <QPointF>
 #include <QPixmap>
 #include <QCoreApplication>

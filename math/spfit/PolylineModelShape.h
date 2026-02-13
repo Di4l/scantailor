@@ -23,7 +23,7 @@
 #include "ModelShape.h"
 #include "SqDistApproximant.h"
 #include "math/gui/XSpline.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "FlagOps.h"
 #include <QPointF>
 #include <vector>

@@ -19,7 +19,7 @@
 #include "RasterDewarper.h"
 #include "dewarping/qt/gui/CylindricalSurfaceDewarper.h"
 #include "HomographicTransform.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include "imageproc/ColorMixer.h"
 #include "imageproc/gui/GrayImage.h"
 #include <QtGlobal>

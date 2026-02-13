@@ -22,7 +22,7 @@
 #include "Zone.h"
 #include "ZoneSet.h"
 #include "zones/gui/SerializableSpline.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "PictureLayerProperty.h"
 #include "PictureZonePropDialog.h"
 #include "Settings.h"

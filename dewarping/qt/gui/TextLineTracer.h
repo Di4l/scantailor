@@ -20,7 +20,7 @@
 #define DEWARPING_TEXT_LINE_TRACER_H_
 
 #include "Grid.h"
-#include "VecNT.h"
+#include "qt/VecNT.h"
 #include <QPoint>
 #include <QPointF>
 #include <QLineF>

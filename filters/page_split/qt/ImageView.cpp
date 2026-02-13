@@ -20,7 +20,7 @@
 // #include "ImageView.h.moc"
 #include "ImageTransformation.h"
 #include "ImagePresentation.h"
-#include "Proximity.h"
+#include "qt/Proximity.h"
 #include "PageId.h"
 #include "ProjectPages.h"
 #include <QPainter>

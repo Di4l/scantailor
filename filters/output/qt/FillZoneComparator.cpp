@@ -19,7 +19,7 @@
 #include "FillZoneComparator.h"
 #include "ZoneSet.h"
 #include "Zone.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 #include "FillColorProperty.h"
 #include "imageproc/PolygonUtils.h"
 #include <QPolygonF>

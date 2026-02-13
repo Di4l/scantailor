@@ -21,7 +21,7 @@
 
 #include "zones/gui/SerializableSpline.h"
 #include "IntrusivePtr.h"
-#include "PropertySet.h"
+#include "qt/PropertySet.h"
 
 class PropertyFactory;
 class QDomDocument;
